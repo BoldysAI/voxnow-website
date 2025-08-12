@@ -13,6 +13,7 @@
     "@emailjs/browser": "^4.3.3",
     "airtable": "^0.12.2",
     "firebase": "^10.8.0",
+    "lovable-tagger": "^1.1.9",
     "lucide-react": "^0.344.0",
     "openai": "^5.10.2",
     "react": "^18.3.1",
