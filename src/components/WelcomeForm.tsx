@@ -107,10 +107,10 @@ export function WelcomeForm() {
     }
   };
 
-  const watchUsesCalendar = watch('usesCalendar') === 'true';
-  const watchUsesCRM = watch('usesCRM') === 'true';
-  const watchMissedOpportunity = watch('missedOpportunity') === 'true';
-  const watchHasReferrals = watch('hasReferrals') === 'true';
+  const watchUsesCalendar = watch('usesCalendar') === true;
+  const watchUsesCRM = watch('usesCRM') === true;
+  const watchMissedOpportunity = watch('missedOpportunity') === true;
+  const watchHasReferrals = watch('hasReferrals') === true;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white py-12">

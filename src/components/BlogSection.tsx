@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight, Clock } from 'lucide-react';
 
@@ -150,11 +150,13 @@ export function BlogSection() {
                     to={`/blog/${post.slug}`}
                     className="text-vox-blue hover:text-now-green transition-colors font-medium flex items-center group"
                     onClick={() => {
-                      trackCustomEvent('BlogPostClick', {
-                        content_name: post.title,
-                        content_category: 'Blog Post'
-                      });
-                      // Scroll will be handled by BlogPost component
+                      // Analytics tracking
+                      if (typeof window !== 'undefined' && (window as any).fbq) {
+                        (window as any).fbq('track', 'ViewContent', {
+                          content_name: post.title,
+                          content_category: 'Blog Post'
+                        });
+                      }
                     }}
                   >
                     Lire l'article
