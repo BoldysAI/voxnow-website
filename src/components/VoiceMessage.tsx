@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { storage } from '../firebase';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { Mic, Square, ArrowLeft, MessageSquare, RotateCcw, Upload, AlertTriangle, Link as LinkIcon } from 'lucide-react';

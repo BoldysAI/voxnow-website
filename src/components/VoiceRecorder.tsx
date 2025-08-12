@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Square, Play, RotateCcw, Send, Clock, CheckCircle, Mail, User } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Mic, Square, RotateCcw, Send, Clock, CheckCircle, Mail, User } from 'lucide-react';
 import { trackCustomEvent } from '../utils/fbPixel';
 
 const lawyerQuotes = [
@@ -234,7 +234,7 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
         }
       });
 
-      const responseText = await response.text();
+      await response.text();
       
       if (response.ok) {
         setSendSuccess(true);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, Fragment } from 'react';
 import { signOut } from 'firebase/auth';
 import { Statistics } from './Statistics';
 import { auth } from '../firebase';
@@ -13,7 +13,6 @@ import {
   RotateCcw,
   Clock,
   Phone,
-  User,
   Calendar,
   Search,
   FileText,
@@ -21,7 +20,6 @@ import {
   Filter,
   BarChart3,
   Play,
-  Archive,
   Download,
   CheckCircle,
   Circle,
@@ -30,7 +28,6 @@ import {
   Volume2,
   AlertTriangle,
   Monitor,
-  Users,
   Scale as ScaleIcon,
   X
 } from 'lucide-react';
@@ -55,6 +52,7 @@ interface VoicemailRecord {
     'Urgence Analysis'?: string;            // AI text - Analyse urgence
     'Request category Analysis'?: string;   // AI text - Catégorie de demande
     'Field of law Analysis'?: string;       // AI text - Domaine juridique
+    'Case Stage Analysis'?: string;         // AI text - Analyse étape du cas
     
     // Gestion et statuts
     'Status email avocat'?: string;         // Single select - Statut email
@@ -98,7 +96,7 @@ export function Dashboard() {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [readMessages, setReadMessages] = useState<Set<string>>(new Set());
-  const [archivedMessages, setArchivedMessages] = useState<Set<string>>(new Set());
+  const [archivedMessages] = useState<Set<string>>(new Set());
   const [showMobileWarning, setShowMobileWarning] = useState(false);
   const [mobileWarningDismissed, setMobileWarningDismissed] = useState(false);
   
@@ -154,8 +152,8 @@ export function Dashboard() {
     for (const source of sentimentSources) {
       if (source) {
         // Handle Airtable AI field objects
-        if (typeof source === "object" && source.value !== undefined) {
-          sentiment = getSafeString(source.value, '');
+        if (typeof source === "object" && source !== null && 'value' in source) {
+          sentiment = getSafeString((source as any).value, '');
         } else if (typeof source === "string") {
           sentiment = source;
         }
@@ -191,8 +189,8 @@ export function Dashboard() {
     
     if (urgencySource) {
       // Handle Airtable AI field objects
-      if (typeof urgencySource === "object" && urgencySource.value !== undefined) {
-        urgencyValue = getSafeString(urgencySource.value, '');
+      if (typeof urgencySource === "object" && urgencySource !== null && 'value' in urgencySource) {
+        urgencyValue = getSafeString((urgencySource as any).value, '');
       } else if (typeof urgencySource === "string") {
         urgencyValue = urgencySource;
       }
@@ -489,11 +487,6 @@ export function Dashboard() {
     setReadMessages(newRead);
   };
 
-  const archiveMessage = (id: string) => {
-    const newArchived = new Set(archivedMessages);
-    newArchived.add(id);
-    setArchivedMessages(newArchived);
-  };
 
   const playAudio = (audioUrl?: string) => {
     if (audioUrl) {
@@ -1120,7 +1113,7 @@ export function Dashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {getPaginatedData().map((voicemail) => (
-                        <React.Fragment key={voicemail.id}>
+                        <Fragment key={voicemail.id}>
                           <tr className={`hover:bg-gray-50 transition-colors ${!readMessages.has(voicemail.id) ? 'bg-blue-50/30' : ''}`}>
                             <td className="px-6 py-4">
                               <button
@@ -1341,7 +1334,7 @@ export function Dashboard() {
                               </td>
                             </tr>
                           )}
-                        </React.Fragment>
+                        </Fragment>
                       ))}
                     </tbody>
                   </table>

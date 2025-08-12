@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Mic, MessageSquare, Zap } from 'lucide-react';
 import { VoiceRecorder } from './VoiceRecorder';

@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { TrendingUp, Users, Clock, AlertTriangle, Scale, FileText, Brain, BarChart3 } from 'lucide-react';
 
 interface AirtableRecord {
@@ -87,7 +87,7 @@ const calculateRequestCategoryStats = (records: AirtableRecord[]) => {
   ).filter(Boolean);
 
   const total = categories.length;
-  if (total === 0) return {};
+  if (total === 0) return { total: 0 };
 
   const categoryList = [
     'Legal advice needed',
@@ -116,7 +116,7 @@ const calculateFieldOfLawStats = (records: AirtableRecord[]) => {
   ).filter(Boolean);
 
   const total = fields.length;
-  if (total === 0) return {};
+  if (total === 0) return { total: 0 };
 
   const fieldList = [
     'Contract law',

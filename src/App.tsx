@@ -1,25 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
 import { 
-  MessageSquare, 
-  ChevronRight,
-  ChevronLeft, 
   ArrowRight, 
   CheckCircle2, 
   Clock, 
   Zap, 
   Calendar,
   MessageCircle, 
-  Infinity, 
   Lock,
-  CalendarDays,
   FileText,
-  Send,
-  BellRing,
   Mail,
-  CalendarCheck,
-  Bot,
-  ArrowRight as ArrowRight2,
   Brain,
   Linkedin,
   PhoneCall,
@@ -122,10 +112,6 @@ function Home() {
     window.open('https://calendly.com/hey-sachadelcourt/voxnow', '_blank');
   };
 
-  const scrollToCalendly = () => {
-    const element = document.getElementById('calendly-section');
-    element?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const handleWelcomeFormClick = () => {
     // Track welcome form access

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, CreditCard, Shield, CheckCircle, Calendar, Gift, Star } from 'lucide-react';
 import { trackViewContent, trackCustomEvent } from '../utils/fbPixel';

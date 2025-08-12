@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { 
-  ArrowLeft, 
   LogOut, 
   MessageSquare, 
   Calendar, 
@@ -10,11 +9,9 @@ import {
   Phone,
   FileText,
   AlertTriangle,
-  CheckCircle,
   XCircle,
   BarChart3,
   TrendingUp,
-  Filter,
   Search,
   Download,
   RefreshCw,
@@ -72,7 +69,7 @@ export function HuezDashboard() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterUrgency, setFilterUrgency] = useState('all');
   const [showStatistics, setShowStatistics] = useState(false);
-  const [selectedMessage, setSelectedMessage] = useState<VoiceMessage | null>(null);
+  
   const [expandedMessage, setExpandedMessage] = useState<string | null>(null);
   
   const navigate = useNavigate();

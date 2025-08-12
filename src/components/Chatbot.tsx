@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, X, Send, Bot, Loader2, Calendar } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { X, Send, Loader2, Calendar } from 'lucide-react';
 import { trackCustomEvent } from '../utils/fbPixel';
 import OpenAI from 'openai';
 
