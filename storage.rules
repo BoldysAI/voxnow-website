@@ -1,0 +1,17 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /voice-messages/{fileName} {
+      // Tout le monde peut uploader des fichiers audio
+      allow create: if request.resource.contentType.matches('audio/.*');
+      // Seuls les admins peuvent lire et modifier
+      allow read, update, delete: if false;
+    }
+    
+    // Bloquer l'accès à tous les autres fichiers
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
