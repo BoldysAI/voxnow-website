@@ -18,6 +18,18 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
+    id: '7',
+    title: 'Gagnez un temps précieux grâce à l\'intégration VoxNow + Symplicy',
+    excerpt: 'Découvrez comment l\'intégration entre VoxNow et Symplicy révolutionne la gestion des demandes clients dans les cabinets d\'avocats. Automatisation complète, gain de temps et expérience client optimisée.',
+    slug: 'integration-voxnow-symplicy-avocat',
+    date: '22 juillet 2025',
+    author: 'Équipe VoxNow',
+    readTime: '10 min',
+    category: 'Intégration',
+    image: '/lovable-uploads/cdf9b7b0-ef95-4ace-b826-7c6a83d3e724.png',
+    metaDescription: 'L\'intégration VoxNow + Symplicy automatise complètement la gestion des demandes clients. Transcription IA, envoi automatique de formulaires et gain de temps pour les avocats.'
+  },
+  {
     id: '8',
     title: 'Comment les avocats belges gagnent 5h par semaine avec la transcription automatique VoxNow',
     excerpt: 'Pour un avocat, chaque minute compte. Entre les audiences, les rendez-vous et la préparation des dossiers, écouter et retranscrire les messages vocaux devient une perte de temps précieuse. VoxNow propose une solution simple et rapide pour transformer ces minutes perdues en heures facturables.',
@@ -102,18 +114,6 @@ const blogPosts: BlogPost[] = [
     metaDescription: 'Découvrez pourquoi les messages vocaux sont un frein à la productivité des avocats et comment automatiser leur traitement pour optimiser votre temps.'
   },
   {
-    id: '7',
-    title: 'Gagnez un temps précieux grâce à l\'intégration VoxNow + Symplicy',
-    excerpt: 'Découvrez comment l\'intégration entre VoxNow et Symplicy révolutionne la gestion des demandes clients dans les cabinets d\'avocats. Automatisation complète, gain de temps et expérience client optimisée.',
-    slug: 'integration-voxnow-symplicy-avocat',
-    date: '22 juillet 2025',
-    author: 'Équipe VoxNow',
-    readTime: '10 min',
-    category: 'Intégration',
-    image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
-    metaDescription: 'L\'intégration VoxNow + Symplicy automatise complètement la gestion des demandes clients. Transcription IA, envoi automatique de formulaires et gain de temps pour les avocats.'
-  },
-  {
     id: '6',
     title: 'Comment optimiser l\'accueil téléphonique d\'un cabinet d\'avocats à l\'ère digitale',
     excerpt: 'Pour beaucoup de cabinets d\'avocats, le premier contact avec un client potentiel passe encore par un appel téléphonique. Pourtant, la majorité des appels ne sont pas décrochés à la première tentative.',
@@ -194,19 +194,35 @@ export function BlogList() {
 
           {/* Blog Posts Grid */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {blogPosts.map((post) => (
+            {blogPosts.map((post, index) => (
               <article 
                 key={post.id} 
-                className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 group"
+                className={`${
+                  index === 0 
+                    ? 'lg:col-span-2 bg-gradient-to-br from-orange-50 to-red-50 border-2 border-orange-200 shadow-2xl' 
+                    : 'bg-white border border-gray-100 shadow-lg'
+                } rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 group`}
               >
+                {index === 0 && (
+                  <div className="bg-gradient-to-r from-red-500 to-orange-500 text-white px-4 py-2">
+                    <div className="flex items-center justify-center">
+                      <span className="text-sm font-bold tracking-wider animate-pulse">🔥 FLASH NEWS</span>
+                    </div>
+                  </div>
+                )}
+                
                 <div className="relative overflow-hidden">
                   <img
                     src={post.image}
                     alt={`Illustration pour l'article : ${post.title}`}
-                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    className={`w-full ${index === 0 ? 'h-64' : 'h-48'} object-cover group-hover:scale-105 transition-transform duration-300`}
                   />
                   <div className="absolute top-4 left-4">
-                    <span className="bg-vox-blue text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span className={`${
+                      index === 0 
+                        ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' 
+                        : 'bg-vox-blue text-white'
+                    } px-3 py-1 rounded-full text-sm font-medium shadow-lg`}>
                       {post.category}
                     </span>
                   </div>
@@ -221,11 +237,15 @@ export function BlogList() {
                     <span>{post.readTime}</span>
                   </div>
                   
-                  <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-vox-blue transition-colors leading-tight">
+                  <h2 className={`${
+                    index === 0 
+                      ? 'text-2xl text-gray-900 mb-4' 
+                      : 'text-xl text-gray-900 mb-3'
+                  } font-bold group-hover:text-vox-blue transition-colors leading-tight`}>
                     {post.title}
                   </h2>
                   
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+                  <p className={`text-gray-600 mb-4 leading-relaxed ${index === 0 ? 'text-lg' : ''}`}>
                     {post.excerpt}
                   </p>
                   
@@ -237,7 +257,11 @@ export function BlogList() {
                     
                     <Link
                       to={`/blog/${post.slug}`}
-                      className="text-vox-blue hover:text-now-green transition-colors font-medium flex items-center group"
+                      className={`${
+                        index === 0 
+                          ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full hover:shadow-lg' 
+                          : 'text-vox-blue hover:text-now-green'
+                      } transition-colors font-medium flex items-center group`}
                       onClick={() => trackCustomEvent('BlogPostClick', {
                         content_name: post.title,
                         content_category: 'Blog Post'
