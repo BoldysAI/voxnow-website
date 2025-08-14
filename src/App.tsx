@@ -180,7 +180,7 @@ function Home() {
                 {[
                   { 
                     name: 'Bastien Lombaerd', 
-                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754932644/Screenshot_2025-08-11_at_19.17.17_aqhqzp.png'
+                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1743539346/Screenshot_2025-04-01_at_21.26.43_ce7kuf.png'
                   },
                   { 
                     name: 'Gilles Rousseau', 
