@@ -591,6 +591,353 @@ function Home() {
         </div>
       </section>
 
+      {/* Trusted by Lawyers Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl font-bold gradient-text mb-4">
+              Ces cabinets nous font déjà confiance
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Découvrez les avocats qui ont déjà adopté VoxNow pour optimiser leur gestion des appels
+            </p>
+          </div>
+
+          {/* Scrolling lawyer cards */}
+          <div className="relative overflow-hidden">
+            <div className="flex animate-scroll space-x-8">
+              {/* First set */}
+              <div className="flex space-x-8 min-w-max">
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754933128/Screenshot_2025-08-11_at_19.25.20_xsclfm.png"
+                      alt="Gilles Rousseau"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Gilles Rousseau</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/gilles-rousseau-8a56a8144/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Gilles Rousseau LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:gilles.rousseau@avocat.be"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Gilles Rousseau Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754933288/Screenshot_2025-08-11_at_19.28.04_fqwjud.png"
+                      alt="Geoffroy Huez"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Geoffroy Huez</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/geoffroy-huez-2589388a/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Geoffroy Huez LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:mandathuez@gmail.com"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Geoffroy Huez Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754933487/Screenshot_2025-08-11_at_19.31.21_jxramd.png"
+                      alt="Thibault Delaey"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Thibault Delaey</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/delaeythibault/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Thibault Delaey LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:ta.delaey@avocat.be"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Thibault Delaey Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754934117/Screenshot_2025-08-11_at_19.41.51_bi7rn6.png"
+                      alt="Samuel Pochet"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Samuel Pochet</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/samuel-pochet-827866169/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Samuel Pochet LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:s.pochet@avocat.be"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Samuel Pochet Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Second set (duplicate for seamless loop) */}
+              <div className="flex space-x-8 min-w-max">
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754933128/Screenshot_2025-08-11_at_19.25.20_xsclfm.png"
+                      alt="Gilles Rousseau"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Gilles Rousseau</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/gilles-rousseau-8a56a8144/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Gilles Rousseau LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:gilles.rousseau@avocat.be"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Gilles Rousseau Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754933288/Screenshot_2025-08-11_at_19.28.04_fqwjud.png"
+                      alt="Geoffroy Huez"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Geoffroy Huez</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/geoffroy-huez-2589388a/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Geoffroy Huez LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:mandathuez@gmail.com"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Geoffroy Huez Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754933487/Screenshot_2025-08-11_at_19.31.21_jxramd.png"
+                      alt="Thibault Delaey"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Thibault Delaey</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/delaeythibault/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Thibault Delaey LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:ta.delaey@avocat.be"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Thibault Delaey Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-center space-x-4">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754934117/Screenshot_2025-08-11_at_19.41.51_bi7rn6.png"
+                      alt="Samuel Pochet"
+                      className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
+                    />
+                    <div className="flex-1">
+                      <h3 className="font-bold text-gray-900">Samuel Pochet</h3>
+                      <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
+                      <div className="flex space-x-2">
+                        <a
+                          href="https://www.linkedin.com/in/samuel-pochet-827866169/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerLinkedInClick', {
+                            content_name: 'Samuel Pochet LinkedIn',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          LinkedIn
+                        </a>
+                        <span className="text-gray-300">•</span>
+                        <a
+                          href="mailto:s.pochet@avocat.be"
+                          className="text-vox-blue hover:text-now-green transition-colors text-sm"
+                          onClick={() => trackCustomEvent('LawyerEmailClick', {
+                            content_name: 'Samuel Pochet Email',
+                            content_category: 'Social Proof'
+                          })}
+                        >
+                          Email
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Section */}
+          <div className="text-center mt-12">
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
+            >
+              Découvrir la solution
+            </button>
+          </div>
+        </div>
+      </section>
+
       {/* Free Trial Section */}
       <section id="free-trial-section" className="py-24 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto px-4">
