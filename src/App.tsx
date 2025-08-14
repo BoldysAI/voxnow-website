@@ -282,10 +282,23 @@ function Home() {
                 
                 {/* Plus indicator */}
                 <div className="flex flex-col items-center">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-vox-blue/20 to-now-green/20 border-2 border-gray-300 border-dashed flex items-center justify-center mb-2 hover:scale-110 transition-transform duration-300">
+                  <button
+                    onClick={() => {
+                      trackCustomEvent('TrustIndicatorClick', {
+                        content_name: 'More Lawyers Click',
+                        content_category: 'Trust Indicator'
+                      });
+                      // Scroll to testimonial lawyers section
+                      const testimonialSection = document.querySelector('#testimonial-lawyers');
+                      if (testimonialSection) {
+                        testimonialSection.scrollIntoView({ behavior: 'smooth' });
+                      }
+                    }}
+                    className="w-12 h-12 rounded-full bg-gradient-to-r from-vox-blue/20 to-now-green/20 border-2 border-gray-300 border-dashed flex items-center justify-center mb-2 hover:scale-110 transition-transform duration-300"
+                  >
                     <span className="text-2xl text-gray-600 font-bold">+</span>
-                  </div>
-                  <span className="text-xs text-gray-600 text-center">bien plus</span>
+                  </button>
+                  <span className="text-xs text-gray-600 text-center">Et bien plus</span>
                 </div>
               </div>
             </div>
