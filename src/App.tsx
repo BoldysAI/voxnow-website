@@ -279,7 +279,8 @@ function Home() {
                     className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
                   />
                   <img
-                    src="https://media.licdn.com/dms/image/v2/D4E03AQGQHBpQlJvJJA/profile-displayphoto-shrink_200_200/profile-displayphoto-shrink_200_200/0/1704878473633?e=1746057600&v=beta&t=wKhJhJJvJJA"
+                    src="https://res.cloudinary.com/drdqov4zs/image/upload/v1743539346/Screenshot_2025-04-01_at_21.26.43_ce7kuf.png'
+                  },"
                     alt="Bastien Lombaerd"
                     className="w-8 h-8 rounded-full object-cover border-2 border-white shadow-sm"
                   />
