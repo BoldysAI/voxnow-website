@@ -129,10 +129,10 @@ function Home() {
       content_category: 'Lead Generation'
     });
     
-    // Scroll to Calendly embed section
-    const calendlySection = document.querySelector('.calendly-inline-widget');
-    if (calendlySection) {
-      calendlySection.scrollIntoView({ behavior: 'smooth' });
+    // Scroll to Free Trial Form section
+    const trialFormSection = document.querySelector('#free-trial-section');
+    if (trialFormSection) {
+      trialFormSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
