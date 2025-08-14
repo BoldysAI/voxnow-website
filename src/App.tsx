@@ -15,7 +15,6 @@ import {
   PhoneCall,
   Link2,
   Gift,
-  Scale,
   Shield,
   Users,
   BarChart3,
@@ -176,11 +175,6 @@ function Home() {
         
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-5xl mx-auto">
-            {/* Badge */}
-            <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-6 py-3 rounded-full shadow-sm mb-8">
-              <Scale className="h-5 w-5 text-vox-blue mr-2" />
-              <span className="text-gray-700 font-medium">Solution dédiée aux cabinets d'avocats</span>
-            </div>
 
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
               Vos demandes <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">juridiques téléphoniques</span> résumées et <span className="relative">
@@ -260,10 +254,10 @@ function Home() {
                           content_name: `${lawyer.name} Photo Click`,
                           content_category: 'Trust Indicator'
                         });
-                        // Scroll to testimonial lawyers section
-                        const testimonialSection = document.querySelector('#testimonial-lawyers');
-                        if (testimonialSection) {
-                          testimonialSection.scrollIntoView({ behavior: 'smooth' });
+                        // Scroll to gain section (just after hero)
+                        const gainSection = document.querySelector('#gain-section');
+                        if (gainSection) {
+                          gainSection.scrollIntoView({ behavior: 'smooth' });
                         }
                       }}
                       className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300 mb-2"
@@ -314,7 +308,7 @@ function Home() {
       </section>
 
       {/* Email Notifications Section */}
-      <section className="py-24 px-4 bg-gradient-to-b from-white to-gray-50">
+      <section id="gain-section" className="py-24 px-4 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
