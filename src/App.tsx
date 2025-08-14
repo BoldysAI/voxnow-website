@@ -303,31 +303,6 @@ function Home() {
               </div>
             </div>
 
-
-            {/* Key benefits */}
-            <div className="grid md:grid-cols-3 gap-6 mt-16 max-w-4xl mx-auto">
-              <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div className="w-12 h-12 bg-vox-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Clock className="h-6 w-6 text-vox-blue" />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">Gain de temps immédiat</h3>
-                <p className="text-gray-600 text-sm">Plus besoin d'écouter vos messages un par un</p>
-              </div>
-              <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div className="w-12 h-12 bg-now-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-6 w-6 text-now-green" />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">Sécurité juridique</h3>
-                <p className="text-gray-600 text-sm">Aucun message important ne sera oublié</p>
-              </div>
-              <div className="bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm">
-                <div className="w-12 h-12 bg-light-blue/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Users className="h-6 w-6 text-light-blue" />
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">Service client optimisé</h3>
-                <p className="text-gray-600 text-sm">Réponses automatiques et personnalisées</p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
