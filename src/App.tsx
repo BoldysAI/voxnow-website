@@ -37,6 +37,8 @@ import { BlogList } from './components/BlogList';
 import { BlogPost } from './components/BlogPost';
 import { Chatbot } from './components/Chatbot';
 import { HuezDashboard } from './components/HuezDashboard';
+import { BlogArticle1 } from './components/BlogArticle1';
+import { BlogArticle2 } from './components/BlogArticle2';
 
 declare global {
   interface Window {
@@ -1534,6 +1536,8 @@ function App() {
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/paiement" element={<PaymentPage />} />
         <Route path="/blog" element={<BlogList />} />
+        <Route path="/blog/avocats-belgique-gagner-temps-voxnow" element={<BlogArticle1 />} />
+        <Route path="/blog/solution-belge-gestion-appels-manques" element={<BlogArticle2 />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
       </Routes>
       <Chatbot />

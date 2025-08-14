@@ -18,6 +18,30 @@ interface BlogPost {
 
 const blogPosts: BlogPost[] = [
   {
+    id: '8',
+    title: 'Comment les avocats belges gagnent 5h par semaine avec la transcription automatique VoxNow',
+    excerpt: 'Pour un avocat, chaque minute compte. Entre les audiences, les rendez-vous et la préparation des dossiers, écouter et retranscrire les messages vocaux devient une perte de temps précieuse. VoxNow propose une solution simple et rapide pour transformer ces minutes perdues en heures facturables.',
+    slug: 'avocats-belgique-gagner-temps-voxnow',
+    date: '5 février 2025',
+    author: 'Équipe VoxNow',
+    readTime: '5 min',
+    category: 'Productivité',
+    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    metaDescription: 'Gagnez jusqu\'à 5 heures par semaine grâce à VoxNow, la solution belge de transcription et de gestion intelligente des messages vocaux pour avocats.'
+  },
+  {
+    id: '9',
+    title: 'VoxNow, l\'assistant virtuel belge pour gérer vos appels manqués',
+    excerpt: 'Un appel manqué peut signifier un client perdu. Pour les professions à forte interaction téléphonique (avocats, notaires, agents immobiliers…), chaque demande compte. VoxNow automatise la gestion de vos appels manqués, vous faisant gagner en réactivité et en organisation.',
+    slug: 'solution-belge-gestion-appels-manques',
+    date: '5 février 2025',
+    author: 'Équipe VoxNow',
+    readTime: '4 min',
+    category: 'Technologie',
+    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    metaDescription: 'Découvrez comment VoxNow aide les professionnels belges à centraliser, transcrire et répondre plus vite à leurs messages vocaux.'
+  },
+  {
     id: '1',
     title: 'Pourquoi les avocats perdent 3 heures par semaine à écouter leurs messages vocaux (et comment y remédier)',
     excerpt: 'Découvrez comment la transcription vocale automatique peut révolutionner la gestion de votre cabinet d\'avocat et vous faire gagner un temps précieux. Une analyse complète des enjeux et solutions.',
@@ -261,10 +285,10 @@ export function BlogList() {
             </h3>
             <div className="grid md:grid-cols-4 gap-6">
               {[
-                { name: 'Productivité', count: 1, color: 'bg-vox-blue' },
-                { name: 'Technologie', count: 0, color: 'bg-now-green' },
-                { name: 'Gestion', count: 0, color: 'bg-light-blue' },
-                { name: 'Innovation', count: 0, color: 'bg-light-green' }
+                { name: 'Productivité', count: 4, color: 'bg-vox-blue' },
+                { name: 'Technologie', count: 1, color: 'bg-now-green' },
+                { name: 'Gestion', count: 2, color: 'bg-light-blue' },
+                { name: 'Innovation', count: 2, color: 'bg-light-green' }
               ].map((category) => (
                 <div key={category.name} className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 text-center">
                   <div className={`w-12 h-12 ${category.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
