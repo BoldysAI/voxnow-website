@@ -120,13 +120,18 @@ function Home() {
 
 
 
-  const handleWelcomeFormClick = () => {
-    // Track welcome form access
-    trackCustomEvent('WelcomeFormAccess', {
-      content_name: 'Early Adopter Form',
+  const handleTrialFormClick = () => {
+    // Track trial form access
+    trackCustomEvent('TrialFormAccess', {
+      content_name: 'Free Trial Form',
       content_category: 'Lead Generation'
     });
-    navigate('/bienvenue');
+    
+    // Scroll to Calendly embed section
+    const calendlySection = document.querySelector('.calendly-inline-widget');
+    if (calendlySection) {
+      calendlySection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   return (
@@ -205,7 +210,7 @@ function Home() {
             
             <div className="flex justify-center mb-8">
               <button
-                onClick={handleWelcomeFormClick}
+                onClick={handleTrialFormClick}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
                 Essai gratuit de 14 jours
@@ -270,18 +275,6 @@ function Home() {
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Optimisation message with enhanced design */}
-            <div className="relative bg-gradient-to-r from-blue-50/80 via-white to-green-50/80 backdrop-blur-sm p-8 rounded-3xl border border-gray-100 shadow-lg">
-              <div className="absolute -top-2 -left-2 w-20 h-20 bg-gradient-to-br from-vox-blue/20 to-now-green/20 rounded-full blur-xl"></div>
-              <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-light-blue/20 to-light-green/20 rounded-full blur-xl"></div>
-              <p className="text-xl md:text-2xl text-gray-700 font-semibold text-center relative z-10">
-                <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">Optimisez votre cabinet</span>, 
-                <span className="text-light-blue"> gagnez du temps</span>, 
-                <span className="bg-gradient-to-r from-now-green to-light-green bg-clip-text text-transparent"> améliorez votre réactivité</span> et 
-                <span className="text-light-blue"> restez organisé</span>.
-              </p>
             </div>
 
 
@@ -1061,7 +1054,7 @@ function Home() {
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center mb-12">
             <button
-              onClick={handleWelcomeFormClick}
+              onClick={handleTrialFormClick}
               className="mb-8 inline-flex items-center bg-white/90 backdrop-blur-sm border border-gray-200 px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
             >
               <Gift className="h-6 w-6 text-now-green mr-3 group-hover:scale-110 transition-transform" />
@@ -1376,7 +1369,7 @@ function Home() {
                 </ul>
                 
                 <button
-                  onClick={() => navigate('/paiement')}
+                  onClick={handleTrialFormClick}
                   className="w-full bg-gradient-to-r from-vox-blue to-now-green text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
                 >
                   Commencer l'essai gratuit
