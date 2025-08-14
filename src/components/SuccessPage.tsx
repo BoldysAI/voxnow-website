@@ -12,13 +12,15 @@ export function SuccessPage() {
     });
   }, []);
 
-  const openCalendly = () => {
+  const scrollToCalendly = () => {
     // Track Calendly click from success page
     trackCustomEvent('CalendlyClickFromSuccess', {
       content_name: 'Demo Booking from Success',
       content_category: 'Lead Generation'
     });
-    window.open('https://calendly.com/hey-sachadelcourt/voxnow', '_blank');
+    
+    // Navigate back to home and scroll to Calendly
+    window.location.href = '/#calendly';
   };
 
   return (
@@ -63,7 +65,7 @@ export function SuccessPage() {
             </p>
 
             <button
-              onClick={openCalendly}
+              onClick={scrollToCalendly}
               className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center justify-center mx-auto"
             >
               <Calendar className="h-5 w-5 mr-2" />

@@ -105,14 +105,20 @@ function Home() {
     }
   }, []);
 
-  const openCalendly = () => {
-    // Track Calendly click
-    trackCustomEvent('CalendlyClick', {
-      content_name: 'Demo Booking',
+  const scrollToCalendly = () => {
+    // Track Calendly scroll
+    trackCustomEvent('CalendlyScroll', {
+      content_name: 'Demo Booking Scroll',
       content_category: 'Lead Generation'
     });
-    window.open('https://calendly.com/hey-sachadelcourt/voxnow', '_blank');
+    
+    // Scroll to Calendly embed section
+    const calendlySection = document.querySelector('.calendly-inline-widget');
+    if (calendlySection) {
+      calendlySection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
+
 
 
   const handleWelcomeFormClick = () => {
@@ -149,7 +155,7 @@ function Home() {
                 Espace Client
               </Link>
               <button
-                onClick={openCalendly}
+                onClick={scrollToCalendly}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full hover:shadow-xl transition-all duration-300 flex items-center group font-semibold"
               >
                 Réserver une démo
@@ -240,7 +246,7 @@ function Home() {
             
             <div className="flex justify-center mb-8">
               <button
-                onClick={openCalendly}
+                onClick={scrollToCalendly}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-10 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
                 Réserver une démo gratuite
@@ -1019,7 +1025,7 @@ function Home() {
           {/* CTA Section */}
           <div className="text-center mt-12">
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={scrollToCalendly}
               className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
             >
               Découvrir la solution
@@ -1261,7 +1267,7 @@ function Home() {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
-                    onClick={openCalendly}
+                    onClick={scrollToCalendly}
                     className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center"
                   >
                     <Calendar className="h-5 w-5 mr-2" />
@@ -1398,7 +1404,7 @@ function Home() {
                 </ul>
                 
                 <button
-                  onClick={openCalendly}
+                  onClick={scrollToCalendly}
                   className="w-full bg-gradient-to-r from-light-blue to-light-green text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
                 >
                   Réserver une démo
@@ -1442,7 +1448,7 @@ function Home() {
               Rejoignez les cabinets d'avocats qui gagnent jusqu'à une heure par jour avec VoxNow.
             </p>
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-              <div className="calendly-inline-widget" style={{ minWidth: '320px', height: '700px' }}></div>
+              <div id="calendly" className="calendly-inline-widget" style={{ minWidth: '320px', height: '700px' }}></div>
             </div>
           </div>
         </div>

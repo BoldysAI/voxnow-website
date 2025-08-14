@@ -197,19 +197,17 @@ export function BlogArticle1() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
-                  to="/dashboard"
+                  to="/"
                   className="bg-white text-vox-blue px-6 py-3 rounded-full font-semibold hover:bg-gray-100 transition-colors text-center"
                 >
                   Découvrir VoxNow
                 </Link>
-                <a
-                  href="https://calendly.com/hey-sachadelcourt/voxnow"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/#calendly"
                   className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-vox-blue transition-colors text-center"
                 >
                   Demander une démo gratuite
-                </a>
+                </Link>
               </div>
             </div>
           </section>

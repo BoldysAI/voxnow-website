@@ -427,12 +427,17 @@ export function Chatbot() {
     });
   };
 
-  const openCalendly = () => {
+  const scrollToCalendly = () => {
     trackCustomEvent('CalendlyClickFromChatbot', {
       content_name: 'Demo Booking from Voxy',
       content_category: 'Lead Generation'
     });
-    window.open('https://calendly.com/hey-sachadelcourt/voxnow', '_blank');
+    
+    // Scroll to Calendly embed section
+    const calendlySection = document.querySelector('.calendly-inline-widget');
+    if (calendlySection) {
+      calendlySection.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   // Handle mobile viewport adjustment
@@ -605,7 +610,7 @@ export function Chatbot() {
           {showCTA && (
             <div className="px-3 sm:px-4 pb-2">
               <button
-                onClick={openCalendly}
+                onClick={scrollToCalendly}
                 className={`w-full bg-gradient-to-r from-orange-400 to-pink-500 text-white py-2 sm:py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-300 transform hover:scale-105 flex items-center justify-center space-x-2 ${
                   ctaAnimating ? 'animate-pulse' : ''
                 }`}
