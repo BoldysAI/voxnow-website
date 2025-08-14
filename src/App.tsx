@@ -203,27 +203,25 @@ function Home() {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <button
-                onClick={scrollToCalendly}
-                className="bg-gradient-to-r from-vox-blue to-now-green text-white px-10 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-              >
-                Réserver une démo gratuite
-              </button>
+            <div className="flex justify-center mb-8">
               <button
                 onClick={handleWelcomeFormClick}
-                className="bg-white text-vox-blue border-2 border-vox-blue px-10 py-4 rounded-full text-xl font-bold hover:bg-vox-blue hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
+                className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
-                Essai gratuit
+                Essai gratuit de 14 jours
               </button>
             </div>
 
-            <p className="text-lg md:text-xl text-gray-600 font-medium mb-12">
-              Optimisez votre cabinet, gagnez du temps, améliorez votre réactivité et restez organisé.
-            </p>
+            {/* Trust indicator */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full shadow-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-vox-blue to-now-green rounded-full mr-2 animate-pulse"></div>
+                <span className="text-gray-700 font-medium text-sm">+20 cabinets belges nous font déjà confiance</span>
+              </div>
+            </div>
 
             {/* Trust indicators avec photos */}
-            <div className="text-center">
+            <div className="text-center mb-12">
               <div className="flex items-center justify-center space-x-4 mb-3">
                 {[
                   { 
@@ -272,10 +270,18 @@ function Home() {
                   </div>
                 ))}
               </div>
-              <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full shadow-sm">
-                <div className="w-2 h-2 bg-gradient-to-r from-vox-blue to-now-green rounded-full mr-2 animate-pulse"></div>
-                <span className="text-gray-700 font-medium text-sm">+20 cabinets belges nous font déjà confiance</span>
-              </div>
+            </div>
+
+            {/* Optimisation message with enhanced design */}
+            <div className="relative bg-gradient-to-r from-blue-50/80 via-white to-green-50/80 backdrop-blur-sm p-8 rounded-3xl border border-gray-100 shadow-lg">
+              <div className="absolute -top-2 -left-2 w-20 h-20 bg-gradient-to-br from-vox-blue/20 to-now-green/20 rounded-full blur-xl"></div>
+              <div className="absolute -bottom-2 -right-2 w-16 h-16 bg-gradient-to-br from-light-blue/20 to-light-green/20 rounded-full blur-xl"></div>
+              <p className="text-xl md:text-2xl text-gray-700 font-semibold text-center relative z-10">
+                <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">Optimisez votre cabinet</span>, 
+                <span className="text-light-blue"> gagnez du temps</span>, 
+                <span className="bg-gradient-to-r from-now-green to-light-green bg-clip-text text-transparent"> améliorez votre réactivité</span> et 
+                <span className="text-light-blue"> restez organisé</span>.
+              </p>
             </div>
 
 
