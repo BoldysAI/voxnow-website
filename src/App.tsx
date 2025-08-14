@@ -209,18 +209,55 @@ function Home() {
               Optimisez votre cabinet, gagnez du temps, améliorez votre réactivité et restez organisé.
             </p>
 
-            {/* Trust indicators avec noms */}
+            {/* Trust indicators avec photos */}
             <div className="text-center">
-              <div className="flex flex-wrap items-center justify-center gap-4 mb-3">
-                <span className="text-gray-700 font-medium">Bastien Lombaerd</span>
-                <span className="text-gray-300">•</span>
-                <span className="text-gray-700 font-medium">Gilles Rousseau</span>
-                <span className="text-gray-300">•</span>
-                <span className="text-gray-700 font-medium">Geoffroy Huez</span>
-                <span className="text-gray-300">•</span>
-                <span className="text-gray-700 font-medium">Thibault Delaey</span>
-                <span className="text-gray-300">•</span>
-                <span className="text-gray-700 font-medium">Samuel Pochet</span>
+              <div className="flex items-center justify-center space-x-4 mb-3">
+                {[
+                  { 
+                    name: 'Bastien Lombaerd', 
+                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1743539346/Screenshot_2025-04-01_at_21.26.43_ce7kuf.png'
+                  },
+                  { 
+                    name: 'Gilles Rousseau', 
+                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754933128/Screenshot_2025-08-11_at_19.25.20_xsclfm.png'
+                  },
+                  { 
+                    name: 'Geoffroy Huez', 
+                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754933288/Screenshot_2025-08-11_at_19.28.04_fqwjud.png'
+                  },
+                  { 
+                    name: 'Thibault Delaey', 
+                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754933487/Screenshot_2025-08-11_at_19.31.21_jxramd.png'
+                  },
+                  { 
+                    name: 'Samuel Pochet', 
+                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754934117/Screenshot_2025-08-11_at_19.41.51_bi7rn6.png'
+                  }
+                ].map((lawyer, index) => (
+                  <div key={index} className="flex flex-col items-center">
+                    <button
+                      onClick={() => {
+                        trackCustomEvent('TrustIndicatorClick', {
+                          content_name: `${lawyer.name} Photo Click`,
+                          content_category: 'Trust Indicator'
+                        });
+                        // Scroll to testimonial lawyers section
+                        const testimonialSection = document.querySelector('#testimonial-lawyers');
+                        if (testimonialSection) {
+                          testimonialSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                      }}
+                      className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300 mb-2"
+                    >
+                      <img
+                        src={lawyer.image}
+                        alt={lawyer.name}
+                        className="w-full h-full object-cover"
+                      />
+                    </button>
+                    <span className="text-xs text-gray-600 text-center">{lawyer.name}</span>
+                  </div>
+                ))}
               </div>
               <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full shadow-sm">
                 <div className="w-2 h-2 bg-gradient-to-r from-vox-blue to-now-green rounded-full mr-2 animate-pulse"></div>
