@@ -231,7 +231,7 @@ function Home() {
             </div>
 
             {/* Trust indicators avec photos */}
-            <div className="text-center mb-4">
+            <div className="text-center mb-2">
               <div className="flex items-center justify-center space-x-4 mb-3">
                 {[
                   { 
@@ -308,7 +308,7 @@ function Home() {
       </section>
 
       {/* Email Notifications Section */}
-      <section id="gain-section" className="pt-0 pb-6 px-4 bg-gradient-to-b from-white to-gray-50">
+      <section id="gain-section" className="py-6 px-4 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
