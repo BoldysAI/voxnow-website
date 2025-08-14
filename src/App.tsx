@@ -206,10 +206,10 @@ function Home() {
                         content_name: `${lawyer.name} Photo Click`,
                         content_category: 'Trust Indicator'
                       });
-                      // Scroll to video testimonial section
-                      const videoSection = document.querySelector('#video-testimonial');
-                      if (videoSection) {
-                        videoSection.scrollIntoView({ behavior: 'smooth' });
+                      // Scroll to testimonial lawyers section
+                      const testimonialSection = document.querySelector('#testimonial-lawyers');
+                      if (testimonialSection) {
+                        testimonialSection.scrollIntoView({ behavior: 'smooth' });
                       }
                     }}
                     className="w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300"
@@ -592,7 +592,7 @@ function Home() {
       </section>
 
       {/* Trusted by Lawyers Section */}
-      <section className="py-16 bg-white">
+      <section id="testimonial-lawyers" className="py-16 bg-white">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-2xl font-bold gradient-text mb-4">
