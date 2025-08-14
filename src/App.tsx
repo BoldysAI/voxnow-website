@@ -1270,34 +1270,6 @@ function Home() {
 
 
 
-      {/* Free Trial Section */}
-      <section className="py-24 bg-gradient-to-b from-white to-gray-50">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto text-center mb-12">
-            <button
-              onClick={handleWelcomeFormClick}
-              className="mb-8 inline-flex items-center bg-white/90 backdrop-blur-sm border border-gray-200 px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
-            >
-              <Gift className="h-6 w-6 text-now-green mr-3 group-hover:scale-110 transition-transform" />
-              <span className="text-gray-700 group-hover:text-gray-900 transition-colors font-semibold">
-                Offres exclusives early adopters 🎁
-              </span>
-            </button>
-            
-            <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-6">
-              Essai gratuit de 14 jours
-            </h2>
-            <p className="text-xl text-gray-600 mb-6">
-              L'essai gratuit de 14 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email.
-            </p>
-            <p className="text-gray-600 mb-12 max-w-3xl mx-auto">
-              Pour intégrer des automatisations avancées (SMS automatiques, intégration agenda, transferts vers collaborateurs), 
-              réservez une démo personnalisée avec notre équipe.
-            </p>
-          </div>
-          <FreeTrialForm />
-        </div>
-      </section>
 
       {/* Pricing Section */}
       <section className="py-24 bg-white">
