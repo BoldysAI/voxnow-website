@@ -568,50 +568,50 @@ function Home() {
                   <p className="text-gray-700 italic mb-8 text-lg leading-relaxed text-center">
                     "{testimonials[currentTestimonial].text}"
                   </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center">
+                  <div className="flex items-center">
+                    <div className="flex items-center flex-1">
                       <img
                         src={testimonials[currentTestimonial].image}
                         alt={testimonials[currentTestimonial].author}
                         className="w-16 h-16 rounded-full mr-4 border-2 border-gray-100"
                       />
-                      <div>
+                      <div className="flex-1">
                         <p className="font-bold text-vox-blue text-lg">{testimonials[currentTestimonial].author}</p>
-                        <p className="text-gray-600">{testimonials[currentTestimonial].role}</p>
+                        <p className="text-gray-600 mb-2">{testimonials[currentTestimonial].role}</p>
+                        <div className="flex items-center space-x-2">
+                          <a
+                            href={testimonials[currentTestimonial].linkedin}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-gray-400 hover:text-vox-blue transition-colors p-1 rounded-full hover:bg-gray-50"
+                            onClick={() => trackCustomEvent('TestimonialLinkedInClick', { 
+                              author: testimonials[currentTestimonial].author 
+                            })}
+                          >
+                            <Linkedin className="h-5 w-5" />
+                          </a>
+                          <a
+                            href={`mailto:${testimonials[currentTestimonial].email}`}
+                            className="text-gray-400 hover:text-vox-blue transition-colors p-1 rounded-full hover:bg-gray-50"
+                            onClick={() => trackCustomEvent('TestimonialEmailClick', { 
+                              author: testimonials[currentTestimonial].author 
+                            })}
+                          >
+                            <Mail className="h-5 w-5" />
+                          </a>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <a
-                        href={testimonials[currentTestimonial].linkedin}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-vox-blue transition-colors p-2 rounded-full hover:bg-gray-50"
-                        onClick={() => trackCustomEvent('TestimonialLinkedInClick', { 
-                          author: testimonials[currentTestimonial].author 
-                        })}
-                      >
-                        <Linkedin className="h-6 w-6" />
-                      </a>
-                      <a
-                        href={`mailto:${testimonials[currentTestimonial].email}`}
-                        className="text-gray-400 hover:text-vox-blue transition-colors p-2 rounded-full hover:bg-gray-50"
-                        onClick={() => trackCustomEvent('TestimonialEmailClick', { 
-                          author: testimonials[currentTestimonial].author 
-                        })}
-                      >
-                        <Mail className="h-6 w-6" />
-                      </a>
-                      <button
-                        onClick={() => {
-                          const nextIndex = (currentTestimonial + 1) % testimonials.length;
-                          setCurrentTestimonial(nextIndex);
-                        }}
-                        className="text-gray-400 hover:text-vox-blue transition-colors p-2 rounded-full hover:bg-gray-50"
-                        aria-label="Témoignage suivant"
-                      >
-                        <ArrowRight className="h-5 w-5" />
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => {
+                        const nextIndex = (currentTestimonial + 1) % testimonials.length;
+                        setCurrentTestimonial(nextIndex);
+                      }}
+                      className="text-gray-400 hover:text-vox-blue transition-colors p-2 rounded-full hover:bg-gray-50 ml-4"
+                      aria-label="Témoignage suivant"
+                    >
+                      <ArrowRight className="h-5 w-5" />
+                    </button>
                   </div>
                 </div>
               </div>
