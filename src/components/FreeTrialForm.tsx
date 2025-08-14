@@ -249,13 +249,6 @@ export function FreeTrialForm() {
           )}
         </div>
 
-        <div className="bg-yellow-50 p-4 rounded-lg flex items-start space-x-3">
-          <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5 flex-shrink-0" />
-          <p className="text-sm text-yellow-700">
-            <strong>ATTENTION :</strong> Nous n'activerons pas vos services sans que vous n'enregistriez votre messagerie vocale grâce à l'outil ci-dessous. Une fois fait, nous vous enverrons un code de déviation à taper sur votre clavier dans les 48H.
-          </p>
-        </div>
-
         <button
           type="submit"
           disabled={isSubmitting}
