@@ -183,12 +183,31 @@ function Home() {
             </div>
 
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Vos demandes juridiques téléphoniques résumées et traitées instantanément
+              Vos demandes <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">juridiques téléphoniques</span> résumées et <span className="relative">
+                <span className="bg-gradient-to-r from-light-blue to-light-green bg-clip-text text-transparent">traitées instantanément</span>
+                <div className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-vox-blue/30 to-now-green/30 rounded-full shadow-lg"></div>
+              </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
-              Recevez vos messages vocaux et appels manqués transcrits par email en quelques secondes. Vos clients reçoivent immédiatement un SMS qui répond à leur demande et pose les bonnes questions pour ouvrir un dossier.
-            </p>
+            <div className="grid md:grid-cols-2 gap-6 mb-12 max-w-4xl mx-auto">
+              <div className="flex items-start space-x-4 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-vox-blue to-now-green rounded-full flex items-center justify-center shadow-lg">
+                  <CheckCircle2 className="h-5 w-5 text-white" />
+                </div>
+                <p className="text-lg text-gray-700 font-medium">
+                  Vos messages vocaux <span className="text-vox-blue font-semibold">transcrits et résumés</span> en quelques secondes par email
+                </p>
+              </div>
+              
+              <div className="flex items-start space-x-4 bg-white/70 backdrop-blur-sm p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-r from-now-green to-light-green rounded-full flex items-center justify-center shadow-lg">
+                  <CheckCircle2 className="h-5 w-5 text-white" />
+                </div>
+                <p className="text-lg text-gray-700 font-medium">
+                  Vos clients reçoivent un <span className="text-now-green font-semibold">SMS instantané</span> qui répond à leur demande et les accompagne dans l'ouverture de dossier
+                </p>
+              </div>
+            </div>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <button
