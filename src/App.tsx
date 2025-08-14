@@ -182,84 +182,50 @@ function Home() {
               <span className="text-gray-700 font-medium">Solution dédiée aux cabinets d'avocats</span>
             </div>
 
-            {/* Trust Indicators - Small photos at top */}
-            <div className="text-center mb-8">
-              <div className="flex items-center justify-center space-x-4 mb-3">
-                {[
-                  { 
-                    name: 'Bastien Lombaerd', 
-                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1743539346/Screenshot_2025-04-01_at_21.26.43_ce7kuf.png'
-                  },
-                  { 
-                    name: 'Gilles Rousseau', 
-                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754933128/Screenshot_2025-08-11_at_19.25.20_xsclfm.png'
-                  },
-                  { 
-                    name: 'Geoffroy Huez', 
-                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754933288/Screenshot_2025-08-11_at_19.28.04_fqwjud.png'
-                  },
-                  { 
-                    name: 'Thibault Delaey', 
-                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754933487/Screenshot_2025-08-11_at_19.31.21_jxramd.png'
-                  },
-                  { 
-                    name: 'Samuel Pochet', 
-                    image: 'https://res.cloudinary.com/drdqov4zs/image/upload/v1754934117/Screenshot_2025-08-11_at_19.41.51_bi7rn6.png'
-                  }
-                ].map((lawyer, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      trackCustomEvent('TrustIndicatorClick', {
-                        content_name: `${lawyer.name} Photo Click`,
-                        content_category: 'Trust Indicator'
-                      });
-                      // Scroll to testimonial lawyers section
-                      const testimonialSection = document.querySelector('#testimonial-lawyers');
-                      if (testimonialSection) {
-                        testimonialSection.scrollIntoView({ behavior: 'smooth' });
-                      }
-                    }}
-                    className="w-8 h-8 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300"
-                  >
-                    <img
-                      src={lawyer.image}
-                      alt={lawyer.name}
-                      className="w-full h-full object-cover"
-                    />
-                  </button>
-                ))}
-              </div>
-              <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full shadow-sm">
-                <div className="w-2 h-2 bg-gradient-to-r from-vox-blue to-now-green rounded-full mr-2 animate-pulse"></div>
-                <span className="text-gray-700 font-medium text-sm">+20 cabinets belges nous font déjà confiance</span>
-              </div>
-            </div>
-
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-              Votre messagerie vocale transcrite et résumée instantanément
+              Vos demandes juridiques téléphoniques résumées et traitées instantanément
             </h1>
+            
             <p className="text-lg md:text-xl text-gray-600 mb-12 max-w-3xl mx-auto">
-              Recevez vos messages vocaux transcrits par email en quelques secondes. 
-              Répondez automatiquement à vos clients par SMS. Intégration Symplicy disponible.
+              Recevez vos messages vocaux et appels manqués transcrits par email en quelques secondes. Vos clients reçoivent immédiatement un SMS qui répond à leur demande et pose les bonnes questions pour ouvrir un dossier.
             </p>
             
-            <div className="flex justify-center mb-8">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
               <button
                 onClick={scrollToCalendly}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-10 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
                 Réserver une démo gratuite
               </button>
+              <button
+                onClick={handleWelcomeFormClick}
+                className="bg-white text-vox-blue border-2 border-vox-blue px-10 py-4 rounded-full text-xl font-bold hover:bg-vox-blue hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
+              >
+                Essai gratuit
+              </button>
             </div>
 
-            <div className="max-w-4xl mx-auto">
-              <p className="text-xl md:text-2xl text-gray-700 mb-6 leading-relaxed font-medium">
-                Messagerie vocale intelligente pour avocats : automatisez la réception, la transcription et le traitement de vos messages vocaux et appels.
-              </p>
-              <p className="text-lg md:text-xl text-gray-600 font-medium">
-                Optimisez votre cabinet, améliorez votre réactivité, restez organisé.
-              </p>
+            <p className="text-lg md:text-xl text-gray-600 font-medium mb-12">
+              Optimisez votre cabinet, gagnez du temps, améliorez votre réactivité et restez organisé.
+            </p>
+
+            {/* Trust indicators avec noms */}
+            <div className="text-center">
+              <div className="flex flex-wrap items-center justify-center gap-4 mb-3">
+                <span className="text-gray-700 font-medium">Bastien Lombaerd</span>
+                <span className="text-gray-300">•</span>
+                <span className="text-gray-700 font-medium">Gilles Rousseau</span>
+                <span className="text-gray-300">•</span>
+                <span className="text-gray-700 font-medium">Geoffroy Huez</span>
+                <span className="text-gray-300">•</span>
+                <span className="text-gray-700 font-medium">Thibault Delaey</span>
+                <span className="text-gray-300">•</span>
+                <span className="text-gray-700 font-medium">Samuel Pochet</span>
+              </div>
+              <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full shadow-sm">
+                <div className="w-2 h-2 bg-gradient-to-r from-vox-blue to-now-green rounded-full mr-2 animate-pulse"></div>
+                <span className="text-gray-700 font-medium text-sm">+20 cabinets belges nous font déjà confiance</span>
+              </div>
             </div>
 
 
