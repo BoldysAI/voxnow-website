@@ -571,6 +571,16 @@ function Home() {
                       >
                         <Mail className="h-6 w-6" />
                       </a>
+                      <button
+                        onClick={() => {
+                          const nextIndex = (currentTestimonial + 1) % testimonials.length;
+                          setCurrentTestimonial(nextIndex);
+                        }}
+                        className="text-gray-400 hover:text-vox-blue transition-colors p-2 rounded-full hover:bg-gray-50"
+                        aria-label="Témoignage suivant"
+                      >
+                        <ArrowRight className="h-5 w-5" />
+                      </button>
                     </div>
                   </div>
                 </div>
