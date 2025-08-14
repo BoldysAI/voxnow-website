@@ -50,7 +50,7 @@ const blogPosts: BlogPost[] = [
     author: 'Équipe VoxNow',
     readTime: '4 min',
     category: 'Technologie',
-    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     metaDescription: 'Découvrez comment VoxNow aide les professionnels belges à centraliser, transcrire et répondre plus vite à leurs messages vocaux.'
   },
   {
@@ -62,7 +62,7 @@ const blogPosts: BlogPost[] = [
     author: 'Équipe VoxNow',
     readTime: '8 min',
     category: 'Productivité',
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1556484687-30636164638b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     metaDescription: 'Découvrez comment la transcription vocale automatique peut faire gagner 3h/semaine aux avocats et optimiser la gestion de cabinet.'
   },
   {
@@ -110,7 +110,7 @@ const blogPosts: BlogPost[] = [
     author: 'Équipe VoxNow',
     readTime: '9 min',
     category: 'Productivité',
-    image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     metaDescription: 'Découvrez pourquoi les messages vocaux sont un frein à la productivité des avocats et comment automatiser leur traitement pour optimiser votre temps.'
   },
   {
@@ -122,7 +122,7 @@ const blogPosts: BlogPost[] = [
     author: 'Équipe VoxNow',
     readTime: '7 min',
     category: 'Expérience client',
-    image: 'https://images.unsplash.com/photo-1556761175-b413da4baf72?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: 'https://images.unsplash.com/photo-1423666639041-f56000c27a9a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     metaDescription: 'Un bon accueil téléphonique est essentiel dans un cabinet. Découvrez comment l\'automatiser sans perdre en humanité, et améliorer l\'efficacité de votre gestion client.'
   }
 ];
