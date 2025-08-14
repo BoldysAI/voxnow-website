@@ -1355,22 +1355,28 @@ function Home() {
                 Tarifs transparents et adaptés
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Choisissez la formule qui correspond à vos besoins. Tous nos plans incluent la transcription, 
-                le résumé par IA et les réponses automatiques par SMS.
+                Solution complète pour automatiser toute votre gestion d'appels. 
+                Incluant transcription, résumé par IA et réponses automatiques par SMS.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-8">
-              {/* Starter Plan */}
-              <div className="bg-gradient-to-br from-white to-blue-50/30 rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Main Plan */}
+              <div className="bg-gradient-to-br from-white to-green-50/30 rounded-3xl p-8 border-2 border-now-green shadow-xl hover:shadow-2xl transition-all duration-300 relative">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-2 rounded-full text-sm font-semibold">
+                    Le plus populaire
+                  </span>
+                </div>
+                
                 <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-vox-blue mb-2">Starter</h3>
-                  <p className="text-gray-600 mb-6">Parfait pour débuter</p>
+                  <h3 className="text-2xl font-bold text-now-green mb-2">VoxNow Complete</h3>
+                  <p className="text-gray-600 mb-6">Solution complète pour votre cabinet</p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold text-gray-900">29€</span>
+                    <span className="text-4xl font-bold text-gray-900">90€</span>
                     <span className="text-gray-600">/mois</span>
                   </div>
-                  <p className="text-sm text-gray-500">Jusqu'à 50 messages/mois</p>
+                  <p className="text-sm text-gray-500">Jusqu'à 300 messages/mois</p>
                 </div>
                 
                 <ul className="space-y-4 mb-8">
@@ -1385,43 +1391,6 @@ function Home() {
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
                     <span>SMS automatiques</span>
-                  </li>
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Support email</span>
-                  </li>
-                </ul>
-                
-                <button
-                  onClick={() => navigate('/paiement')}
-                  className="w-full bg-gradient-to-r from-vox-blue to-now-green text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
-                >
-                  Commencer l'essai gratuit
-                </button>
-              </div>
-
-              {/* Professional Plan - Most Popular */}
-              <div className="bg-gradient-to-br from-white to-green-50/30 rounded-3xl p-8 border-2 border-now-green shadow-xl hover:shadow-2xl transition-all duration-300 relative">
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-2 rounded-full text-sm font-semibold">
-                    Le plus populaire
-                  </span>
-                </div>
-                
-                <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-now-green mb-2">Professional</h3>
-                  <p className="text-gray-600 mb-6">Pour les cabinets actifs</p>
-                  <div className="mb-6">
-                    <span className="text-4xl font-bold text-gray-900">79€</span>
-                    <span className="text-gray-600">/mois</span>
-                  </div>
-                  <p className="text-sm text-gray-500">Jusqu'à 200 messages/mois</p>
-                </div>
-                
-                <ul className="space-y-4 mb-8">
-                  <li className="flex items-center">
-                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Tout du plan Starter</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
@@ -1449,14 +1418,13 @@ function Home() {
                 </button>
               </div>
 
-              {/* Enterprise Plan */}
+              {/* Custom Plan */}
               <div className="bg-gradient-to-br from-white to-purple-50/30 rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-light-blue mb-2">Enterprise</h3>
+                  <h3 className="text-2xl font-bold text-light-blue mb-2">Custom</h3>
                   <p className="text-gray-600 mb-6">Pour les gros cabinets</p>
                   <div className="mb-6">
-                    <span className="text-4xl font-bold text-gray-900">149€</span>
-                    <span className="text-gray-600">/mois</span>
+                    <span className="text-3xl font-bold text-gray-900">Sur mesure</span>
                   </div>
                   <p className="text-sm text-gray-500">Messages illimités</p>
                 </div>
@@ -1464,7 +1432,11 @@ function Home() {
                 <ul className="space-y-4 mb-8">
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Tout du plan Professional</span>
+                    <span>Toutes les fonctionnalités VoxNow</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Automatisation complète des appels</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
@@ -1481,6 +1453,10 @@ function Home() {
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
                     <span>Support téléphonique</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Intégrations sur mesure</span>
                   </li>
                 </ul>
                 
