@@ -173,7 +173,7 @@ function Home() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-12 px-4 bg-gradient-to-br from-blue-50/50 via-white to-green-50/30 relative overflow-hidden">
+      <section className="pt-32 pb-6 px-4 bg-gradient-to-br from-blue-50/50 via-white to-green-50/30 relative overflow-hidden">
         {/* Background decoration */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-vox-blue/10 to-now-green/10 rounded-full blur-3xl"></div>
@@ -308,7 +308,7 @@ function Home() {
       </section>
 
       {/* Email Notifications Section */}
-      <section id="gain-section" className="pt-4 pb-6 px-4 bg-gradient-to-b from-white to-gray-50">
+      <section id="gain-section" className="pt-6 pb-6 px-4 bg-gradient-to-b from-white to-gray-50">
         <div className="container mx-auto">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
