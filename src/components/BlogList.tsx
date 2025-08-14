@@ -215,7 +215,7 @@ export function BlogList() {
                   <img
                     src={post.image}
                     alt={`Illustration pour l'article : ${post.title}`}
-                    className={`w-full ${index === 0 ? 'h-64' : 'h-48'} object-cover group-hover:scale-105 transition-transform duration-300`}
+                    className={`w-full ${index === 0 ? 'h-64 md:object-[center_20%]' : 'h-48'} object-cover group-hover:scale-105 transition-transform duration-300`}
                   />
                   <div className="absolute top-4 left-4">
                     <span className={`${
