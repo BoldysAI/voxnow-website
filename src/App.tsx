@@ -1333,7 +1333,7 @@ function Home() {
                   <p className="text-gray-600 mb-6">Solution complète pour votre cabinet</p>
                   <div className="mb-6">
                     <span className="text-4xl font-bold text-gray-900">90€</span>
-                    <span className="text-gray-600">/mois</span>
+                    <span className="text-gray-600">/mois/user</span>
                   </div>
                   <p className="text-sm text-gray-500">Jusqu'à 300 messages/mois</p>
                 </div>
@@ -1353,15 +1353,15 @@ function Home() {
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Intégration Symplicy</span>
+                    <span>Symplicy (si client)</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Dashboard avancé</span>
+                    <span>Stockage illimité des vocaux</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Statistiques détaillées</span>
+                    <span>Accès aux fonctionnalités beta</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
