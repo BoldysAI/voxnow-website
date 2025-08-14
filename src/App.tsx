@@ -252,10 +252,10 @@ function Home() {
                           content_name: `${lawyer.name} Photo Click`,
                           content_category: 'Trust Indicator'
                         });
-                        // Scroll to gain section (just after hero)
-                        const gainSection = document.querySelector('#gain-section');
-                        if (gainSection) {
-                          gainSection.scrollIntoView({ behavior: 'smooth' });
+                        // Scroll to testimonial lawyers section
+                        const testimonialSection = document.querySelector('#testimonial-lawyers');
+                        if (testimonialSection) {
+                          testimonialSection.scrollIntoView({ behavior: 'smooth' });
                         }
                       }}
                       className="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-lg hover:scale-110 transition-transform duration-300 mb-2"
