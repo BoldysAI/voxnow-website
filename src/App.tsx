@@ -231,7 +231,7 @@ function Home() {
             </div>
 
             {/* Trust indicators avec photos */}
-            <div className="text-center mb-12">
+            <div className="text-center mb-4">
               <div className="flex items-center justify-center space-x-4 mb-3">
                 {[
                   { 
