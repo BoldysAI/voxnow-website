@@ -279,6 +279,14 @@ function Home() {
                     <span className="text-xs text-gray-600 text-center">{lawyer.name}</span>
                   </div>
                 ))}
+                
+                {/* Plus indicator */}
+                <div className="flex flex-col items-center">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-r from-vox-blue/20 to-now-green/20 border-2 border-gray-300 border-dashed flex items-center justify-center mb-2 hover:scale-110 transition-transform duration-300">
+                    <span className="text-2xl text-gray-600 font-bold">+</span>
+                  </div>
+                  <span className="text-xs text-gray-600 text-center">bien plus</span>
+                </div>
               </div>
             </div>
 
