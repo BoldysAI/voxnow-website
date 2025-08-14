@@ -120,7 +120,9 @@ function Home() {
 
 
 
+  // Function to handle trial form scroll
   const handleTrialFormClick = () => {
+    console.log('handleTrialFormClick called successfully');
     // Track trial form access
     trackCustomEvent('TrialFormAccess', {
       content_name: 'Free Trial Form',
@@ -210,7 +212,10 @@ function Home() {
             
             <div className="flex justify-center mb-8">
               <button
-                onClick={handleTrialFormClick}
+                onClick={() => {
+                  console.log('Button clicked - calling handleTrialFormClick');
+                  handleTrialFormClick();
+                }}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
                 Essai gratuit de 14 jours
