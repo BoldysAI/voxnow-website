@@ -1016,7 +1016,7 @@ function Home() {
                 <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 min-w-[280px] hover:shadow-xl transition-all duration-300">
                   <div className="flex items-center space-x-4">
                     <img
-                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754933487/Screenshot_2025-08-11_at_19.31.21_jxramd.png"
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1754934117/Screenshot_2025-08-11_at_19.41.51_bi7rn6.png"
                       alt="Samuel Pochet"
                       className="w-16 h-16 rounded-full object-cover border-2 border-gray-200"
                     />
