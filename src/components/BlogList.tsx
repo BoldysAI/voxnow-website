@@ -252,56 +252,6 @@ export function BlogList() {
             ))}
           </div>
 
-          {/* Newsletter Signup */}
-          <div className="mt-16 bg-gradient-to-r from-vox-blue to-now-green rounded-3xl p-8 md:p-12 text-white text-center">
-            <h3 className="text-2xl font-bold mb-4">
-              Restez informé des dernières innovations juridiques
-            </h3>
-            <p className="text-xl mb-8 text-white/90 max-w-2xl mx-auto">
-              Recevez nos conseils d'experts et les dernières tendances pour optimiser votre cabinet d'avocat
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Votre adresse email"
-                className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white/50"
-              />
-              <button
-                className="bg-white text-vox-blue px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300"
-                onClick={() => trackCustomEvent('NewsletterSignup', {
-                  content_name: 'Newsletter Subscription',
-                  source: 'Blog List'
-                })}
-              >
-                S'abonner
-              </button>
-            </div>
-          </div>
-
-          {/* Categories */}
-          <div className="mt-16">
-            <h3 className="text-2xl font-bold text-center mb-8 gradient-text">
-              Catégories d'articles
-            </h3>
-            <div className="grid md:grid-cols-4 gap-6">
-              {[
-                { name: 'Productivité', count: 4, color: 'bg-vox-blue' },
-                { name: 'Technologie', count: 1, color: 'bg-now-green' },
-                { name: 'Gestion', count: 2, color: 'bg-light-blue' },
-                { name: 'Innovation', count: 2, color: 'bg-light-green' }
-              ].map((category) => (
-                <div key={category.name} className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100 text-center">
-                  <div className={`w-12 h-12 ${category.color} rounded-full flex items-center justify-center mx-auto mb-4`}>
-                    <span className="text-white font-bold">{category.count}</span>
-                  </div>
-                  <h4 className="font-bold text-gray-900 mb-2">{category.name}</h4>
-                  <p className="text-gray-600 text-sm">
-                    {category.count} article{category.count !== 1 ? 's' : ''}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </div>
     </div>
