@@ -1329,7 +1329,7 @@ function Home() {
                 </div>
                 
                 <div className="text-center mb-8">
-                  <h3 className="text-2xl font-bold text-now-green mb-2">VoxNow Complete</h3>
+                  <h3 className="text-2xl font-bold text-now-green mb-2">VoxNow</h3>
                   <p className="text-gray-600 mb-6">Solution complète pour votre cabinet</p>
                   <div className="mb-6">
                     <span className="text-4xl font-bold text-gray-900">90€</span>
@@ -1381,7 +1381,7 @@ function Home() {
               <div className="bg-gradient-to-br from-white to-purple-50/30 rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
                 <div className="text-center mb-8">
                   <h3 className="text-2xl font-bold text-light-blue mb-2">Custom</h3>
-                  <p className="text-gray-600 mb-6">Pour les gros cabinets</p>
+                  <p className="text-gray-600 mb-6">Pour les gros cabinets et besoins spécifiques</p>
                   <div className="mb-6">
                     <span className="text-3xl font-bold text-gray-900">Sur mesure</span>
                   </div>
