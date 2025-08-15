@@ -53,33 +53,8 @@ const DiscoveryCall = () => {
                 Découvrons comment <span className="gradient-text">transformer votre cabinet</span>
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-                Réservez votre appel découverte gratuit de 15 minutes pour découvrir comment VoxNow peut révolutionner la gestion de vos appels
+                Réservez votre appel découverte gratuit de 30 minutes pour découvrir comment VoxNow peut révolutionner la gestion de vos appels
               </p>
-            </div>
-
-            
-            {/* Calendly Section */}
-            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden mb-16">
-              <div className="bg-gradient-to-r from-vox-blue to-now-green p-8 text-center">
-                <div className="flex items-center justify-center mb-4">
-                  <Calendar className="h-8 w-8 text-white mr-3" />
-                  <h2 className="text-3xl font-bold text-white">
-                    Réservez votre appel découverte gratuit
-                  </h2>
-                </div>
-                <p className="text-blue-100 text-lg">
-                  15 minutes pour comprendre vos besoins et vous présenter une solution personnalisée
-                </p>
-              </div>
-              
-              <div className="p-8">
-                {/* Calendly Inline Widget */}
-                <div 
-                  className="calendly-inline-widget" 
-                  data-url="https://calendly.com/hey-sachadelcourt/voxnow" 
-                  style={{ minWidth: '320px', height: '700px' }}
-                ></div>
-              </div>
             </div>
 
             {/* Solution Summary */}
@@ -117,6 +92,29 @@ const DiscoveryCall = () => {
               </div>
             </div>
 
+            {/* Calendly Section */}
+            <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
+              <div className="bg-gradient-to-r from-vox-blue to-now-green p-8 text-center">
+                <div className="flex items-center justify-center mb-4">
+                  <Calendar className="h-8 w-8 text-white mr-3" />
+                  <h2 className="text-3xl font-bold text-white">
+                    Réservez votre appel découverte gratuit
+                  </h2>
+                </div>
+                <p className="text-blue-100 text-lg">
+                  30 minutes pour comprendre vos besoins et vous présenter une solution personnalisée
+                </p>
+              </div>
+              
+              <div className="p-8">
+                {/* Calendly Inline Widget */}
+                <div 
+                  className="calendly-inline-widget" 
+                  data-url="https://calendly.com/hey-sachadelcourt/voxnow" 
+                  style={{ minWidth: '320px', height: '700px' }}
+                ></div>
+              </div>
+            </div>
 
             {/* Trust Indicators */}
             <div className="text-center mt-16">
