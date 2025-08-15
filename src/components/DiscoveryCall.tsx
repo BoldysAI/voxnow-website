@@ -4,19 +4,18 @@ import { useEffect } from 'react';
 
 const DiscoveryCall = () => {
   useEffect(() => {
-    // Load Calendly script
-    const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-    script.async = true;
-    document.body.appendChild(script);
+    // Check if Calendly script is already loaded
+    const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
+    
+    if (!existingScript) {
+      // Load Calendly script only if it doesn't exist
+      const script = document.createElement('script');
+      script.src = 'https://assets.calendly.com/assets/external/widget.js';
+      script.async = true;
+      document.head.appendChild(script);
+    }
 
-    return () => {
-      // Cleanup
-      const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-      if (existingScript) {
-        document.body.removeChild(existingScript);
-      }
-    };
+    // No cleanup needed since the script can stay loaded for the whole app
   }, []);
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
