@@ -1,22 +1,40 @@
 import { CheckCircle2, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const DiscoveryCall = () => {
+  const [calendlyLoaded, setCalendlyLoaded] = useState(false);
+
   useEffect(() => {
-    // Check if Calendly script is already loaded
-    const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
-    
-    if (!existingScript) {
-      // Load Calendly script only if it doesn't exist
-      const script = document.createElement('script');
-      script.src = 'https://assets.calendly.com/assets/external/widget.js';
-      script.async = true;
-      document.head.appendChild(script);
+    // Check if Calendly is already available
+    if (window.Calendly) {
+      setCalendlyLoaded(true);
+      return;
     }
 
-    // No cleanup needed since the script can stay loaded for the whole app
+    // Load Calendly script
+    const script = document.createElement('script');
+    script.src = 'https://assets.calendly.com/assets/external/widget.js';
+    script.async = true;
+    
+    script.onload = () => {
+      setCalendlyLoaded(true);
+    };
+
+    document.head.appendChild(script);
   }, []);
+
+  useEffect(() => {
+    if (calendlyLoaded && window.Calendly) {
+      // Initialize the inline widget
+      window.Calendly.initInlineWidget({
+        url: 'https://calendly.com/hey-sachadelcourt/voxnow',
+        parentElement: document.querySelector('.calendly-inline-widget'),
+        prefill: {},
+        utm: {}
+      });
+    }
+  }, [calendlyLoaded]);
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
@@ -106,11 +124,16 @@ const DiscoveryCall = () => {
               
               <div className="p-8">
                 {/* Calendly Inline Widget */}
-                <div 
-                  className="calendly-inline-widget" 
-                  data-url="https://calendly.com/hey-sachadelcourt/voxnow" 
-                  style={{ minWidth: '320px', height: '700px' }}
-                ></div>
+                {calendlyLoaded ? (
+                  <div 
+                    className="calendly-inline-widget" 
+                    style={{ minWidth: '320px', height: '700px' }}
+                  ></div>
+                ) : (
+                  <div className="flex items-center justify-center h-96">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue"></div>
+                  </div>
+                )}
               </div>
             </div>
 
