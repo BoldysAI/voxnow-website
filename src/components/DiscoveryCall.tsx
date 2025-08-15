@@ -52,7 +52,7 @@ const DiscoveryCall = () => {
                 Découvrons comment <span className="gradient-text">transformer votre cabinet</span>
               </h1>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-12">
-                Réservez votre appel découverte gratuit de 30 minutes pour découvrir comment VoxNow peut révolutionner la gestion de vos appels
+                Réservez votre appel découverte gratuit de 15 minutes pour découvrir comment VoxNow peut révolutionner la gestion de vos appels
               </p>
             </div>
 
@@ -101,7 +101,7 @@ const DiscoveryCall = () => {
                   </h2>
                 </div>
                 <p className="text-blue-100 text-lg">
-                  30 minutes pour comprendre vos besoins et vous présenter une solution personnalisée
+                  15 minutes pour comprendre vos besoins et vous présenter une solution personnalisée
                 </p>
               </div>
               
