@@ -1,7 +1,23 @@
 import { CheckCircle2, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 const DiscoveryCall = () => {
+  useEffect(() => {
+    // Load Calendly script
+    const script = document.createElement('script');
+    script.src = 'https://assets.calendly.com/assets/external/widget.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      // Cleanup
+      const existingScript = document.querySelector('script[src="https://assets.calendly.com/assets/external/widget.js"]');
+      if (existingScript) {
+        document.body.removeChild(existingScript);
+      }
+    };
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
@@ -111,12 +127,6 @@ const DiscoveryCall = () => {
         </div>
       </section>
 
-      {/* Calendly Script */}
-      <script 
-        type="text/javascript" 
-        src="https://assets.calendly.com/assets/external/widget.js" 
-        async
-      ></script>
     </div>
   );
 };
