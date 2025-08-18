@@ -123,6 +123,20 @@ const DiscoveryCall = () => {
               </div>
               
               <div className="p-8">
+                {/* Fallback button */}
+                <div className="text-center mb-6">
+                  <p className="text-gray-600 mb-3">
+                    Si le calendrier ne s'affiche pas ci-dessous, {" "}
+                    <a 
+                      href="https://calendly.com/hey-sachadelcourt/voxnow"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-vox-blue hover:text-now-green transition-colors underline font-medium"
+                    >
+                      cliquez ici
+                    </a>
+                  </p>
+                </div>
                 {/* Calendly Inline Widget */}
                 {calendlyLoaded ? (
                   <div 
