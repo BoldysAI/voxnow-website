@@ -1461,9 +1461,25 @@ function Home() {
             <h2 className="text-3xl md:text-4xl font-bold mb-6 text-center">
               Optimisez votre cabinet en simplifiant la gestion de vos messages vocaux 📈
             </h2>
-            <p className="text-xl mb-12 text-white/90 text-center max-w-3xl mx-auto">
+            <p className="text-xl mb-8 text-white/90 text-center max-w-3xl mx-auto">
               Rejoignez les cabinets d'avocats qui gagnent jusqu'à une heure par jour avec VoxNow.
             </p>
+            
+            {/* Fallback button */}
+            <div className="text-center mb-8">
+              <p className="text-white/80 mb-3">
+                Si le calendrier ne s'affiche pas ci-dessous, {" "}
+                <a 
+                  href="https://calendly.com/hey-sachadelcourt/voxnow"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white hover:text-blue-200 transition-colors underline font-medium"
+                >
+                  cliquez ici
+                </a>
+              </p>
+            </div>
+            
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
               <div id="calendly" className="calendly-inline-widget" style={{ minWidth: '320px', height: '700px' }}></div>
             </div>
