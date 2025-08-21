@@ -1694,7 +1694,7 @@ export function BlogPost() {
               <img
                 src={post.image}
                 alt={`Illustration pour l'article : ${post.title}`}
-                className="w-full h-64 md:h-96 object-cover"
+                className="w-full h-64 md:h-96 object-cover object-[0%_20%]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
             </div>
