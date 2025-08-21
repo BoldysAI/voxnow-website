@@ -1157,7 +1157,7 @@ const blogPosts: Record<string, BlogPostData> = {
     author: 'Équipe VoxNow',
     readTime: '10 min',
     category: 'Intégration',
-    image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    image: '/lovable-uploads/cdf9b7b0-ef95-4ace-b826-7c6a83d3e724.png',
     metaDescription: 'L\'intégration VoxNow + Symplicy automatise complètement la gestion des demandes clients. Transcription IA, envoi automatique de formulaires et gain de temps pour les avocats.',
     keywords: ['intégration VoxNow Symplicy', 'automatisation cabinet avocat', 'formulaires juridiques automatiques', 'gestion demandes clients', 'transcription IA avocat'],
     content: `
