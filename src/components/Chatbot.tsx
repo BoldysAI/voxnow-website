@@ -11,7 +11,7 @@ interface Message {
 }
 
 const openai = new OpenAI({
-  apiKey: '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',
+  apiKey: import.meta.env.VITE_OPENAI_API_KEY || '',
   dangerouslyAllowBrowser: true
 });
 
