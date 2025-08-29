@@ -22,7 +22,7 @@ export function OngoingFreeTrialPage() {
       value: 90,
       currency: 'EUR'
     });
-    window.open('https://buy.stripe.com/8x85kF8Za4DN29v5pIeAg05', '_blank');
+    window.open('https://buy.stripe.com/8x25kF8Za4DN29v5pIeAg05', '_blank');
   };
 
   return (
