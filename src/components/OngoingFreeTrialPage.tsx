@@ -91,15 +91,15 @@ export function OngoingFreeTrialPage() {
                 <span className="text-xl text-gray-600 ml-2">/mois</span>
               </div>
               
-              <div className="bg-orange-50 border border-orange-200 rounded-xl p-4 mb-6">
-                <p className="text-orange-800 font-semibold mb-2">
-                  🚀 Vous ne serez pas facturé maintenant !
+              <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
+                <p className="text-vox-blue font-semibold mb-2">
+                  Vous ne serez pas facturé maintenant !
                 </p>
-                <p className="text-orange-700 text-sm">
+                <p className="text-vox-blue text-sm">
                   Entrez simplement votre moyen de paiement pour assurer la continuité du service. 
-                  Vous pouvez encore vous désabonner pendant les 7 jours qui suivent sans aucun frais. 
+                  <strong>Abonnement sans engagement</strong> - Vous pouvez encore vous désabonner pendant les 7 jours qui suivent sans aucun frais. 
                   Si vous ne faites rien, vous serez automatiquement débité dans 7 jours et recevrez 
-                  une facture chaque mois.
+                  une facture chaque mois. <strong>Résiliable à tout moment sans frais.</strong>
                 </p>
               </div>
             </div>
@@ -163,14 +163,14 @@ export function OngoingFreeTrialPage() {
             <div className="text-center">
               <button
                 onClick={handleSubscriptionClick}
-                className="bg-gradient-to-r from-orange-500 to-vox-blue text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center mx-auto"
+                className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center mx-auto"
               >
                 <CreditCard className="h-6 w-6 mr-3" />
                 Configurer mon moyen de paiement
               </button>
               
               <p className="text-gray-500 text-sm mt-4">
-                Paiement sécurisé par Stripe • Aucun débit avant 7 jours • Résiliable sans frais pendant 7 jours
+                Paiement sécurisé par Stripe • Aucun débit avant 7 jours • <strong>Sans engagement - Résiliable à tout moment</strong>
               </p>
             </div>
           </div>
@@ -243,41 +243,6 @@ export function OngoingFreeTrialPage() {
             </div>
           </div>
 
-          {/* Contact Support */}
-          <div className="text-center mt-12">
-            <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
-              <h3 className="text-xl font-bold text-vox-blue mb-4">
-                Besoin d'aide ou d'optimisations ?
-              </h3>
-              <p className="text-gray-600 mb-6">
-                Notre équipe reste disponible pour optimiser votre utilisation de VoxNow
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <a
-                  href="mailto:sacha@voxnow.be"
-                  className="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center"
-                  onClick={() => trackCustomEvent('ContactSupport', {
-                    content_name: 'Email Support',
-                    source: 'Ongoing Free Trial Page'
-                  })}
-                >
-                  Nous contacter par email
-                </a>
-                <button
-                  onClick={() => {
-                    trackCustomEvent('CalendlyClick', {
-                      content_name: 'Demo Booking from Ongoing Free Trial',
-                      content_category: 'Support'
-                    });
-                    window.open('https://calendly.com/hey-sachadelcourt/voxnow', '_blank');
-                  }}
-                  className="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 flex items-center justify-center"
-                >
-                  Réserver un appel
-                </button>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
