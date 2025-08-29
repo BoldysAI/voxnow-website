@@ -1,8 +1,7 @@
 import { useState, useEffect, Fragment } from 'react';
-import { signOut } from 'firebase/auth';
 import { Statistics } from './Statistics';
-import { auth } from '../firebase';
 import { useNavigate } from 'react-router-dom';
+import { useAuth, useVoicemails, getAnalysisByType, VoicemailWithAnalysis } from '../hooks/useSupabase';
 import { 
   LogOut, 
   MessageSquare, 
@@ -32,46 +31,7 @@ import {
   X
 } from 'lucide-react';
 
-interface VoicemailRecord {
-  id: string;
-  fields: {
-    // Champs de base
-    Name?: string;                           // Autonumber - ID du message
-    Time?: string;                           // Long text - Date/heure de réception
-    'Caller Phone number'?: string;         // Single line text - Numéro appelant
-    'Duration (Seconds)'?: number;          // Number - Durée en secondes
-    'VoxNow Line'?: string;                 // Single line text - Ligne VoxNow
-    
-    // Contenu du message
-    Transcription?: string;                 // Long text - Transcription complète
-    'Résumé'?: string;                      // Long text - Résumé IA
-    'Audio File'?: string;                  // Single line text - URL fichier audio
-    
-    // Analyses IA
-    'Sentiment Analysis'?: string;          // AI text - Analyse sentiment
-    'Urgence Analysis'?: string;            // AI text - Analyse urgence
-    'Request category Analysis'?: string;   // AI text - Catégorie de demande
-    'Field of law Analysis'?: string;       // AI text - Domaine juridique
-    'Case Stage Analysis'?: string;         // AI text - Analyse étape du cas
-    
-    // Gestion et statuts
-    'Status email avocat'?: string;         // Single select - Statut email
-    'Status SMS client'?: string;           // Single select - Statut SMS
-    'SMS draft'?: string;                   // Long text - Brouillon SMS
-    
-    // Relations
-    Users?: string[];                       // Linked record vers Users
-    
-    // Champs de travail IA (Long text)
-    'Analyse de sentiment'?: string;
-    'Analyse de l\'urgence'?: string;
-    
-    // Anciens champs (compatibilité)
-    'sentiment test'?: string;
-  };
-}
-
-type SortField = 'Name' | 'VoxNow Line' | 'Duration (Seconds)' | 'Time' | 'Caller Phone number';
+type SortField = 'id' | 'received_at' | 'caller_phone_number' | 'duration_seconds';
 type SortDirection = 'asc' | 'desc';
 type PeriodFilter = 'all' | 'today' | 'week' | 'month';
 type DurationFilter = 'all' | 'short' | 'medium' | 'long';
@@ -83,20 +43,20 @@ type RequestCategoryFilter = 'all' | 'legal-advice-needed' | 'case-update-reques
 type FieldOfLawFilter = 'all' | 'contract-law' | 'family-law' | 'employment-law' | 'civil-law' | 'administrative-and-public-law' | 'undetermined' | 'criminal-law' | 'business-and-commercial-law' | 'consumer-law' | 'banking-and-finance-law' | 'inheritance-and-succession-law' | 'real-estate-law' | 'ongoing-case';
 
 export function Dashboard() {
-  const [voicemails, setVoicemails] = useState<VoicemailRecord[]>([]);
-  const [filteredVoicemails, setFilteredVoicemails] = useState<VoicemailRecord[]>([]);
+  // Auth and data hooks
+  const { user, loading: authLoading, signOut } = useAuth();
+  const { voicemails, loading: voicemailsLoading, error, fetchVoicemails, updateVoicemailStatus } = useVoicemails(user?.id);
+  
+  // UI state
+  const [filteredVoicemails, setFilteredVoicemails] = useState<VoicemailWithAnalysis[]>([]);
   const [activeTab, setActiveTab] = useState<'messages' | 'statistics'>('messages');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [loadingTimeout, setLoadingTimeout] = useState(false);
-  const [sortField, setSortField] = useState<SortField>('Time');
+  const [sortField, setSortField] = useState<SortField>('received_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
   const [readMessages, setReadMessages] = useState<Set<string>>(new Set());
-  const [archivedMessages] = useState<Set<string>>(new Set());
   const [showMobileWarning, setShowMobileWarning] = useState(false);
   const [mobileWarningDismissed, setMobileWarningDismissed] = useState(false);
   
@@ -113,61 +73,32 @@ export function Dashboard() {
   
   const navigate = useNavigate();
 
-  // Utility function for safe string handling
-  const getSafeString = (value: any, fallback: string = "non analysé"): string => {
-    if (!value) return fallback;
-    
-    // Handle Airtable AI field objects
-    if (typeof value === "object" && value.value !== undefined) {
-      return value.value && value.value.trim() !== "" ? value.value : fallback;
+  // Redirect to auth if not authenticated
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate('/auth');
     }
-    
-    // Handle regular strings
-    if (typeof value === "string" && value.trim() !== "") {
-      return value;
-    }
-    
-    // Handle other object types by converting to string
-    if (typeof value === "object") {
-      return JSON.stringify(value);
-    }
-    
-    return fallback;
-  };
+  }, [user, authLoading, navigate]);
+
+  // Loading state
+  const loading = authLoading || voicemailsLoading;
+
+
 
   // Capitalize first letter for display
   const capitalize = (str: string): string => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
-  // Get sentiment test display with color coding
-  const getSentimentDisplay = (record: VoicemailRecord) => {
-    // Essayer plusieurs champs de sentiment dans l'ordre de priorité
-    const sentimentSources = [
-      record.fields['Sentiment Analysis'],
-      record.fields['sentiment test']
-    ];
+  // Get sentiment display with color coding - updated for new schema
+  const getSentimentDisplay = (voicemail: VoicemailWithAnalysis) => {
+    const sentiment = getAnalysisByType(voicemail, 'Sentiment').toLowerCase().trim();
     
-    let sentiment = '';
-    for (const source of sentimentSources) {
-      if (source) {
-        // Handle Airtable AI field objects
-        if (typeof source === "object" && source !== null && 'value' in source) {
-          sentiment = getSafeString((source as any).value, '');
-        } else if (typeof source === "string") {
-          sentiment = source;
-        }
-        if (sentiment && sentiment.trim() !== '') break;
-      }
-    }
-    
-    const normalizedSentiment = getSafeString(sentiment, '').toLowerCase().trim();
-    
-    if (!normalizedSentiment || normalizedSentiment === "") {
+    if (!sentiment || sentiment === "") {
       return { text: 'Non analysé', color: 'text-gray-400 bg-gray-100' };
     }
     
-    switch (normalizedSentiment) {
+    switch (sentiment) {
       case 'positive':
       case 'positif':
         return { text: 'Positive', color: 'text-green-600 bg-green-50' };
@@ -178,57 +109,33 @@ export function Dashboard() {
       case 'neutre':
         return { text: 'Neutral', color: 'text-gray-600 bg-gray-50' };
       default:
-        return { text: capitalize(normalizedSentiment), color: 'text-blue-600 bg-blue-50' };
+        return { text: capitalize(sentiment), color: 'text-blue-600 bg-blue-50' };
     }
   };
 
-  // Get urgency display with color coding
-  const getUrgencyDisplay = (record: VoicemailRecord) => {
-    let urgencyValue = '';
-    const urgencySource = record.fields['Urgence Analysis'];
+  // Get urgency display with color coding - updated for new schema
+  const getUrgencyDisplay = (voicemail: VoicemailWithAnalysis) => {
+    const urgency = getAnalysisByType(voicemail, 'Urgence').toLowerCase().trim();
     
-    if (urgencySource) {
-      // Handle Airtable AI field objects
-      if (typeof urgencySource === "object" && urgencySource !== null && 'value' in urgencySource) {
-        urgencyValue = getSafeString((urgencySource as any).value, '');
-      } else if (typeof urgencySource === "string") {
-        urgencyValue = urgencySource;
-      }
-    }
-    
-    if (!urgencyValue || urgencyValue.trim() === '') {
+    if (!urgency || urgency === '') {
       return { text: 'Non analysé', color: 'text-gray-400 bg-gray-100' };
     }
     
-    const normalizedUrgency = getSafeString(urgencyValue, '').toLowerCase().trim();
-    
-    switch (normalizedUrgency) {
-      case 'critique':
+    switch (urgency) {
       case 'urgent':
-      case 'haute':
-      case 'high':
-      case 'élevé':
-      case 'élevée':
         return { text: 'Urgent', color: 'text-red-600 bg-red-50' };
-      case 'moyenne':
-      case 'moyen':
-      case 'medium':
-      case 'modéré':
-      case 'modérée':
-        return { text: 'Moyen', color: 'text-orange-600 bg-orange-50' };
+      case 'élevé':
+        return { text: 'Élevé', color: 'text-orange-600 bg-orange-50' };
+      case 'normal':
+        return { text: 'Normal', color: 'text-yellow-600 bg-yellow-50' };
       case 'faible':
-      case 'basse':
-      case 'low':
-      case 'bas':
         return { text: 'Faible', color: 'text-green-600 bg-green-50' };
       default:
-        return { text: capitalize(normalizedUrgency), color: 'text-blue-600 bg-blue-50' };
+        return { text: capitalize(urgency), color: 'text-blue-600 bg-blue-50' };
     }
   };
 
   useEffect(() => {
-    fetchVoicemails();
-    
     // Check if user is on mobile and show warning
     const checkMobile = () => {
       // Don't show warning if already dismissed
@@ -251,7 +158,7 @@ export function Dashboard() {
   useEffect(() => {
     applyFilters();
     setCurrentPage(1);
-  }, [searchTerm, voicemails, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter, archivedMessages]);
+  }, [searchTerm, voicemails, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter]);
 
   // Check localStorage on component mount
   useEffect(() => {
@@ -261,83 +168,33 @@ export function Dashboard() {
     }
   }, []);
 
-  const fetchVoicemails = async () => {
+  // Sign out function
+  const handleSignOut = async () => {
     try {
-      setLoading(true);
-      setError(null);
-      
-      // Set a timeout to prevent infinite loading
-      const timeoutId = setTimeout(() => {
-        setLoadingTimeout(true);
-        setLoading(false);
-        setError('Délai d\'attente dépassé. Veuillez réessayer.');
-      }, 10000); // 10 seconds timeout
-      
-      const response = await fetch(
-        `https://api.airtable.com/v0/appaHCYACotTr76A1/Voicemails%20(demo)`,
-        {
-          headers: {
-            'Authorization': 'Bearer patozC94xMMGI4CTT.e4967e60f6012ef4e3e8f82eac56fdaef15452ab3c56d06c1de888c1e109367e',
-            'Content-Type': 'application/json'
-          }
-        }
-      );
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        throw new Error(`Erreur API: ${response.status}`);
-      }
-
-      const data = await response.json();
-      setVoicemails(data.records || []);
-      
-      // Debug: Log first record to see available fields
-      if (data.records && data.records.length > 0) {
-        console.log('Premier enregistrement Airtable:', data.records[0]);
-        console.log('Champs disponibles:', Object.keys(data.records[0].fields));
-      }
-    } catch (err: any) {
-      console.error('Erreur lors de la récupération des données:', err);
-      setLoadingTimeout(true);
-      setError(err.message || 'Erreur lors du chargement des données');
-    } finally {
-      setLoading(false);
+      await signOut();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
     }
   };
 
-  // Helper function to normalize analysis values for filtering
-  const normalizeAnalysisValue = (value: any): string => {
-    if (!value) return '';
-    
-    // Handle Airtable AI field objects
-    if (typeof value === "object" && value.value !== undefined) {
-      return (value.value || '').toString().toLowerCase().trim();
-    }
-    
-    // Handle regular strings
-    if (typeof value === "string") {
-      return value.toLowerCase().trim();
-    }
-    
-    return '';
-  };
+
 
   const applyFilters = () => {
-    let filtered = voicemails.filter(vm => !archivedMessages.has(vm.id));
+    let filtered = voicemails.filter(vm => vm.status !== 'Supprimé');
 
     // Search filter
     if (searchTerm.trim() !== '') {
       const searchLower = searchTerm.toLowerCase();
       filtered = filtered.filter(voicemail => {
-        const transcription = (voicemail.fields.Transcription || '').toString().toLowerCase();
-        const summary = (voicemail.fields['Résumé'] || '').toString().toLowerCase();
-        const name = (voicemail.fields.Name || '').toString().toLowerCase();
-        const phone = (voicemail.fields['Caller Phone number'] || '').toString().toLowerCase();
+        const transcription = (voicemail.transcription || '').toLowerCase();
+        const summary = (voicemail.ai_summary || '').toLowerCase();
+        const id = (voicemail.id || '').toLowerCase();
+        const phone = (voicemail.caller_phone_number || '').toLowerCase();
         
         return transcription.includes(searchLower) || 
                summary.includes(searchLower) || 
-               name.includes(searchLower) ||
+               id.includes(searchLower) ||
                phone.includes(searchLower);
       });
     }
@@ -350,8 +207,8 @@ export function Dashboard() {
       const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
 
       filtered = filtered.filter(voicemail => {
-        if (!voicemail.fields.Time) return false;
-        const messageDate = new Date(voicemail.fields.Time);
+        if (!voicemail.received_at) return false;
+        const messageDate = new Date(voicemail.received_at);
         
         switch (periodFilter) {
           case 'today':
@@ -369,7 +226,7 @@ export function Dashboard() {
     // Duration filter
     if (durationFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const duration = voicemail.fields['Duration (Seconds)'] || 0;
+        const duration = voicemail.duration_seconds || 0;
         switch (durationFilter) {
           case 'short':
             return duration <= 30;
@@ -386,8 +243,8 @@ export function Dashboard() {
     // Content filter
     if (contentFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const hasTranscription = !!voicemail.fields.Transcription;
-        const hasSummary = !!voicemail.fields['Résumé'];
+        const hasTranscription = !!voicemail.transcription;
+        const hasSummary = !!voicemail.ai_summary;
         
         switch (contentFilter) {
           case 'with-transcription':
@@ -405,7 +262,7 @@ export function Dashboard() {
     // Sentiment filter
     if (sentimentFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const sentiment = normalizeAnalysisValue(voicemail.fields['Sentiment Analysis']);
+        const sentiment = getAnalysisByType(voicemail, 'Sentiment').toLowerCase();
         return sentiment === sentimentFilter;
       });
     }
@@ -413,7 +270,7 @@ export function Dashboard() {
     // Urgency filter
     if (urgencyFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const urgency = normalizeAnalysisValue(voicemail.fields['Urgence Analysis']);
+        const urgency = getAnalysisByType(voicemail, 'Urgence').toLowerCase();
         return urgency === urgencyFilter.replace('-', ' ');
       });
     }
@@ -421,7 +278,7 @@ export function Dashboard() {
     // Case Stage filter
     if (caseStageFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const caseStage = normalizeAnalysisValue(voicemail.fields['Case Stage Analysis']);
+        const caseStage = getAnalysisByType(voicemail, 'Étape du dossier').toLowerCase();
         return caseStage === caseStageFilter.replace('-', ' ');
       });
     }
@@ -429,7 +286,7 @@ export function Dashboard() {
     // Request Category filter
     if (requestCategoryFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const requestCategory = normalizeAnalysisValue(voicemail.fields['Request category Analysis']);
+        const requestCategory = getAnalysisByType(voicemail, 'Catégorie').toLowerCase();
         return requestCategory === requestCategoryFilter.replace(/-/g, ' ');
       });
     }
@@ -437,7 +294,7 @@ export function Dashboard() {
     // Field of Law filter
     if (fieldOfLawFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const fieldOfLaw = normalizeAnalysisValue(voicemail.fields['Field of law Analysis']);
+        const fieldOfLaw = getAnalysisByType(voicemail, 'Domaine juridique').toLowerCase();
         if (fieldOfLawFilter === 'undetermined') {
           return fieldOfLaw === 'undetermined.';
         }
@@ -448,14 +305,7 @@ export function Dashboard() {
     setFilteredVoicemails(filtered);
   };
 
-  const handleSignOut = async () => {
-    try {
-      await signOut(auth);
-      navigate('/');
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
-    }
-  };
+
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -477,14 +327,27 @@ export function Dashboard() {
     setExpandedRows(newExpanded);
   };
 
-  const toggleReadStatus = (id: string) => {
-    const newRead = new Set(readMessages);
-    if (newRead.has(id)) {
-      newRead.delete(id);
-    } else {
-      newRead.add(id);
+  const toggleReadStatus = async (id: string) => {
+    const isCurrentlyRead = readMessages.has(id);
+    const newReadStatus = !isCurrentlyRead;
+    
+    try {
+      await updateVoicemailStatus(id, { 
+        is_read: newReadStatus,
+        read_at: newReadStatus ? new Date().toISOString() : null 
+      });
+      
+      // Update local state
+      const newRead = new Set(readMessages);
+      if (newReadStatus) {
+        newRead.add(id);
+      } else {
+        newRead.delete(id);
+      }
+      setReadMessages(newRead);
+    } catch (error) {
+      console.error('Error updating read status:', error);
     }
-    setReadMessages(newRead);
   };
 
 
@@ -496,20 +359,18 @@ export function Dashboard() {
 
   const exportData = () => {
     const csvContent = [
-      ['ID', 'Date', 'Numéro', 'Durée', 'Résumé IA', 'Sentiment', 'Urgence', 'Catégorie', 'Domaine juridique', 'Statut Email', 'Statut SMS', 'Transcription'].join(','),
+      ['ID', 'Date', 'Numéro', 'Durée', 'Résumé IA', 'Sentiment', 'Urgence', 'Catégorie', 'Domaine juridique', 'Transcription'].join(','),
       ...filteredVoicemails.map(vm => [
-        vm.fields.Name || '',
-        vm.fields.Time || '',
-        vm.fields['Caller Phone number'] || '',
-        vm.fields['Duration (Seconds)'] || '',
-        `"${(vm.fields['Résumé'] || '').replace(/"/g, '""')}"`,
+        vm.id || '',
+        vm.received_at || '',
+        vm.caller_phone_number || '',
+        vm.duration_seconds || '',
+        `"${(vm.ai_summary || '').replace(/"/g, '""')}"`,
         getSentimentDisplay(vm).text,
         getUrgencyDisplay(vm).text,
-        vm.fields['Request category Analysis'] || '',
-        vm.fields['Field of law Analysis'] || '',
-        vm.fields['Status email avocat'] || '',
-        vm.fields['Status SMS client'] || '',
-        `"${(vm.fields.Transcription || '').replace(/"/g, '""')}"`,
+        getAnalysisByType(vm, 'Catégorie'),
+        getAnalysisByType(vm, 'Domaine juridique'),
+        `"${(vm.transcription || '').replace(/"/g, '""')}"`,
       ].join(','))
     ].join('\n');
 
@@ -524,18 +385,28 @@ export function Dashboard() {
 
   const getSortedData = () => {
     return [...filteredVoicemails].sort((a, b) => {
-      let aValue = a.fields[sortField];
-      let bValue = b.fields[sortField];
+      let aValue: any, bValue: any;
 
-      if (sortField === 'Duration (Seconds)') {
-        aValue = aValue || 0;
-        bValue = bValue || 0;
-      } else if (sortField === 'Time') {
-        aValue = aValue ? new Date(aValue).getTime() : 0;
-        bValue = bValue ? new Date(bValue).getTime() : 0;
-      } else {
-        aValue = (aValue || '').toString().toLowerCase();
-        bValue = (bValue || '').toString().toLowerCase();
+      switch (sortField) {
+        case 'duration_seconds':
+          aValue = a.duration_seconds || 0;
+          bValue = b.duration_seconds || 0;
+          break;
+        case 'received_at':
+          aValue = a.received_at ? new Date(a.received_at).getTime() : 0;
+          bValue = b.received_at ? new Date(b.received_at).getTime() : 0;
+          break;
+        case 'caller_phone_number':
+          aValue = (a.caller_phone_number || '').toLowerCase();
+          bValue = (b.caller_phone_number || '').toLowerCase();
+          break;
+        case 'id':
+          aValue = (a.id || '').toLowerCase();
+          bValue = (b.id || '').toLowerCase();
+          break;
+        default:
+          aValue = 0;
+          bValue = 0;
       }
 
       if (sortDirection === 'asc') {
@@ -586,8 +457,8 @@ export function Dashboard() {
 
   // Statistics calculations
   const totalMessages = voicemails.length;
-  const processedMessages = voicemails.filter(vm => vm.fields.Transcription || vm.fields['Résumé']).length;
-  const totalDuration = voicemails.reduce((sum, vm) => sum + (vm.fields['Duration (Seconds)'] || 0), 0);
+  const processedMessages = voicemails.filter(vm => vm.transcription || vm.ai_summary).length;
+  const totalDuration = voicemails.reduce((sum, vm) => sum + (vm.duration_seconds || 0), 0);
   const unreadMessages = totalMessages - readMessages.size;
 
   const SortIcon = ({ field }: { field: SortField }) => {
@@ -680,8 +551,8 @@ export function Dashboard() {
             
             <div className="flex items-center space-x-4">
               <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">sacha@voxnow.be</p>
-                <p className="text-xs text-gray-500">Compte démo</p>
+                <p className="text-sm font-medium text-gray-900">{user?.full_name || user?.email || 'Utilisateur'}</p>
+                <p className="text-xs text-gray-500">{user?.email || 'Connecté'}</p>
               </div>
               <button
                 onClick={handleSignOut}
@@ -1013,13 +884,7 @@ export function Dashboard() {
                 <div className="bg-red-50 text-red-600 p-6 rounded-lg max-w-md mx-auto">
                   <p className="font-medium mb-4">{error}</p>
                   <button
-                    onClick={() => {
-                      setError(null);
-                      setLoading(true);
-                      setLoadingTimeout(false);
-                      // Retry loading
-                      window.location.reload();
-                    }}
+                    onClick={() => fetchVoicemails()}
                     className="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                   >
                     Réessayer
@@ -1029,7 +894,7 @@ export function Dashboard() {
             )}
 
             {/* No Data State */}
-            {!loading && !error && filteredVoicemails.length === 0 && !loadingTimeout && (
+            {!loading && !error && filteredVoicemails.length === 0 && (
               <div className="text-center py-12 px-4">
                 <div className="bg-gray-50 p-8 rounded-lg max-w-md mx-auto">
                   <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />
@@ -1060,12 +925,12 @@ export function Dashboard() {
                         <th className="px-6 py-4 text-left w-12"></th>
                         <th className="px-6 py-4 text-left min-w-[150px]">
                           <button
-                            onClick={() => handleSort('Time')}
+                            onClick={() => handleSort('received_at')}
                             className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-vox-blue transition-colors w-full"
                           >
                             <Calendar className="h-4 w-4" />
                             <span>Date & Heure</span>
-                            <SortIcon field="Time" />
+                            <SortIcon field="received_at" />
                           </button>
                         </th>
                         <th className="px-6 py-4 text-left min-w-[200px]">
@@ -1088,22 +953,22 @@ export function Dashboard() {
                         </th>
                         <th className="px-6 py-4 text-left min-w-[140px]">
                           <button
-                            onClick={() => handleSort('Caller Phone number')}
+                            onClick={() => handleSort('caller_phone_number')}
                             className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-vox-blue transition-colors w-full"
                           >
                             <Phone className="h-4 w-4" />
                             <span>Numéro</span>
-                            <SortIcon field="Caller Phone number" />
+                            <SortIcon field="caller_phone_number" />
                           </button>
                         </th>
                         <th className="px-6 py-4 text-left">
                           <button
-                            onClick={() => handleSort('Duration (Seconds)')}
+                            onClick={() => handleSort('duration_seconds')}
                             className="flex items-center space-x-2 text-sm font-medium text-gray-700 hover:text-vox-blue transition-colors w-full"
                           >
                             <Clock className="h-4 w-4" />
                             <span>Durée</span>
-                            <SortIcon field="Duration (Seconds)" />
+                            <SortIcon field="duration_seconds" />
                           </button>
                         </th>
                         <th className="px-6 py-4 text-left w-16">
@@ -1141,13 +1006,13 @@ export function Dashboard() {
                             </td>
                             <td className="px-6 py-4">
                               <div className="text-gray-700 text-sm">
-                                {formatTime(voicemail.fields.Time)}
+                                {formatTime(voicemail.received_at)}
                               </div>
                             </td>
                             <td className="px-6 py-4">
                               <div className="text-gray-700">
-                                {voicemail.fields['Résumé'] ? 
-                                  truncateText(voicemail.fields['Résumé'], 60) : 
+                                {voicemail.ai_summary ? 
+                                  truncateText(voicemail.ai_summary, 60) : 
                                   <span className="text-gray-400 italic">Aucun résumé</span>
                                 }
                               </div>
@@ -1174,18 +1039,18 @@ export function Dashboard() {
                             </td>
                             <td className="px-6 py-4">
                               <div className="text-gray-700 font-medium">
-                                {voicemail.fields['Caller Phone number'] || 'Non défini'}
+                                {voicemail.caller_phone_number || 'Non défini'}
                               </div>
                             </td>
                             <td className="px-6 py-4">
                               <div className="text-gray-700 text-sm">
-                                {formatDuration(voicemail.fields['Duration (Seconds)'])}
+                                {formatDuration(voicemail.duration_seconds)}
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              {voicemail.fields['Audio File'] ? (
+                              {voicemail.audio_file_url ? (
                                 <button
-                                  onClick={() => playAudio(voicemail.fields['Audio File'])}
+                                  onClick={() => playAudio(voicemail.audio_file_url)}
                                   className="p-2 text-vox-blue hover:bg-vox-blue/10 rounded-lg transition-colors"
                                   title="Écouter le message vocal"
                                 >
@@ -1210,7 +1075,7 @@ export function Dashboard() {
                                     </h4>
                                     <div className="bg-white rounded-lg p-4 border border-gray-200">
                                       <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
-                                        {getSafeString(voicemail.fields['Transcription']) || 'Aucune transcription disponible'}
+                                        {voicemail.transcription || 'Aucune transcription disponible'}
                                       </p>
                                     </div>
                                   </div>
@@ -1255,7 +1120,7 @@ export function Dashboard() {
                                         <h4 className="font-semibold text-gray-900">Étape du dossier</h4>
                                       </div>
                                       <p className="text-gray-700 text-sm">
-                                        {getSafeString(voicemail.fields['Case Stage Analysis'], 'Non analysé')}
+                                        {getAnalysisByType(voicemail, 'Étape du dossier') || 'Non analysé'}
                                       </p>
                                     </div>
                                     
@@ -1265,7 +1130,7 @@ export function Dashboard() {
                                         <h4 className="font-semibold text-gray-900">Catégorie de demande</h4>
                                       </div>
                                       <p className="text-gray-700 text-sm">
-                                        {getSafeString(voicemail.fields['Request category Analysis'], 'Non analysé')}
+                                        {getAnalysisByType(voicemail, 'Catégorie') || 'Non analysé'}
                                       </p>
                                     </div>
                                     
@@ -1275,20 +1140,20 @@ export function Dashboard() {
                                         <h4 className="font-semibold text-gray-900">Domaine juridique</h4>
                                       </div>
                                       <p className="text-gray-700 text-sm">
-                                        {getSafeString(voicemail.fields['Field of law Analysis'], 'Non analysé')}
+                                        {getAnalysisByType(voicemail, 'Domaine juridique') || 'Non analysé'}
                                       </p>
                                     </div>
                                   </div>
                                   
                                   {/* Résumé IA */}
-                                  {voicemail.fields['Résumé'] && (
+                                  {voicemail.ai_summary && (
                                     <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-lg p-4 border border-blue-200">
                                       <div className="flex items-center mb-3">
                                         <Brain className="h-5 w-5 text-now-green mr-2" />
                                         <h4 className="font-semibold text-gray-900">Résumé IA</h4>
                                       </div>
                                       <p className="text-gray-700 leading-relaxed">
-                                        {voicemail.fields['Résumé']}
+                                        {voicemail.ai_summary}
                                       </p>
                                     </div>
                                   )}
@@ -1300,28 +1165,28 @@ export function Dashboard() {
                                       <div className="space-y-2 text-sm">
                                         <div className="flex justify-between">
                                           <span className="text-gray-600">ID Message:</span>
-                                          <span className="font-medium">{voicemail.fields.Name || 'Non défini'}</span>
+                                          <span className="font-medium">{voicemail.id || 'Non défini'}</span>
                                         </div>
                                         <div className="flex justify-between">
                                           <span className="text-gray-600">Numéro:</span>
-                                          <span className="font-medium">{voicemail.fields['Caller Phone number'] || 'Non défini'}</span>
+                                          <span className="font-medium">{voicemail.caller_phone_number || 'Non défini'}</span>
                                         </div>
                                         <div className="flex justify-between">
                                           <span className="text-gray-600">Durée:</span>
-                                          <span className="font-medium">{formatDuration(voicemail.fields['Duration (Seconds)'])}</span>
+                                          <span className="font-medium">{formatDuration(voicemail.duration_seconds)}</span>
                                         </div>
                                         <div className="flex justify-between">
                                           <span className="text-gray-600">Date & Heure:</span>
-                                          <span className="font-medium">{formatTime(voicemail.fields.Time)}</span>
+                                          <span className="font-medium">{formatTime(voicemail.received_at)}</span>
                                         </div>
                                       </div>
                                     </div>
                                     
-                                    {voicemail.fields['Audio File'] && (
+                                    {voicemail.audio_file_url && (
                                       <div className="bg-white rounded-lg p-4 border border-gray-200">
                                         <h4 className="font-semibold text-gray-900 mb-2">Audio</h4>
                                         <button
-                                          onClick={() => playAudio(voicemail.fields['Audio File'])}
+                                          onClick={() => playAudio(voicemail.audio_file_url)}
                                           className="flex items-center px-4 py-2 bg-vox-blue text-white rounded-lg hover:bg-opacity-90 transition-colors"
                                         >
                                           <Play className="h-4 w-4 mr-2" />

@@ -36,7 +36,7 @@ import { BlogSection } from './components/BlogSection';
 import { BlogList } from './components/BlogList';
 import { BlogPost } from './components/BlogPost';
 import { Chatbot } from './components/Chatbot';
-import { HuezDashboard } from './components/HuezDashboard';
+
 import { BlogArticle1 } from './components/BlogArticle1';
 import { BlogArticle2 } from './components/BlogArticle2';
 import DiscoveryCall from './components/DiscoveryCall';
@@ -1572,7 +1572,7 @@ function App() {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/conditions-generales" element={<TermsAndConditions />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard-huez" element={<HuezDashboard />} />
+
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/paiement" element={<PaymentPage />} />
         <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />

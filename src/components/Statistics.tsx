@@ -1,40 +1,28 @@
 
 import { TrendingUp, Users, Clock, AlertTriangle, Scale, FileText, Brain, BarChart3 } from 'lucide-react';
-
-interface AirtableRecord {
-  id: string;
-  fields: {
-    [key: string]: any;
-  };
-}
+import { VoicemailWithAnalysis, getAnalysisByType } from '../hooks/useSupabase';
 
 interface StatisticsProps {
-  records: AirtableRecord[];
+  records: VoicemailWithAnalysis[];
 }
 
-// Utility function to normalize analysis values (handle objects and strings)
-const normalizeAnalysisValue = (value: any): string => {
+// Utility function to normalize analysis values for new schema
+const normalizeAnalysisValue = (value: string): string => {
   if (!value) return '';
-  if (typeof value === 'object' && value.value) {
-    return value.value.replace(/-/g, ' ');
-  }
-  if (typeof value === 'string') {
-    return value.replace(/-/g, ' ');
-  }
-  return '';
+  return value.replace(/-/g, ' ').toLowerCase();
 };
 
 // Calculation functions for each analysis type
-const calculateSentimentStats = (records: AirtableRecord[]) => {
+const calculateSentimentStats = (records: VoicemailWithAnalysis[]) => {
   const sentiments = records.map(record => 
-    normalizeAnalysisValue(record.fields['Sentiment Analysis'])
+    normalizeAnalysisValue(getAnalysisByType(record, 'Sentiment'))
   ).filter(Boolean);
 
   const total = sentiments.length;
   if (total === 0) return { neutral: 0, negative: 0, total: 0 };
 
-  const neutral = sentiments.filter(s => s.toLowerCase() === 'neutral').length;
-  const negative = sentiments.filter(s => s.toLowerCase() === 'negative').length;
+  const neutral = sentiments.filter(s => s === 'neutral').length;
+  const negative = sentiments.filter(s => s === 'negative').length;
 
   return {
     neutral: Math.round((neutral / total) * 100),
@@ -43,36 +31,38 @@ const calculateSentimentStats = (records: AirtableRecord[]) => {
   };
 };
 
-const calculateUrgencyStats = (records: AirtableRecord[]) => {
+const calculateUrgencyStats = (records: VoicemailWithAnalysis[]) => {
   const urgencies = records.map(record => 
-    normalizeAnalysisValue(record.fields['Urgence Analysis'])
+    normalizeAnalysisValue(getAnalysisByType(record, 'Urgence'))
   ).filter(Boolean);
 
   const total = urgencies.length;
-  if (total === 0) return { notUrgent: 0, urgent: 0, moderate: 0, total: 0 };
+  if (total === 0) return { faible: 0, urgent: 0, normal: 0, eleve: 0, total: 0 };
 
-  const notUrgent = urgencies.filter(u => u.toLowerCase() === 'not urgent').length;
-  const urgent = urgencies.filter(u => u.toLowerCase() === 'urgent').length;
-  const moderate = urgencies.filter(u => u.toLowerCase() === 'moderate').length;
+  const faible = urgencies.filter(u => u === 'faible').length;
+  const urgent = urgencies.filter(u => u === 'urgent').length;
+  const normal = urgencies.filter(u => u === 'normal').length;
+  const eleve = urgencies.filter(u => u === 'élevé').length;
 
   return {
-    notUrgent: Math.round((notUrgent / total) * 100),
+    faible: Math.round((faible / total) * 100),
     urgent: Math.round((urgent / total) * 100),
-    moderate: Math.round((moderate / total) * 100),
+    normal: Math.round((normal / total) * 100),
+    eleve: Math.round((eleve / total) * 100),
     total
   };
 };
 
-const calculateCaseStageStats = (records: AirtableRecord[]) => {
+const calculateCaseStageStats = (records: VoicemailWithAnalysis[]) => {
   const stages = records.map(record => 
-    normalizeAnalysisValue(record.fields['Case Stage Analysis'])
+    normalizeAnalysisValue(getAnalysisByType(record, 'Étape du dossier'))
   ).filter(Boolean);
 
   const total = stages.length;
   if (total === 0) return { ongoing: 0, newCase: 0, total: 0 };
 
-  const ongoing = stages.filter(s => s.toLowerCase() === 'ongoing case').length;
-  const newCase = stages.filter(s => s.toLowerCase() === 'new case').length;
+  const ongoing = stages.filter(s => s === 'ongoing case').length;
+  const newCase = stages.filter(s => s === 'new case').length;
 
   return {
     ongoing: Math.round((ongoing / total) * 100),
@@ -81,9 +71,9 @@ const calculateCaseStageStats = (records: AirtableRecord[]) => {
   };
 };
 
-const calculateRequestCategoryStats = (records: AirtableRecord[]) => {
+const calculateRequestCategoryStats = (records: VoicemailWithAnalysis[]) => {
   const categories = records.map(record => 
-    normalizeAnalysisValue(record.fields['Request category Analysis'])
+    normalizeAnalysisValue(getAnalysisByType(record, 'Catégorie'))
   ).filter(Boolean);
 
   const total = categories.length;
@@ -103,16 +93,16 @@ const calculateRequestCategoryStats = (records: AirtableRecord[]) => {
   const stats: { [key: string]: number } = {};
   
   categoryList.forEach(category => {
-    const count = categories.filter(c => c.toLowerCase() === category.toLowerCase()).length;
+    const count = categories.filter(c => c === category.toLowerCase()).length;
     stats[category] = Math.round((count / total) * 100);
   });
 
   return { ...stats, total };
 };
 
-const calculateFieldOfLawStats = (records: AirtableRecord[]) => {
+const calculateFieldOfLawStats = (records: VoicemailWithAnalysis[]) => {
   const fields = records.map(record => 
-    normalizeAnalysisValue(record.fields['Field of law Analysis'])
+    normalizeAnalysisValue(getAnalysisByType(record, 'Domaine juridique'))
   ).filter(Boolean);
 
   const total = fields.length;
@@ -138,10 +128,9 @@ const calculateFieldOfLawStats = (records: AirtableRecord[]) => {
   
   fieldList.forEach(field => {
     const count = fields.filter(f => {
-      const normalized = f.toLowerCase();
       const fieldNormalized = field.toLowerCase();
-      return normalized === fieldNormalized || 
-             (field === 'Undetermined.' && normalized === 'undetermined.');
+      return f === fieldNormalized || 
+             (field === 'Undetermined.' && f === 'undetermined.');
     }).length;
     stats[field] = Math.round((count / total) * 100);
   });
@@ -273,13 +262,18 @@ export function Statistics({ records }: StatisticsProps) {
           </div>
           <div className="space-y-4">
             <PercentageBar 
-              label="Not urgent" 
-              percentage={urgencyStats.notUrgent} 
+              label="Faible" 
+              percentage={urgencyStats.faible} 
               color="bg-green-500" 
             />
             <PercentageBar 
-              label="Moderate" 
-              percentage={urgencyStats.moderate} 
+              label="Normal" 
+              percentage={urgencyStats.normal} 
+              color="bg-blue-500" 
+            />
+            <PercentageBar 
+              label="Élevé" 
+              percentage={urgencyStats.eleve} 
               color="bg-yellow-500" 
             />
             <PercentageBar 
@@ -391,8 +385,9 @@ export function Statistics({ records }: StatisticsProps) {
           <div className="bg-white rounded-lg p-4 border border-gray-100">
             <p className="text-sm text-gray-600 mb-1">Niveau d'urgence moyen</p>
             <p className="font-bold text-gray-900">
-              {urgencyStats.urgent > 50 ? 'Élevé' : 
-               urgencyStats.moderate > 50 ? 'Modéré' : 'Faible'}
+              {urgencyStats.urgent > 50 ? 'Urgent' : 
+               urgencyStats.eleve > 50 ? 'Élevé' : 
+               urgencyStats.normal > 50 ? 'Normal' : 'Faible'}
             </p>
           </div>
         </div>
