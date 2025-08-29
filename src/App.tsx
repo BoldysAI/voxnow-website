@@ -31,6 +31,7 @@ import { trackViewContent, trackCustomEvent } from './utils/fbPixel';
 import { Dashboard } from './components/Dashboard';
 import { RecordingPage } from './components/RecordingPage';
 import { PaymentPage } from './components/PaymentPage';
+import { OngoingFreeTrialPage } from './components/OngoingFreeTrialPage';
 import { BlogSection } from './components/BlogSection';
 import { BlogList } from './components/BlogList';
 import { BlogPost } from './components/BlogPost';
@@ -1574,6 +1575,7 @@ function App() {
         <Route path="/dashboard-huez" element={<HuezDashboard />} />
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/paiement" element={<PaymentPage />} />
+        <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />
         <Route path="/blog" element={<BlogList />} />
         <Route path="/blog/avocats-belgique-gagner-temps-voxnow" element={<BlogArticle1 />} />
         <Route path="/blog/solution-belge-gestion-appels-manques" element={<BlogArticle2 />} />
