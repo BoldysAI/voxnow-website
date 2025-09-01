@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase, type User, type Voicemail, type VoicemailAnalysis, type AudioFile } from '../supabase';
 
 // Helper type for dashboard queries
@@ -35,7 +35,7 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserProfile = async (authUserId: string) => {
+  const fetchUserProfile = useCallback(async (authUserId: string) => {
     try {
       const { data, error } = await supabase
         .from('users')
@@ -61,7 +61,7 @@ export function useAuth() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   const signOut = async () => {
     await supabase.auth.signOut();
@@ -76,16 +76,7 @@ export function useVoicemails(userId?: string) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!userId) {
-      setLoading(false);
-      return;
-    }
-
-    fetchVoicemails();
-  }, [userId]);
-
-  const fetchVoicemails = async () => {
+  const fetchVoicemails = useCallback(async () => {
     if (!userId) return;
 
     try {
@@ -128,9 +119,18 @@ export function useVoicemails(userId?: string) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
-  const updateVoicemailStatus = async (voicemailId: string, updates: Partial<Pick<Voicemail, 'is_read' | 'is_starred' | 'status'> & { read_at: string | null }>) => {
+  useEffect(() => {
+    if (!userId) {
+      setLoading(false);
+      return;
+    }
+
+    fetchVoicemails();
+  }, [userId, fetchVoicemails]);
+
+  const updateVoicemailStatus = useCallback(async (voicemailId: string, updates: Partial<Pick<Voicemail, 'is_read' | 'is_starred' | 'status'> & { read_at: string | null }>) => {
     try {
       const { error } = await supabase
         .from('voicemails')
@@ -161,7 +161,7 @@ export function useVoicemails(userId?: string) {
       console.error('Error updating voicemail:', err);
       throw err;
     }
-  };
+  }, []);
 
   return { 
     voicemails, 

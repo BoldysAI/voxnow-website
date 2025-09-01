@@ -36,11 +36,11 @@ type SortDirection = 'asc' | 'desc';
 type PeriodFilter = 'all' | 'today' | 'week' | 'month';
 type DurationFilter = 'all' | 'short' | 'medium' | 'long';
 type ContentFilter = 'all' | 'with-transcription' | 'with-summary' | 'without-content';
-type SentimentFilter = 'all' | 'neutral' | 'negative';
-type UrgencyFilter = 'all' | 'not-urgent' | 'urgent' | 'moderate';
-type CaseStageFilter = 'all' | 'ongoing-case' | 'new-case';
-type RequestCategoryFilter = 'all' | 'legal-advice-needed' | 'case-update-requested' | 'payment-inquiry' | 'document-to-provide' | 'document-to-receive' | 'meeting-requested' | 'urgent-action-required' | 'ongoing-case';
-type FieldOfLawFilter = 'all' | 'contract-law' | 'family-law' | 'employment-law' | 'civil-law' | 'administrative-and-public-law' | 'undetermined' | 'criminal-law' | 'business-and-commercial-law' | 'consumer-law' | 'banking-and-finance-law' | 'inheritance-and-succession-law' | 'real-estate-law' | 'ongoing-case';
+type SentimentFilter = 'all' | 'neutre' | 'négatif' | 'positif';
+type UrgencyFilter = 'all' | 'non-urgent' | 'urgent' | 'modéré';
+type CaseStageFilter = 'all' | 'dossier-en-cours' | 'nouveau-dossier' | 'conclusion-de-dossier' | 'suivi-nécessaire';
+type RequestCategoryFilter = 'all' | 'conseil-juridique-requis' | 'mise-à-jour-de-dossier-demandée' | 'demande-de-paiement' | 'document-à-fournir' | 'document-à-recevoir' | 'rendez-vous-demandé' | 'action-urgente-requise' | 'dossier-en-cours';
+type FieldOfLawFilter = 'all' | 'droit-des-contrats' | 'droit-de-la-famille' | 'droit-du-travail' | 'droit-civil' | 'droit-administratif-et-public' | 'indéterminé' | 'droit-pénal' | 'droit-des-affaires-et-commercial' | 'droit-de-la-consommation' | 'droit-bancaire-et-financier' | 'droit-des-successions' | 'droit-immobilier';
 
 export function Dashboard() {
   // Auth and data hooks
@@ -99,15 +99,15 @@ export function Dashboard() {
     }
     
     switch (sentiment) {
-      case 'positive':
       case 'positif':
-        return { text: 'Positive', color: 'text-green-600 bg-green-50' };
-      case 'negative':
+      case 'positive':
+        return { text: 'Positif', color: 'text-green-600 bg-green-50' };
       case 'négatif':
-        return { text: 'Negative', color: 'text-red-600 bg-red-50' };
-      case 'neutral':
+      case 'negative':
+        return { text: 'Négatif', color: 'text-red-600 bg-red-50' };
       case 'neutre':
-        return { text: 'Neutral', color: 'text-gray-600 bg-gray-50' };
+      case 'neutral':
+        return { text: 'Neutre', color: 'text-gray-600 bg-gray-50' };
       default:
         return { text: capitalize(sentiment), color: 'text-blue-600 bg-blue-50' };
     }
@@ -124,6 +124,12 @@ export function Dashboard() {
     switch (urgency) {
       case 'urgent':
         return { text: 'Urgent', color: 'text-red-600 bg-red-50' };
+      case 'modéré':
+      case 'moderate':
+        return { text: 'Modéré', color: 'text-orange-600 bg-orange-50' };
+      case 'non urgent':
+      case 'not urgent':
+        return { text: 'Non Urgent', color: 'text-green-600 bg-green-50' };
       case 'élevé':
         return { text: 'Élevé', color: 'text-orange-600 bg-orange-50' };
       case 'normal':
@@ -263,7 +269,11 @@ export function Dashboard() {
     if (sentimentFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
         const sentiment = getAnalysisByType(voicemail, 'Sentiment').toLowerCase();
-        return sentiment === sentimentFilter;
+        // Convert filter value to match analysis result format
+        const filterValue = sentimentFilter === 'neutre' ? 'neutre' :
+                           sentimentFilter === 'négatif' ? 'négatif' :
+                           sentimentFilter === 'positif' ? 'positif' : sentimentFilter;
+        return sentiment === filterValue;
       });
     }
 
@@ -271,7 +281,11 @@ export function Dashboard() {
     if (urgencyFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
         const urgency = getAnalysisByType(voicemail, 'Urgence').toLowerCase();
-        return urgency === urgencyFilter.replace('-', ' ');
+        // Convert filter value to match analysis result format
+        const filterValue = urgencyFilter === 'non-urgent' ? 'non urgent' :
+                           urgencyFilter === 'modéré' ? 'modéré' :
+                           urgencyFilter === 'urgent' ? 'urgent' : urgencyFilter;
+        return urgency === filterValue;
       });
     }
 
@@ -279,7 +293,9 @@ export function Dashboard() {
     if (caseStageFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
         const caseStage = getAnalysisByType(voicemail, 'Étape du dossier').toLowerCase();
-        return caseStage === caseStageFilter.replace('-', ' ');
+        // Convert filter value to match analysis result format (replace dashes with spaces and capitalize)
+        const filterValue = caseStageFilter.replace(/-/g, ' ').toLowerCase();
+        return caseStage === filterValue;
       });
     }
 
@@ -287,7 +303,9 @@ export function Dashboard() {
     if (requestCategoryFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
         const requestCategory = getAnalysisByType(voicemail, 'Catégorie').toLowerCase();
-        return requestCategory === requestCategoryFilter.replace(/-/g, ' ');
+        // Convert filter value to match analysis result format (replace dashes with spaces and capitalize)
+        const filterValue = requestCategoryFilter.replace(/-/g, ' ').toLowerCase();
+        return requestCategory === filterValue;
       });
     }
 
@@ -295,10 +313,10 @@ export function Dashboard() {
     if (fieldOfLawFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
         const fieldOfLaw = getAnalysisByType(voicemail, 'Domaine juridique').toLowerCase();
-        if (fieldOfLawFilter === 'undetermined') {
-          return fieldOfLaw === 'undetermined.';
-        }
-        return fieldOfLaw === fieldOfLawFilter.replace(/-/g, ' ');
+        // Convert filter value to match analysis result format
+        const filterValue = fieldOfLawFilter === 'indéterminé' ? 'indéterminé' :
+                           fieldOfLawFilter.replace(/-/g, ' ').toLowerCase();
+        return fieldOfLaw === filterValue;
       });
     }
 
@@ -716,8 +734,9 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Tous les sentiments</option>
-                    <option value="neutral">Neutral</option>
-                    <option value="negative">Negative</option>
+                    <option value="neutre">Neutre</option>
+                    <option value="négatif">Négatif</option>
+                    <option value="positif">Positif</option>
                   </select>
                 </div>
               </div>
@@ -731,9 +750,9 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Toutes les urgences</option>
-                    <option value="not-urgent">Not urgent</option>
+                    <option value="non-urgent">Non Urgent</option>
                     <option value="urgent">Urgent</option>
-                    <option value="moderate">Moderate</option>
+                    <option value="modéré">Modéré</option>
                   </select>
                 </div>
 
@@ -745,8 +764,10 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Toutes les étapes</option>
-                    <option value="ongoing-case">Ongoing case</option>
-                    <option value="new-case">New case</option>
+                    <option value="dossier-en-cours">Dossier En Cours</option>
+                    <option value="nouveau-dossier">Nouveau Dossier</option>
+                    <option value="conclusion-de-dossier">Conclusion De Dossier</option>
+                    <option value="suivi-nécessaire">Suivi Nécessaire</option>
                   </select>
                 </div>
 
@@ -758,14 +779,14 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Toutes les catégories</option>
-                    <option value="legal-advice-needed">Legal advice needed</option>
-                    <option value="case-update-requested">Case update requested</option>
-                    <option value="payment-inquiry">Payment inquiry</option>
-                    <option value="document-to-provide">Document to provide</option>
-                    <option value="document-to-receive">Document to receive</option>
-                    <option value="meeting-requested">Meeting requested</option>
-                    <option value="urgent-action-required">Urgent action required</option>
-                    <option value="ongoing-case">Ongoing case</option>
+                    <option value="conseil-juridique-requis">Conseil Juridique Requis</option>
+                    <option value="mise-à-jour-de-dossier-demandée">Mise À Jour De Dossier Demandée</option>
+                    <option value="demande-de-paiement">Demande De Paiement</option>
+                    <option value="document-à-fournir">Document À Fournir</option>
+                    <option value="document-à-recevoir">Document À Recevoir</option>
+                    <option value="rendez-vous-demandé">Rendez-vous Demandé</option>
+                    <option value="action-urgente-requise">Action Urgente Requise</option>
+                    <option value="dossier-en-cours">Dossier En Cours</option>
                   </select>
                 </div>
 
@@ -777,19 +798,18 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Tous les domaines</option>
-                    <option value="contract-law">Contract law</option>
-                    <option value="family-law">Family law</option>
-                    <option value="employment-law">Employment law</option>
-                    <option value="civil-law">Civil law</option>
-                    <option value="administrative-and-public-law">Administrative and public law</option>
-                    <option value="undetermined">Undetermined</option>
-                    <option value="criminal-law">Criminal law</option>
-                    <option value="business-and-commercial-law">Business and commercial law</option>
-                    <option value="consumer-law">Consumer law</option>
-                    <option value="banking-and-finance-law">Banking and finance law</option>
-                    <option value="inheritance-and-succession-law">Inheritance and succession law</option>
-                    <option value="real-estate-law">Real estate law</option>
-                    <option value="ongoing-case">Ongoing case</option>
+                    <option value="droit-des-contrats">Droit Des Contrats</option>
+                    <option value="droit-de-la-famille">Droit De La Famille</option>
+                    <option value="droit-du-travail">Droit Du Travail</option>
+                    <option value="droit-civil">Droit Civil</option>
+                    <option value="droit-administratif-et-public">Droit Administratif Et Public</option>
+                    <option value="indéterminé">Indéterminé</option>
+                    <option value="droit-pénal">Droit Pénal</option>
+                    <option value="droit-des-affaires-et-commercial">Droit Des Affaires Et Commercial</option>
+                    <option value="droit-de-la-consommation">Droit De La Consommation</option>
+                    <option value="droit-bancaire-et-financier">Droit Bancaire Et Financier</option>
+                    <option value="droit-des-successions">Droit Des Successions</option>
+                    <option value="droit-immobilier">Droit Immobilier</option>
                   </select>
                 </div>
               </div>

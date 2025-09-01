@@ -64,18 +64,18 @@ ${summary ? `RÉSUMÉ: "${summary}"` : ''}
 Analyse chaque catégorie et réponds UNIQUEMENT avec un JSON valide dans ce format exact :
 
 {
-  "Sentiment": "positive|negative|neutral",
-  "Urgence": "urgent|moderate|not urgent",
-  "Catégorie": "legal advice needed|case update requested|payment inquiry|document to provide|document to receive|meeting requested|urgent action required|ongoing case",
-  "Domaine juridique": "contract law|family law|employment law|civil law|administrative and public law|criminal law|business and commercial law|consumer law|banking and finance law|inheritance and succession law|real estate law|undetermined",
-  "Étape du dossier": "new case|ongoing case|case conclusion|follow-up needed",
-  "Intention": "information request|appointment booking|complaint|payment|document submission|legal consultation|case follow-up"
+  "Sentiment": "Positif|Négatif|Neutre",
+  "Urgence": "Urgent|Modéré|Non Urgent",
+  "Catégorie": "Conseil Juridique Requis|Mise À Jour De Dossier Demandée|Demande De Paiement|Document À Fournir|Document À Recevoir|Rendez-vous Demandé|Action Urgente Requise|Dossier En Cours",
+  "Domaine juridique": "Droit Des Contrats|Droit De La Famille|Droit Du Travail|Droit Civil|Droit Administratif Et Public|Droit Pénal|Droit Des Affaires Et Commercial|Droit De La Consommation|Droit Bancaire Et Financier|Droit Des Successions|Droit Immobilier|Indéterminé",
+  "Étape du dossier": "Nouveau Dossier|Dossier En Cours|Conclusion De Dossier|Suivi Nécessaire",
+  "Intention": "Demande D'information|Prise De Rendez-vous|Plainte|Paiement|Soumission De Document|Consultation Juridique|Suivi De Dossier"
 }
 
 IMPORTANT: 
 - Réponds UNIQUEMENT avec le JSON, sans texte supplémentaire
 - Utilise exactement les valeurs énumérées ci-dessus
-- Toutes les réponses doivent être en anglais (sauf les clés qui restent en français)
+- Toutes les réponses doivent être en français avec des majuscules en début de chaque mot
 - Si tu n'es pas sûr, choisis l'option la plus probable
 `
 
@@ -137,12 +137,12 @@ IMPORTANT:
       
       // Fallback analysis if JSON parsing fails
       analysisData = {
-        "Sentiment": "neutral",
-        "Urgence": "not urgent", 
-        "Catégorie": "legal advice needed",
-        "Domaine juridique": "undetermined",
-        "Étape du dossier": "ongoing case",
-        "Intention": "information request"
+        "Sentiment": "Neutre",
+        "Urgence": "Non Urgent", 
+        "Catégorie": "Conseil Juridique Requis",
+        "Domaine juridique": "Indéterminé",
+        "Étape du dossier": "Dossier En Cours",
+        "Intention": "Demande D'information"
       }
     }
 
