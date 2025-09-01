@@ -36,15 +36,15 @@ type SortDirection = 'asc' | 'desc';
 type PeriodFilter = 'all' | 'today' | 'week' | 'month';
 type DurationFilter = 'all' | 'short' | 'medium' | 'long';
 type ContentFilter = 'all' | 'with-transcription' | 'with-summary' | 'without-content';
-type SentimentFilter = 'all' | 'neutre' | 'négatif' | 'positif';
-type UrgencyFilter = 'all' | 'non-urgent' | 'urgent' | 'modéré';
-type CaseStageFilter = 'all' | 'dossier-en-cours' | 'nouveau-dossier' | 'conclusion-de-dossier' | 'suivi-nécessaire';
-type RequestCategoryFilter = 'all' | 'conseil-juridique-requis' | 'mise-à-jour-de-dossier-demandée' | 'demande-de-paiement' | 'document-à-fournir' | 'document-à-recevoir' | 'rendez-vous-demandé' | 'action-urgente-requise' | 'dossier-en-cours';
-type FieldOfLawFilter = 'all' | 'droit-des-contrats' | 'droit-de-la-famille' | 'droit-du-travail' | 'droit-civil' | 'droit-administratif-et-public' | 'indéterminé' | 'droit-pénal' | 'droit-des-affaires-et-commercial' | 'droit-de-la-consommation' | 'droit-bancaire-et-financier' | 'droit-des-successions' | 'droit-immobilier';
+type SentimentFilter = 'all' | 'Neutre' | 'Négatif' | 'Positif';
+type UrgencyFilter = 'all' | 'Non Urgent' | 'Urgent' | 'Modéré';
+type CaseStageFilter = 'all' | 'Dossier En Cours' | 'Nouveau Dossier';
+type RequestCategoryFilter = 'all' | 'Conseil Juridique Requis' | 'Demande De Paiement' | 'Document À Fournir' | 'Document À Recevoir';
+type FieldOfLawFilter = 'all' | 'Droit Administratif Et Public' | 'Indéterminé' | 'Droit Pénal';
 
 export function Dashboard() {
   // Auth and data hooks
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, loading: authLoading, signOut, isAuthenticated } = useAuth();
   const { voicemails, loading: voicemailsLoading, error, fetchVoicemails, updateVoicemailStatus } = useVoicemails(user?.id);
   
   // UI state
@@ -75,74 +75,21 @@ export function Dashboard() {
 
   // Redirect to auth if not authenticated
   useEffect(() => {
-    if (!authLoading && !user) {
-      navigate('/auth');
-    }
-  }, [user, authLoading, navigate]);
+    // Add a small delay to prevent redirecting during temporary state transitions
+    const redirectTimer = setTimeout(() => {
+      // Only redirect if we're definitely not authenticated after state has settled
+      if (!authLoading && !isAuthenticated && user === null) {
+        console.log('Redirecting to auth - not authenticated after delay');
+        console.log('Auth state:', { authLoading, isAuthenticated, hasUser: !!user });
+        navigate('/auth');
+      }
+    }, 500); // 500ms delay to let state settle
 
-  // Loading state
-  const loading = authLoading || voicemailsLoading;
+    return () => clearTimeout(redirectTimer);
+  }, [isAuthenticated, authLoading, navigate, user]);
 
-
-
-  // Capitalize first letter for display
-  const capitalize = (str: string): string => {
-    return str.charAt(0).toUpperCase() + str.slice(1);
-  };
-
-  // Get sentiment display with color coding - updated for new schema
-  const getSentimentDisplay = (voicemail: VoicemailWithAnalysis) => {
-    const sentiment = getAnalysisByType(voicemail, 'Sentiment').toLowerCase().trim();
-    
-    if (!sentiment || sentiment === "") {
-      return { text: 'Non analysé', color: 'text-gray-400 bg-gray-100' };
-    }
-    
-    switch (sentiment) {
-      case 'positif':
-      case 'positive':
-        return { text: 'Positif', color: 'text-green-600 bg-green-50' };
-      case 'négatif':
-      case 'negative':
-        return { text: 'Négatif', color: 'text-red-600 bg-red-50' };
-      case 'neutre':
-      case 'neutral':
-        return { text: 'Neutre', color: 'text-gray-600 bg-gray-50' };
-      default:
-        return { text: capitalize(sentiment), color: 'text-blue-600 bg-blue-50' };
-    }
-  };
-
-  // Get urgency display with color coding - updated for new schema
-  const getUrgencyDisplay = (voicemail: VoicemailWithAnalysis) => {
-    const urgency = getAnalysisByType(voicemail, 'Urgence').toLowerCase().trim();
-    
-    if (!urgency || urgency === '') {
-      return { text: 'Non analysé', color: 'text-gray-400 bg-gray-100' };
-    }
-    
-    switch (urgency) {
-      case 'urgent':
-        return { text: 'Urgent', color: 'text-red-600 bg-red-50' };
-      case 'modéré':
-      case 'moderate':
-        return { text: 'Modéré', color: 'text-orange-600 bg-orange-50' };
-      case 'non urgent':
-      case 'not urgent':
-        return { text: 'Non Urgent', color: 'text-green-600 bg-green-50' };
-      case 'élevé':
-        return { text: 'Élevé', color: 'text-orange-600 bg-orange-50' };
-      case 'normal':
-        return { text: 'Normal', color: 'text-yellow-600 bg-yellow-50' };
-      case 'faible':
-        return { text: 'Faible', color: 'text-green-600 bg-green-50' };
-      default:
-        return { text: capitalize(urgency), color: 'text-blue-600 bg-blue-50' };
-    }
-  };
-
+  // Check if user is on mobile and show warning
   useEffect(() => {
-    // Check if user is on mobile and show warning
     const checkMobile = () => {
       // Don't show warning if already dismissed
       if (mobileWarningDismissed) return;
@@ -161,32 +108,8 @@ export function Dashboard() {
     };
   }, [mobileWarningDismissed]);
 
+    // Apply filters when dependencies change
   useEffect(() => {
-    applyFilters();
-    setCurrentPage(1);
-  }, [searchTerm, voicemails, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter]);
-
-  // Check localStorage on component mount
-  useEffect(() => {
-    const dismissed = localStorage.getItem('voxnow_mobile_warning_dismissed');
-    if (dismissed === 'true') {
-      setMobileWarningDismissed(true);
-    }
-  }, []);
-
-  // Sign out function
-  const handleSignOut = async () => {
-    try {
-      await signOut();
-      navigate('/auth');
-    } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
-    }
-  };
-
-
-
-  const applyFilters = () => {
     let filtered = voicemails.filter(vm => vm.status !== 'Supprimé');
 
     // Search filter
@@ -268,60 +191,157 @@ export function Dashboard() {
     // Sentiment filter
     if (sentimentFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const sentiment = getAnalysisByType(voicemail, 'Sentiment').toLowerCase();
-        // Convert filter value to match analysis result format
-        const filterValue = sentimentFilter === 'neutre' ? 'neutre' :
-                           sentimentFilter === 'négatif' ? 'négatif' :
-                           sentimentFilter === 'positif' ? 'positif' : sentimentFilter;
-        return sentiment === filterValue;
+        const sentiment = getAnalysisByType(voicemail, 'Sentiment');
+        // Direct exact match with stored values
+        return sentiment === sentimentFilter;
       });
     }
 
     // Urgency filter
     if (urgencyFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const urgency = getAnalysisByType(voicemail, 'Urgence').toLowerCase();
-        // Convert filter value to match analysis result format
-        const filterValue = urgencyFilter === 'non-urgent' ? 'non urgent' :
-                           urgencyFilter === 'modéré' ? 'modéré' :
-                           urgencyFilter === 'urgent' ? 'urgent' : urgencyFilter;
-        return urgency === filterValue;
+        const urgency = getAnalysisByType(voicemail, 'Urgence');
+        // Direct exact match with stored values
+        return urgency === urgencyFilter;
       });
     }
 
     // Case Stage filter
     if (caseStageFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const caseStage = getAnalysisByType(voicemail, 'Étape du dossier').toLowerCase();
-        // Convert filter value to match analysis result format (replace dashes with spaces and capitalize)
-        const filterValue = caseStageFilter.replace(/-/g, ' ').toLowerCase();
-        return caseStage === filterValue;
+        const caseStage = getAnalysisByType(voicemail, 'Étape du dossier');
+        // Direct exact match with stored values
+        return caseStage === caseStageFilter;
       });
     }
 
     // Request Category filter
     if (requestCategoryFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const requestCategory = getAnalysisByType(voicemail, 'Catégorie').toLowerCase();
-        // Convert filter value to match analysis result format (replace dashes with spaces and capitalize)
-        const filterValue = requestCategoryFilter.replace(/-/g, ' ').toLowerCase();
-        return requestCategory === filterValue;
+        const requestCategory = getAnalysisByType(voicemail, 'Catégorie');
+        // Direct exact match with stored values
+        return requestCategory === requestCategoryFilter;
       });
     }
 
     // Field of Law filter
     if (fieldOfLawFilter !== 'all') {
       filtered = filtered.filter(voicemail => {
-        const fieldOfLaw = getAnalysisByType(voicemail, 'Domaine juridique').toLowerCase();
-        // Convert filter value to match analysis result format
-        const filterValue = fieldOfLawFilter === 'indéterminé' ? 'indéterminé' :
-                           fieldOfLawFilter.replace(/-/g, ' ').toLowerCase();
-        return fieldOfLaw === filterValue;
+        const fieldOfLaw = getAnalysisByType(voicemail, 'Domaine juridique');
+        // Direct exact match with stored values
+        return fieldOfLaw === fieldOfLawFilter;
       });
     }
 
     setFilteredVoicemails(filtered);
+    setCurrentPage(1);
+  }, [voicemails, searchTerm, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter]);
+
+  // Check localStorage on component mount
+  useEffect(() => {
+    const dismissed = localStorage.getItem('voxnow_mobile_warning_dismissed');
+    if (dismissed === 'true') {
+      setMobileWarningDismissed(true);
+    }
+  }, []);
+
+  // Loading state
+  const loading = authLoading || voicemailsLoading;
+
+  // Early returns after all hooks
+  // Show loading if still authenticating
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue mx-auto mb-4"></div>
+          <p className="text-gray-600">Vérification de l'authentification...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Show loading if authenticated but waiting for user profile (give it some time)
+  if (isAuthenticated && user === null && !authLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue mx-auto mb-4"></div>
+          <p className="text-gray-600">Chargement du profil utilisateur...</p>
+        </div>
+      </div>
+    );
+  }
+  
+  // Don't render if not authenticated (redirect will handle it)
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-gray-600">Redirection vers la page de connexion...</p>
+        </div>
+      </div>
+    );
+  }
+
+
+
+
+
+  // Get sentiment display with color coding - matches database values
+  const getSentimentDisplay = (voicemail: VoicemailWithAnalysis) => {
+    const sentiment = getAnalysisByType(voicemail, 'Sentiment').trim();
+    
+    if (!sentiment || sentiment === "") {
+      return { text: 'Non analysé', color: 'text-gray-400 bg-gray-100' };
+    }
+    
+    switch (sentiment) {
+      case 'Positif':
+        return { text: 'Positif', color: 'text-green-600 bg-green-50' };
+      case 'Négatif':
+        return { text: 'Négatif', color: 'text-red-600 bg-red-50' };
+      case 'Neutre':
+        return { text: 'Neutre', color: 'text-gray-600 bg-gray-50' };
+      default:
+        return { text: sentiment, color: 'text-blue-600 bg-blue-50' };
+    }
   };
+
+  // Get urgency display with color coding - matches database values
+  const getUrgencyDisplay = (voicemail: VoicemailWithAnalysis) => {
+    const urgency = getAnalysisByType(voicemail, 'Urgence').trim();
+    
+    if (!urgency || urgency === '') {
+      return { text: 'Non analysé', color: 'text-gray-400 bg-gray-100' };
+    }
+    
+    switch (urgency) {
+      case 'Urgent':
+        return { text: 'Urgent', color: 'text-red-600 bg-red-50' };
+      case 'Modéré':
+        return { text: 'Modéré', color: 'text-orange-600 bg-orange-50' };
+      case 'Non Urgent':
+        return { text: 'Non Urgent', color: 'text-green-600 bg-green-50' };
+      default:
+        return { text: urgency, color: 'text-blue-600 bg-blue-50' };
+    }
+  };
+
+
+
+  // Sign out function
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      navigate('/auth');
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    }
+  };
+
+
+
 
 
 
@@ -488,16 +508,7 @@ export function Dashboard() {
       <ChevronDown className="h-4 w-4 text-vox-blue" />;
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement des messages vocaux...</p>
-        </div>
-      </div>
-    );
-  }
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -734,9 +745,9 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Tous les sentiments</option>
-                    <option value="neutre">Neutre</option>
-                    <option value="négatif">Négatif</option>
-                    <option value="positif">Positif</option>
+                    <option value="Neutre">Neutre</option>
+                    <option value="Négatif">Négatif</option>
+                    <option value="Positif">Positif</option>
                   </select>
                 </div>
               </div>
@@ -750,9 +761,9 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Toutes les urgences</option>
-                    <option value="non-urgent">Non Urgent</option>
-                    <option value="urgent">Urgent</option>
-                    <option value="modéré">Modéré</option>
+                    <option value="Non Urgent">Non Urgent</option>
+                    <option value="Urgent">Urgent</option>
+                    <option value="Modéré">Modéré</option>
                   </select>
                 </div>
 
@@ -764,10 +775,8 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Toutes les étapes</option>
-                    <option value="dossier-en-cours">Dossier En Cours</option>
-                    <option value="nouveau-dossier">Nouveau Dossier</option>
-                    <option value="conclusion-de-dossier">Conclusion De Dossier</option>
-                    <option value="suivi-nécessaire">Suivi Nécessaire</option>
+                    <option value="Dossier En Cours">Dossier En Cours</option>
+                    <option value="Nouveau Dossier">Nouveau Dossier</option>
                   </select>
                 </div>
 
@@ -779,14 +788,10 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Toutes les catégories</option>
-                    <option value="conseil-juridique-requis">Conseil Juridique Requis</option>
-                    <option value="mise-à-jour-de-dossier-demandée">Mise À Jour De Dossier Demandée</option>
-                    <option value="demande-de-paiement">Demande De Paiement</option>
-                    <option value="document-à-fournir">Document À Fournir</option>
-                    <option value="document-à-recevoir">Document À Recevoir</option>
-                    <option value="rendez-vous-demandé">Rendez-vous Demandé</option>
-                    <option value="action-urgente-requise">Action Urgente Requise</option>
-                    <option value="dossier-en-cours">Dossier En Cours</option>
+                    <option value="Conseil Juridique Requis">Conseil Juridique Requis</option>
+                    <option value="Demande De Paiement">Demande De Paiement</option>
+                    <option value="Document À Fournir">Document À Fournir</option>
+                    <option value="Document À Recevoir">Document À Recevoir</option>
                   </select>
                 </div>
 
@@ -798,18 +803,9 @@ export function Dashboard() {
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
                   >
                     <option value="all">Tous les domaines</option>
-                    <option value="droit-des-contrats">Droit Des Contrats</option>
-                    <option value="droit-de-la-famille">Droit De La Famille</option>
-                    <option value="droit-du-travail">Droit Du Travail</option>
-                    <option value="droit-civil">Droit Civil</option>
-                    <option value="droit-administratif-et-public">Droit Administratif Et Public</option>
-                    <option value="indéterminé">Indéterminé</option>
-                    <option value="droit-pénal">Droit Pénal</option>
-                    <option value="droit-des-affaires-et-commercial">Droit Des Affaires Et Commercial</option>
-                    <option value="droit-de-la-consommation">Droit De La Consommation</option>
-                    <option value="droit-bancaire-et-financier">Droit Bancaire Et Financier</option>
-                    <option value="droit-des-successions">Droit Des Successions</option>
-                    <option value="droit-immobilier">Droit Immobilier</option>
+                    <option value="Droit Administratif Et Public">Droit Administratif Et Public</option>
+                    <option value="Indéterminé">Indéterminé</option>
+                    <option value="Droit Pénal">Droit Pénal</option>
                   </select>
                 </div>
               </div>

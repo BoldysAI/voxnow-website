@@ -1,9 +1,39 @@
 import { createClient } from '@supabase/supabase-js'
 
+// Validate environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://hxyyqidiixyshsszqmqd.supabase.co'
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4eXlxaWRpaXh5c2hzc3pxbXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MjE0NTEsImV4cCI6MjA3MTE5NzQ1MX0.WAfEvVIKtT2DOWGI8oRDZSsqroloYZ1PAb3cN1GSjGU'
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Basic validation
+if (!supabaseUrl || !supabaseUrl.startsWith('https://')) {
+  console.error('Invalid Supabase URL:', supabaseUrl);
+}
+
+if (!supabaseAnonKey || supabaseAnonKey.length < 50) {
+  console.error('Invalid Supabase Anon Key');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  auth: {
+    autoRefreshToken: true,
+    persistSession: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+    flowType: 'pkce', // Use PKCE flow for better security and reliability
+    debug: false, // Disable debug in production
+    storageKey: 'voxnow-auth-token' // Custom storage key
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'voxnow-web@1.0.0'
+    }
+  },
+  realtime: {
+    params: {
+      eventsPerSecond: 10
+    }
+  }
+})
 
 // Database types based on public.users schema (connected to auth.users)
 export interface User {
