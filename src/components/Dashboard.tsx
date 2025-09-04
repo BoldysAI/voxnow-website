@@ -73,20 +73,27 @@ export function Dashboard() {
   
   const navigate = useNavigate();
 
-  // Redirect to auth if not authenticated
+  // Anti-loop redirect to auth - only redirect when definitely not authenticated
   useEffect(() => {
-    // Add a small delay to prevent redirecting during temporary state transitions
-    const redirectTimer = setTimeout(() => {
-      // Only redirect if we're definitely not authenticated after state has settled
-      if (!authLoading && !isAuthenticated && user === null) {
-        console.log('Redirecting to auth - not authenticated after delay');
-        console.log('Auth state:', { authLoading, isAuthenticated, hasUser: !!user });
-        navigate('/auth');
-      }
-    }, 500); // 500ms delay to let state settle
+    // Only redirect if we're absolutely sure user is not authenticated
+    // AND we've waited long enough to avoid redirect loops
+    if (!authLoading && !isAuthenticated && user === null) {
+      console.log('Dashboard: Definitely not authenticated, redirecting to auth');
+      
+      // Add delay to prevent rapid redirect loops
+      const redirectTimer = setTimeout(() => {
+        // Double-check auth state hasn't changed during delay
+        if (!isAuthenticated && user === null) {
+          console.log('Dashboard: Confirmed redirect after delay');
+          navigate('/auth', { replace: true }); // Use replace to prevent back button issues
+        } else {
+          console.log('Dashboard: Auth state changed during delay, not redirecting');
+        }
+      }, 1000); // 1 second delay to let auth stabilize
 
-    return () => clearTimeout(redirectTimer);
-  }, [isAuthenticated, authLoading, navigate, user]);
+      return () => clearTimeout(redirectTimer);
+    }
+  }, [authLoading, isAuthenticated, user, navigate]);
 
   // Check if user is on mobile and show warning
   useEffect(() => {
@@ -248,40 +255,23 @@ export function Dashboard() {
   // Loading state
   const loading = authLoading || voicemailsLoading;
 
-  // Early returns after all hooks
-  // Show loading if still authenticating
-  if (authLoading) {
+  // Show loading while auth is in progress
+  if (authLoading || (isAuthenticated && !user)) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue mx-auto mb-4"></div>
-          <p className="text-gray-600">Vérification de l'authentification...</p>
+          <p className="text-gray-600">
+            {authLoading ? 'Vérification de l\'authentification...' : 'Chargement du profil utilisateur...'}
+          </p>
         </div>
       </div>
     );
   }
-  
-  // Show loading if authenticated but waiting for user profile (give it some time)
-  if (isAuthenticated && user === null && !authLoading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue mx-auto mb-4"></div>
-          <p className="text-gray-600">Chargement du profil utilisateur...</p>
-        </div>
-      </div>
-    );
-  }
-  
-  // Don't render if not authenticated (redirect will handle it)
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-600">Redirection vers la page de connexion...</p>
-        </div>
-      </div>
-    );
+
+  // Don't render dashboard if not authenticated (redirect useEffect will handle it)
+  if (!isAuthenticated || !user) {
+    return null;
   }
 
 
