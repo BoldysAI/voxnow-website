@@ -56,7 +56,6 @@ export function Dashboard() {
   const [itemsPerPage] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
-  const [readMessages, setReadMessages] = useState<Set<string>>(new Set());
   const [showMobileWarning, setShowMobileWarning] = useState(false);
   const [mobileWarningDismissed, setMobileWarningDismissed] = useState(false);
   
@@ -70,6 +69,11 @@ export function Dashboard() {
   const [requestCategoryFilter, setRequestCategoryFilter] = useState<RequestCategoryFilter>('all');
   const [fieldOfLawFilter, setFieldOfLawFilter] = useState<FieldOfLawFilter>('all');
   const [showFilters, setShowFilters] = useState(false);
+  
+  // Quick filters (independent from advanced filters)
+  const [quickTodayFilter, setQuickTodayFilter] = useState(false);
+  const [quickUrgentFilter, setQuickUrgentFilter] = useState(false);
+  const [quickUnreadFilter, setQuickUnreadFilter] = useState(false);
   
   const navigate = useNavigate();
 
@@ -240,9 +244,34 @@ export function Dashboard() {
       });
     }
 
+    // Quick filters (independent from advanced filters)
+    if (quickTodayFilter) {
+      const today = new Date();
+      const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      filtered = filtered.filter(voicemail => {
+        if (!voicemail.received_at) return false;
+        const messageDate = new Date(voicemail.received_at);
+        return messageDate >= startOfToday;
+      });
+    }
+
+    if (quickUrgentFilter) {
+      filtered = filtered.filter(voicemail => {
+        const urgency = getAnalysisByType(voicemail, 'Urgence');
+        return urgency === 'Urgent';
+      });
+    }
+
+    if (quickUnreadFilter) {
+      filtered = filtered.filter(voicemail => {
+        return !voicemail.is_read;
+      });
+    }
+
     setFilteredVoicemails(filtered);
     setCurrentPage(1);
-  }, [voicemails, searchTerm, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter]);
+  }, [voicemails, searchTerm, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter, quickTodayFilter, quickUrgentFilter, quickUnreadFilter]);
+
 
   // Check localStorage on component mount
   useEffect(() => {
@@ -356,8 +385,11 @@ export function Dashboard() {
   };
 
   const toggleReadStatus = async (id: string) => {
-    const isCurrentlyRead = readMessages.has(id);
-    const newReadStatus = !isCurrentlyRead;
+    // Find the voicemail to get current read status from database
+    const voicemail = voicemails.find(vm => vm.id === id);
+    if (!voicemail) return;
+    
+    const newReadStatus = !voicemail.is_read;
     
     try {
       await updateVoicemailStatus(id, { 
@@ -365,14 +397,8 @@ export function Dashboard() {
         read_at: newReadStatus ? new Date().toISOString() : null 
       });
       
-      // Update local state
-      const newRead = new Set(readMessages);
-      if (newReadStatus) {
-        newRead.add(id);
-      } else {
-        newRead.delete(id);
-      }
-      setReadMessages(newRead);
+      // No need to manually update local state - the useEffect will handle it
+      // when voicemails data is updated via updateVoicemailStatus
     } catch (error) {
       console.error('Error updating read status:', error);
     }
@@ -487,7 +513,7 @@ export function Dashboard() {
   const totalMessages = voicemails.length;
   const processedMessages = voicemails.filter(vm => vm.transcription || vm.ai_summary).length;
   const totalDuration = voicemails.reduce((sum, vm) => sum + (vm.duration_seconds || 0), 0);
-  const unreadMessages = totalMessages - readMessages.size;
+  const unreadMessages = voicemails.filter(vm => !vm.is_read).length;
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
@@ -624,14 +650,28 @@ export function Dashboard() {
             </div>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+          <div className={`rounded-2xl shadow-lg p-6 border-2 transition-all ${
+            unreadMessages > 0 
+              ? 'bg-gradient-to-r from-red-50 to-orange-50 border-red-200 ring-2 ring-red-100' 
+              : 'bg-white border-gray-100'
+          }`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Non lus</p>
-                <p className="text-2xl font-bold text-light-green">{unreadMessages}</p>
+                <p className={`text-2xl font-bold ${
+                  unreadMessages > 0 ? 'text-red-600' : 'text-gray-400'
+                }`}>
+                  {unreadMessages}
+                </p>
               </div>
-              <div className="w-12 h-12 bg-light-green/10 rounded-full flex items-center justify-center">
-                <Circle className="h-6 w-6 text-light-green" />
+              <div className={`w-12 h-12 rounded-full flex items-center justify-center ${
+                unreadMessages > 0 
+                  ? 'bg-red-100 animate-pulse' 
+                  : 'bg-gray-100'
+              }`}>
+                <Circle className={`h-6 w-6 ${
+                  unreadMessages > 0 ? 'text-red-600' : 'text-gray-400'
+                }`} />
               </div>
             </div>
           </div>
@@ -650,6 +690,45 @@ export function Dashboard() {
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-vox-blue focus:border-transparent"
               />
+            </div>
+
+            {/* Quick Filter Buttons */}
+            <div className="flex space-x-2">
+              <button
+                onClick={() => setQuickTodayFilter(!quickTodayFilter)}
+                className={`flex items-center px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  quickTodayFilter
+                    ? 'bg-vox-blue text-white shadow-md'
+                    : 'bg-blue-50 text-vox-blue hover:bg-blue-100 border border-blue-200'
+                }`}
+              >
+                <Calendar className="h-4 w-4 mr-2" />
+                Aujourd'hui
+              </button>
+              
+              <button
+                onClick={() => setQuickUrgentFilter(!quickUrgentFilter)}
+                className={`flex items-center px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  quickUrgentFilter
+                    ? 'bg-red-500 text-white shadow-md'
+                    : 'bg-red-50 text-red-600 hover:bg-red-100 border border-red-200'
+                }`}
+              >
+                <AlertTriangle className="h-4 w-4 mr-2" />
+                Urgent
+              </button>
+              
+              <button
+                onClick={() => setQuickUnreadFilter(!quickUnreadFilter)}
+                className={`flex items-center px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
+                  quickUnreadFilter
+                    ? 'bg-orange-500 text-white shadow-md'
+                    : 'bg-orange-50 text-orange-600 hover:bg-orange-100 border border-orange-200'
+                }`}
+              >
+                <Circle className="h-4 w-4 mr-2" />
+                Non lu
+              </button>
             </div>
 
             {/* Filter Toggle */}
@@ -817,6 +896,11 @@ export function Dashboard() {
               <div className="flex items-center justify-center space-x-2">
                 <FileText className="h-5 w-5" />
                 <span>Messages vocaux ({filteredVoicemails.length})</span>
+                {unreadMessages > 0 && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-bold bg-red-500 text-white animate-pulse">
+                    {unreadMessages} non lu{unreadMessages > 1 ? 's' : ''}
+                  </span>
+                )}
               </div>
             </button>
             <button
@@ -855,10 +939,34 @@ export function Dashboard() {
               <div className="flex items-center justify-between">
                 <div>
                   <h2 className="text-xl font-bold text-vox-blue">Messages vocaux</h2>
-                  <p className="text-gray-600 mt-1">
-                    {filteredVoicemails.length} message{filteredVoicemails.length !== 1 ? 's' : ''} 
-                    {searchTerm && ` (filtré${filteredVoicemails.length !== 1 ? 's' : ''} sur ${voicemails.length})`}
-                  </p>
+                  <div className="flex items-center space-x-2 mt-1">
+                    <p className="text-gray-600">
+                      {filteredVoicemails.length} message{filteredVoicemails.length !== 1 ? 's' : ''} 
+                      {searchTerm && ` (filtré${filteredVoicemails.length !== 1 ? 's' : ''} sur ${voicemails.length})`}
+                    </p>
+                    {(quickTodayFilter || quickUrgentFilter || quickUnreadFilter) && (
+                      <div className="flex space-x-1">
+                        {quickTodayFilter && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-vox-blue">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            Aujourd'hui
+                          </span>
+                        )}
+                        {quickUrgentFilter && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-600">
+                            <AlertTriangle className="h-3 w-3 mr-1" />
+                            Urgent
+                          </span>
+                        )}
+                        {quickUnreadFilter && (
+                          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-600">
+                            <Circle className="h-3 w-3 mr-1" />
+                            Non lu
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center space-x-2">
                   <BarChart3 className="h-5 w-5 text-vox-blue" />
@@ -985,7 +1093,11 @@ export function Dashboard() {
                     <tbody className="divide-y divide-gray-100">
                       {getPaginatedData().map((voicemail) => (
                         <Fragment key={voicemail.id}>
-                          <tr className={`hover:bg-gray-50 transition-colors ${!readMessages.has(voicemail.id) ? 'bg-blue-50/30' : ''}`}>
+                          <tr className={`transition-colors ${
+                            !voicemail.is_read 
+                              ? 'bg-white border-l-4 border-l-vox-blue shadow-sm hover:bg-blue-50/20' 
+                              : 'bg-gray-50/60 text-gray-600 hover:bg-gray-100/80'
+                          }`}>
                             <td className="px-6 py-4">
                               <button
                                 onClick={() => toggleRowExpansion(voicemail.id)}
@@ -1001,22 +1113,36 @@ export function Dashboard() {
                             <td className="px-6 py-4">
                               <button
                                 onClick={() => toggleReadStatus(voicemail.id)}
-                                className="text-gray-400 hover:text-vox-blue transition-colors"
+                                className={`transition-colors ${
+                                  voicemail.is_read 
+                                    ? 'text-gray-400 hover:text-now-green' 
+                                    : 'text-vox-blue hover:text-now-green animate-pulse'
+                                }`}
+                                title={voicemail.is_read ? "Marquer comme non lu" : "Marquer comme lu"}
                               >
-                                {readMessages.has(voicemail.id) ? (
+                                {voicemail.is_read ? (
                                   <CheckCircle className="h-5 w-5 text-now-green" />
                                 ) : (
-                                  <Circle className="h-5 w-5" />
+                                  <Circle className="h-5 w-5 stroke-2" />
                                 )}
                               </button>
                             </td>
                             <td className="px-6 py-4">
-                              <div className="text-gray-700 text-sm">
-                                {formatTime(voicemail.received_at)}
+                              <div className={`text-sm flex items-center space-x-2 ${
+                                !voicemail.is_read ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}>
+                                <span>{formatTime(voicemail.received_at)}</span>
+                                {!voicemail.is_read && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-vox-blue text-white">
+                                    NOUVEAU
+                                  </span>
+                                )}
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <div className="text-gray-700">
+                              <div className={`${
+                                !voicemail.is_read ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}>
                                 {voicemail.ai_summary ? 
                                   truncateText(voicemail.ai_summary, 60) : 
                                   <span className="text-gray-400 italic">Aucun résumé</span>
@@ -1044,12 +1170,16 @@ export function Dashboard() {
                               })()}
                             </td>
                             <td className="px-6 py-4">
-                              <div className="text-gray-700 font-medium">
+                              <div className={`font-medium ${
+                                !voicemail.is_read ? 'text-gray-900' : 'text-gray-500'
+                              }`}>
                                 {voicemail.caller_phone_number || 'Non défini'}
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              <div className="text-gray-700 text-sm">
+                              <div className={`text-sm ${
+                                !voicemail.is_read ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}>
                                 {formatDuration(voicemail.duration_seconds)}
                               </div>
                             </td>

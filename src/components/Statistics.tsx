@@ -169,7 +169,35 @@ export function Statistics({ records }: StatisticsProps) {
 
   // Calculate general metrics
   const totalMessages = safeRecords.length;
-  const averagePerDay = totalMessages > 0 ? Math.round(totalMessages / 30) : 0; // Assuming 30 days
+  
+  // Calculate real average per day based on actual date range
+  const calculateAveragePerDay = () => {
+    if (totalMessages === 0) return 0;
+    
+    // Get all valid received_at dates
+    const dates = safeRecords
+      .map(record => record.received_at)
+      .filter(Boolean)
+      .map(dateStr => new Date(dateStr))
+      .filter(date => !isNaN(date.getTime()));
+    
+    if (dates.length === 0) return 0;
+    
+    // Find earliest and latest dates
+    const earliestDate = new Date(Math.min(...dates.map(d => d.getTime())));
+    const latestDate = new Date(Math.max(...dates.map(d => d.getTime())));
+    
+    // Calculate difference in days
+    const timeDiff = latestDate.getTime() - earliestDate.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
+    
+    // Avoid division by zero and ensure minimum 1 day
+    const actualDays = Math.max(daysDiff, 1);
+    
+    return Math.round((totalMessages / actualDays) * 10) / 10; // Round to 1 decimal place
+  };
+  
+  const averagePerDay = calculateAveragePerDay();
   const mostUrgent = urgencyStats.urgent || 0;
   const newCases = caseStageStats.nouveauDossier || 0;
 
@@ -187,7 +215,7 @@ export function Statistics({ records }: StatisticsProps) {
         <MetricCard
           title="Moyenne/jour"
           value={averagePerDay}
-          subtitle="Messages par jour"
+          subtitle="Sur la période analysée"
           icon={Clock}
           color="bg-now-green"
         />
