@@ -55,6 +55,7 @@ export interface Voicemail {
   duration_seconds?: number
   received_at: string
   audio_file_url?: string
+  audio_url?: string
   transcription?: string
   ai_summary?: string
   original_language: string

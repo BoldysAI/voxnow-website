@@ -83,7 +83,8 @@ CREATE TABLE voicemails (
     received_at TIMESTAMP WITH TIME ZONE NOT NULL,
     
     -- Content
-    audio_file_url TEXT,
+    audio_file_url TEXT, -- Download URL for audio file
+    audio_url TEXT, -- Web player URL for inline audio playback
     transcription TEXT,
     ai_summary TEXT,
     original_language CHAR(2) DEFAULT 'fr',
@@ -393,6 +394,8 @@ erDiagram
         text ai_summary
         string status
         boolean is_read
+        text audio_file_url
+        text audio_url
         timestamp created_at
         timestamp updated_at
     }
@@ -480,5 +483,25 @@ const { data: { publicUrl } } = supabase.storage
   .from('audio-files')
   .getPublicUrl(`voicemails/${voicemailId}.mp3`);
 ```
+
+## Audio URL Fields Explanation
+
+### audio_file_url vs audio_url
+
+The voicemails table contains two different URL fields for audio files:
+
+- **`audio_file_url`**: Direct download URL for the audio file
+  - Used for downloading the file to the user's device
+  - Typically points to a storage service (S3, Firebase Storage, etc.)
+  - File format is usually MP3 or WAV
+  - May have CORS restrictions that prevent direct browser playback
+
+- **`audio_url`**: Web player URL for inline audio playback
+  - Used for playing audio directly in the browser
+  - Designed to work with HTML5 audio elements
+  - Optimized for streaming and web playback
+  - Should not have CORS restrictions
+
+**Implementation Note**: The frontend uses `audio_url` for the play button (inline playback) and `audio_file_url` for the download button. This separation allows for better user experience and resolves CORS issues that can occur when trying to play download URLs directly in the browser.
 
 This simplified schema focuses on your core needs while providing a clear path for future enhancements when you're ready to implement billing and other features.

@@ -20,11 +20,13 @@ import {
   BarChart3,
   Play,
   Download,
+  Pause,
+  Loader2,
+  ExternalLink,
   CheckCircle,
   Circle,
   TrendingUp,
   Timer,
-  Volume2,
   AlertTriangle,
   Monitor,
   Scale as ScaleIcon,
@@ -74,6 +76,12 @@ export function Dashboard() {
   const [quickTodayFilter, setQuickTodayFilter] = useState(false);
   const [quickUrgentFilter, setQuickUrgentFilter] = useState(false);
   const [quickUnreadFilter, setQuickUnreadFilter] = useState(false);
+  
+  // Audio player state
+  const [currentlyPlaying, setCurrentlyPlaying] = useState<string | null>(null);
+  const [audioLoading, setAudioLoading] = useState<string | null>(null);
+  const [audioElements, setAudioElements] = useState<Map<string, HTMLAudioElement>>(new Map());
+  const [audioSupportCache, setAudioSupportCache] = useState<Map<string, boolean>>(new Map());
   
   const navigate = useNavigate();
 
@@ -273,6 +281,20 @@ export function Dashboard() {
   }, [voicemails, searchTerm, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter, quickTodayFilter, quickUrgentFilter, quickUnreadFilter]);
 
 
+  // Cleanup audio elements when component unmounts
+  useEffect(() => {
+    return () => {
+      // Pause and cleanup all audio elements
+      audioElements.forEach(audio => {
+        audio.pause();
+        audio.src = '';
+      });
+      setCurrentlyPlaying(null);
+      setAudioLoading(null);
+      setAudioSupportCache(new Map());
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Check localStorage on component mount
   useEffect(() => {
     const dismissed = localStorage.getItem('voxnow_mobile_warning_dismissed');
@@ -405,9 +427,165 @@ export function Dashboard() {
   };
 
 
-  const playAudio = (audioUrl?: string) => {
+  const downloadAudio = (audioUrl?: string, voicemailId?: string) => {
     if (audioUrl) {
-      window.open(audioUrl, '_blank');
+      const link = document.createElement('a');
+      link.href = audioUrl;
+      link.download = `voicemail_${voicemailId || 'audio'}.mp3`;
+      link.click();
+    }
+  };
+
+  const openAudioInNewTab = (audioUrl: string, showMessage = true) => {
+    window.open(audioUrl, '_blank');
+    if (showMessage) {
+      // Use a more subtle notification instead of alert
+      console.info('Audio ouvert dans un nouvel onglet car la lecture directe n\'est pas disponible');
+    }
+  };
+
+  const checkAudioSupport = async (audioUrl: string): Promise<boolean> => {
+    // Check cache first
+    if (audioSupportCache.has(audioUrl)) {
+      return audioSupportCache.get(audioUrl)!;
+    }
+
+    try {
+      // Try to fetch the audio file to check accessibility
+      const response = await fetch(audioUrl, { method: 'HEAD' });
+      const canPlay = response.ok;
+      
+      if (canPlay) {
+        // Check content type
+        const contentType = response.headers.get('content-type');
+        const supportedTypes = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/ogg', 'audio/webm'];
+        
+        if (contentType && !supportedTypes.some(type => contentType.includes(type))) {
+          console.warn('Audio format may not be supported:', contentType);
+        }
+      }
+      
+      // Cache the result
+      const newCache = new Map(audioSupportCache);
+      newCache.set(audioUrl, canPlay);
+      setAudioSupportCache(newCache);
+      
+      return canPlay;
+    } catch (error) {
+      console.warn('Cannot access audio file directly:', error);
+      
+      // Cache negative result
+      const newCache = new Map(audioSupportCache);
+      newCache.set(audioUrl, false);
+      setAudioSupportCache(newCache);
+      
+      return false;
+    }
+  };
+
+  const toggleAudioPlayback = async (audioUrl?: string, voicemailId?: string) => {
+    if (!audioUrl || !voicemailId) return;
+
+    // If this audio is currently playing, pause it
+    if (currentlyPlaying === voicemailId) {
+      const currentAudio = audioElements.get(voicemailId);
+      if (currentAudio) {
+        currentAudio.pause();
+        setCurrentlyPlaying(null);
+      }
+      return;
+    }
+
+    // Stop any currently playing audio
+    if (currentlyPlaying) {
+      const currentAudio = audioElements.get(currentlyPlaying);
+      if (currentAudio) {
+        currentAudio.pause();
+      }
+    }
+
+    setAudioLoading(voicemailId);
+
+    // First, quickly check if we can access the audio file
+    const canPlayDirect = await checkAudioSupport(audioUrl);
+    
+    if (!canPlayDirect) {
+      setAudioLoading(null);
+      openAudioInNewTab(audioUrl, false);
+      return;
+    }
+
+    // Create new audio element if it doesn't exist
+    let audio = audioElements.get(voicemailId);
+    if (!audio) {
+      audio = new Audio();
+      
+      // Set up event listeners
+      audio.addEventListener('ended', () => {
+        setCurrentlyPlaying(null);
+        setAudioLoading(null);
+      });
+      
+      audio.addEventListener('error', (e) => {
+        console.error('Direct audio playback failed, falling back to new tab:', e);
+        setCurrentlyPlaying(null);
+        setAudioLoading(null);
+        openAudioInNewTab(audioUrl, false);
+      });
+
+      audio.addEventListener('loadstart', () => {
+        console.log('Audio loading started for:', audioUrl);
+      });
+
+      audio.addEventListener('canplaythrough', () => {
+        console.log('Audio can play through:', audioUrl);
+        setAudioLoading(null);
+      });
+
+      audio.addEventListener('loadeddata', () => {
+        setAudioLoading(null);
+      });
+      
+      const newAudioElements = new Map(audioElements);
+      newAudioElements.set(voicemailId, audio);
+      setAudioElements(newAudioElements);
+    }
+
+    // Set the source and try to load
+    try {
+      audio.src = audioUrl;
+      audio.load(); // Explicitly load the audio
+      
+      // Set a timeout for loading
+      const loadTimeout = setTimeout(() => {
+        if (audioLoading === voicemailId) {
+          setAudioLoading(null);
+          setCurrentlyPlaying(null);
+          openAudioInNewTab(audioUrl, false);
+        }
+      }, 5000); // 5 second timeout
+      
+      // Attempt to play
+      const playPromise = audio.play();
+      
+      if (playPromise !== undefined) {
+        playPromise.then(() => {
+          clearTimeout(loadTimeout);
+          setCurrentlyPlaying(voicemailId);
+          setAudioLoading(null);
+        }).catch((error) => {
+          clearTimeout(loadTimeout);
+          console.error('Play promise rejected:', error);
+          setCurrentlyPlaying(null);
+          setAudioLoading(null);
+          openAudioInNewTab(audioUrl, false);
+        });
+      }
+    } catch (error) {
+      console.error('Error setting up audio playback:', error);
+      setCurrentlyPlaying(null);
+      setAudioLoading(null);
+      openAudioInNewTab(audioUrl, false);
     }
   };
 
@@ -1085,7 +1263,7 @@ export function Dashboard() {
                             <SortIcon field="duration_seconds" />
                           </button>
                         </th>
-                        <th className="px-6 py-4 text-left w-16">
+                        <th className="px-6 py-4 text-left w-24">
                           <span className="text-sm font-medium text-gray-700">Audio</span>
                         </th>
                       </tr>
@@ -1184,14 +1362,42 @@ export function Dashboard() {
                               </div>
                             </td>
                             <td className="px-6 py-4">
-                              {voicemail.audio_file_url ? (
-                                <button
-                                  onClick={() => playAudio(voicemail.audio_file_url)}
-                                  className="p-2 text-vox-blue hover:bg-vox-blue/10 rounded-lg transition-colors"
-                                  title="Écouter le message vocal"
-                                >
-                                  <Volume2 className="h-5 w-5" />
-                                </button>
+                              {(voicemail.audio_url || voicemail.audio_file_url) ? (
+                                <div className="flex space-x-2">
+                                  {voicemail.audio_url && (
+                                    <button
+                                      onClick={() => toggleAudioPlayback(voicemail.audio_url, voicemail.id)}
+                                      className="p-2 text-vox-blue hover:bg-vox-blue/10 rounded-lg transition-colors relative"
+                                      title={
+                                        audioLoading === voicemail.id ? "Chargement..." :
+                                        currentlyPlaying === voicemail.id ? "Arrêter la lecture" : 
+                                        audioSupportCache.get(voicemail.audio_url || '') === false ? "Ouvrir dans un nouvel onglet" :
+                                        "Écouter le message"
+                                      }
+                                      disabled={audioLoading === voicemail.id}
+                                    >
+                                      {audioLoading === voicemail.id ? (
+                                        <Loader2 className="h-5 w-5 animate-spin" />
+                                      ) : currentlyPlaying === voicemail.id ? (
+                                        <Pause className="h-5 w-5" />
+                                      ) : (
+                                        <Play className="h-5 w-5" />
+                                      )}
+                                      {voicemail.audio_url && audioSupportCache.get(voicemail.audio_url) === false && (
+                                        <ExternalLink className="h-2 w-2 absolute -top-0.5 -right-0.5 text-gray-400" />
+                                      )}
+                                    </button>
+                                  )}
+                                  {voicemail.audio_file_url && (
+                                    <button
+                                      onClick={() => downloadAudio(voicemail.audio_file_url, voicemail.id)}
+                                      className="p-2 text-now-green hover:bg-now-green/10 rounded-lg transition-colors"
+                                      title="Télécharger l'audio"
+                                    >
+                                      <Download className="h-5 w-5" />
+                                    </button>
+                                  )}
+                                </div>
                               ) : (
                                 <span className="text-gray-400 text-sm">-</span>
                               )}
@@ -1318,16 +1524,52 @@ export function Dashboard() {
                                       </div>
                                     </div>
                                     
-                                    {voicemail.audio_file_url && (
+                                    {(voicemail.audio_url || voicemail.audio_file_url) && (
                                       <div className="bg-white rounded-lg p-4 border border-gray-200">
                                         <h4 className="font-semibold text-gray-900 mb-2">Audio</h4>
-                                        <button
-                                          onClick={() => playAudio(voicemail.audio_file_url)}
-                                          className="flex items-center px-4 py-2 bg-vox-blue text-white rounded-lg hover:bg-opacity-90 transition-colors"
-                                        >
-                                          <Play className="h-4 w-4 mr-2" />
-                                          Écouter l'enregistrement
-                                        </button>
+                                        <div className="flex space-x-3">
+                                          {voicemail.audio_url && (
+                                            <button
+                                              onClick={() => toggleAudioPlayback(voicemail.audio_url, voicemail.id)}
+                                              className="flex items-center px-4 py-2 bg-vox-blue text-white rounded-lg hover:bg-opacity-90 transition-colors disabled:opacity-50 relative"
+                                              disabled={audioLoading === voicemail.id}
+                                              title={
+                                                audioSupportCache.get(voicemail.audio_url || '') === false ? 
+                                                "Ouvrira dans un nouvel onglet" : undefined
+                                              }
+                                            >
+                                              {audioLoading === voicemail.id ? (
+                                                <>
+                                                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                                  Chargement...
+                                                </>
+                                              ) : currentlyPlaying === voicemail.id ? (
+                                                <>
+                                                  <Pause className="h-4 w-4 mr-2" />
+                                                  Arrêter la lecture
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <Play className="h-4 w-4 mr-2" />
+                                                  {audioSupportCache.get(voicemail.audio_url || '') === false ? 
+                                                    "Ouvrir l'audio" : "Écouter l'enregistrement"}
+                                                  {audioSupportCache.get(voicemail.audio_url || '') === false && (
+                                                    <ExternalLink className="h-3 w-3 ml-1" />
+                                                  )}
+                                                </>
+                                              )}
+                                            </button>
+                                          )}
+                                          {voicemail.audio_file_url && (
+                                            <button
+                                              onClick={() => downloadAudio(voicemail.audio_file_url, voicemail.id)}
+                                              className="flex items-center px-4 py-2 bg-now-green text-white rounded-lg hover:bg-opacity-90 transition-colors"
+                                            >
+                                              <Download className="h-4 w-4 mr-2" />
+                                              Télécharger
+                                            </button>
+                                          )}
+                                        </div>
                                       </div>
                                     )}
                                   </div>
