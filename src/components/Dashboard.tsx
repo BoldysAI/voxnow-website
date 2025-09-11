@@ -44,9 +44,24 @@ type CaseStageFilter = 'all' | 'Dossier En Cours' | 'Nouveau Dossier';
 type RequestCategoryFilter = 'all' | 'Conseil Juridique Requis' | 'Demande De Paiement' | 'Document À Fournir' | 'Document À Recevoir';
 type FieldOfLawFilter = 'all' | 'Droit Administratif Et Public' | 'Indéterminé' | 'Droit Pénal';
 
-export function Dashboard() {
-  // Auth and data hooks
-  const { user, loading: authLoading, signOut, isAuthenticated } = useAuth();
+interface DashboardProps {
+  demoMode?: boolean;
+}
+
+export function Dashboard({ demoMode = false }: DashboardProps) {
+  // Demo user data
+  const demoUser = {
+    id: '8647524b-c248-4bfc-9ea2-aaef11e36e85', // This should match the ID we created in the database
+    email: 'demo@voxnow.be',
+    full_name: 'Cabinet d\'Avocat Démo',
+    demo_user: true
+  };
+
+  // Auth and data hooks - use demo data when in demo mode
+  const { user: authUser, loading: authLoading, signOut: authSignOut, isAuthenticated } = useAuth();
+  const user = demoMode ? demoUser : authUser;
+  const signOut = demoMode ? () => navigate('/') : authSignOut;
+  
   const { voicemails, loading: voicemailsLoading, error, fetchVoicemails, updateVoicemailStatus } = useVoicemails(user?.id);
   
   // UI state
@@ -85,8 +100,11 @@ export function Dashboard() {
   
   const navigate = useNavigate();
 
-  // Anti-loop redirect to auth - only redirect when definitely not authenticated
+  // Anti-loop redirect to auth - only redirect when definitely not authenticated (skip in demo mode)
   useEffect(() => {
+    // Skip auth redirect in demo mode
+    if (demoMode) return;
+    
     // Only redirect if we're absolutely sure user is not authenticated
     // AND we've waited long enough to avoid redirect loops
     if (!authLoading && !isAuthenticated && user === null) {
@@ -105,7 +123,7 @@ export function Dashboard() {
 
       return () => clearTimeout(redirectTimer);
     }
-  }, [authLoading, isAuthenticated, user, navigate]);
+  }, [authLoading, isAuthenticated, user, navigate, demoMode]);
 
   // Check if user is on mobile and show warning
   useEffect(() => {
@@ -303,9 +321,6 @@ export function Dashboard() {
     }
   }, []);
 
-  // Loading state
-  const loading = authLoading || voicemailsLoading;
-
   // Show loading while auth is in progress
   if (authLoading || (isAuthenticated && !user)) {
     return (
@@ -320,8 +335,8 @@ export function Dashboard() {
     );
   }
 
-  // Don't render dashboard if not authenticated (redirect useEffect will handle it)
-  if (!isAuthenticated || !user) {
+  // Don't render dashboard if not authenticated (redirect useEffect will handle it) - except in demo mode
+  if (!demoMode && (!isAuthenticated || !user)) {
     return null;
   }
 
@@ -758,6 +773,15 @@ export function Dashboard() {
 
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-100">
+        {/* Demo Banner */}
+        {demoMode && (
+          <div className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white text-center py-2 px-4">
+            <div className="flex items-center justify-center space-x-2">
+              <span className="font-semibold">MODE DÉMONSTRATION</span>
+              <span className="text-sm opacity-90">• Données exemples</span>
+            </div>
+          </div>
+        )}
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -767,7 +791,14 @@ export function Dashboard() {
                 className="h-10"
               />
               <div>
-                <h1 className="text-xl font-bold text-vox-blue">Tableau de bord</h1>
+                <div className="flex items-center space-x-2">
+                  <h1 className="text-xl font-bold text-vox-blue">Tableau de bord</h1>
+                  {demoMode && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
+                      DÉMO
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-gray-600">Gestion des messages vocaux</p>
               </div>
             </div>
@@ -1156,7 +1187,7 @@ export function Dashboard() {
             </div>
             
             {/* Loading State */}
-            {loading && (
+            {(authLoading || voicemailsLoading) && (
               <div className="flex flex-col justify-center items-center py-12 space-y-4">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue"></div>
                 <span className="text-gray-600 font-medium">Chargement des messages vocaux...</span>
@@ -1186,7 +1217,7 @@ export function Dashboard() {
             )}
 
             {/* No Data State */}
-            {!loading && !error && filteredVoicemails.length === 0 && (
+            {!(authLoading || voicemailsLoading) && !error && filteredVoicemails.length === 0 && (
               <div className="text-center py-12 px-4">
                 <div className="bg-gray-50 p-8 rounded-lg max-w-md mx-auto">
                   <MessageSquare className="h-12 w-12 text-gray-400 mx-auto mb-4" />

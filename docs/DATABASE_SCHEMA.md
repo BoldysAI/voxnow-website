@@ -42,6 +42,9 @@ CREATE TABLE users (
     status VARCHAR(20) DEFAULT 'active' 
         CHECK (status IN ('active', 'inactive', 'suspended')),
     
+    -- Demo flag for public demo user
+    demo_user BOOLEAN DEFAULT FALSE,
+    
     -- Timestamps
     last_login TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
@@ -103,6 +106,9 @@ CREATE TABLE voicemails (
     -- Quality Metrics
     transcription_confidence DECIMAL(3,2) CHECK (transcription_confidence BETWEEN 0 AND 1),
     audio_quality_score DECIMAL(3,2) CHECK (audio_quality_score BETWEEN 0 AND 1),
+    
+    -- Demo flag for public demo data
+    demo_data BOOLEAN DEFAULT FALSE,
     
     -- Metadata
     tags TEXT[],

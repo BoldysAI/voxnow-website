@@ -19,7 +19,8 @@ import {
   Users,
   BarChart3,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  Monitor
 } from 'lucide-react';
 import { Auth } from './components/Auth';
 import { FreeTrialForm } from './components/FreeTrialForm';
@@ -162,6 +163,18 @@ function Home() {
                 <Lock className="h-5 w-5 mr-2" />
                 Espace Client
               </Link>
+              <Link
+                to="/demo"
+                className="text-gray-600 hover:text-vox-blue transition-colors duration-300 flex items-center font-medium"
+                onClick={() => trackCustomEvent('DemoButtonClick', { 
+                  content_name: 'Demo Dashboard',
+                  content_category: 'Demo Access',
+                  location: 'Header Navigation'
+                })}
+              >
+                <Monitor className="h-5 w-5 mr-2" />
+                Démo Interactive
+              </Link>
               <button
                 onClick={scrollToCalendly}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full hover:shadow-xl transition-all duration-300 flex items-center group font-semibold"
@@ -212,7 +225,7 @@ function Home() {
               </div>
             </div>
             
-            <div className="flex justify-center mb-8">
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
               <button
                 onClick={() => {
                   console.log('Button clicked - calling handleTrialFormClick');
@@ -221,6 +234,21 @@ function Home() {
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
                 Essai gratuit de 14 jours
+              </button>
+              
+              <button
+                onClick={() => {
+                  trackCustomEvent('DemoButtonClick', {
+                    content_name: 'Demo Dashboard',
+                    content_category: 'Demo Access',
+                    location: 'Hero Section'
+                  });
+                  navigate('/demo');
+                }}
+                className="bg-white border-2 border-vox-blue text-vox-blue px-8 py-3 rounded-full font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center"
+              >
+                <Monitor className="h-5 w-5 mr-2" />
+                Voir le tableau de bord démo
               </button>
             </div>
 
@@ -1292,10 +1320,18 @@ function Home() {
                     Réserver une démo
                   </button>
                   <button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => {
+                      trackCustomEvent('DemoButtonClick', {
+                        content_name: 'Demo Dashboard',
+                        content_category: 'Demo Access',
+                        location: 'Beta Features Section'
+                      });
+                      navigate('/demo');
+                    }}
                     className="bg-white border-2 border-vox-blue text-vox-blue px-8 py-3 rounded-full font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 flex items-center justify-center"
                   >
-                    Découvrir en démo
+                    <Monitor className="h-5 w-5 mr-2" />
+                    Découvrir le tableau de bord
                   </button>
                 </div>
               </div>
@@ -1437,14 +1473,16 @@ function Home() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link
-                  to="/dashboard"
-                  className="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300"
+                  to="/demo"
+                  className="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 flex items-center justify-center"
                   onClick={() => trackCustomEvent('DashboardPreviewClick', {
-                    content_name: 'Dashboard Preview',
-                    content_category: 'Feature Preview'
+                    content_name: 'Demo Dashboard',
+                    content_category: 'Demo Access',
+                    location: 'Pricing Section'
                   })}
                 >
-                  Visiter l'espace démo
+                  <Monitor className="h-4 w-4 mr-2" />
+                  Découvrir le tableau de bord démo
                 </Link>
               </div>
             </div>
@@ -1572,6 +1610,7 @@ function App() {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/conditions-generales" element={<TermsAndConditions />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/demo" element={<Dashboard demoMode={true} />} />
 
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/paiement" element={<PaymentPage />} />

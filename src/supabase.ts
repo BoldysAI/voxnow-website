@@ -43,6 +43,7 @@ export interface User {
   phone?: string | null
   status?: string | null
   last_login?: string | null
+  demo_user?: boolean
   created_at: string
   updated_at?: string | null
 }
@@ -66,6 +67,7 @@ export interface Voicemail {
   read_at?: string | null
   transcription_confidence?: number
   audio_quality_score?: number
+  demo_data?: boolean
   tags?: string[]
   notes?: string
   metadata: Record<string, any>
