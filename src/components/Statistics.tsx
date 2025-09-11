@@ -1,148 +1,115 @@
 
 import { TrendingUp, Users, Clock, AlertTriangle, Scale, FileText, Brain, BarChart3 } from 'lucide-react';
-
-interface AirtableRecord {
-  id: string;
-  fields: {
-    [key: string]: any;
-  };
-}
+import { VoicemailWithAnalysis, getAnalysisByType } from '../hooks/useSupabase';
 
 interface StatisticsProps {
-  records: AirtableRecord[];
+  records: VoicemailWithAnalysis[];
 }
 
-// Utility function to normalize analysis values (handle objects and strings)
-const normalizeAnalysisValue = (value: any): string => {
-  if (!value) return '';
-  if (typeof value === 'object' && value.value) {
-    return value.value.replace(/-/g, ' ');
-  }
-  if (typeof value === 'string') {
-    return value.replace(/-/g, ' ');
-  }
-  return '';
-};
+// No normalization needed - use exact database values
 
 // Calculation functions for each analysis type
-const calculateSentimentStats = (records: AirtableRecord[]) => {
+const calculateSentimentStats = (records: VoicemailWithAnalysis[]) => {
   const sentiments = records.map(record => 
-    normalizeAnalysisValue(record.fields['Sentiment Analysis'])
+    getAnalysisByType(record, 'Sentiment')
   ).filter(Boolean);
 
   const total = sentiments.length;
-  if (total === 0) return { neutral: 0, negative: 0, total: 0 };
+  if (total === 0) return { neutre: 0, negatif: 0, positif: 0, total: 0 };
 
-  const neutral = sentiments.filter(s => s.toLowerCase() === 'neutral').length;
-  const negative = sentiments.filter(s => s.toLowerCase() === 'negative').length;
+  const neutre = sentiments.filter(s => s === 'Neutre').length;
+  const negatif = sentiments.filter(s => s === 'Négatif').length;
+  const positif = sentiments.filter(s => s === 'Positif').length;
 
   return {
-    neutral: Math.round((neutral / total) * 100),
-    negative: Math.round((negative / total) * 100),
+    neutre: Math.round((neutre / total) * 100),
+    negatif: Math.round((negatif / total) * 100),
+    positif: Math.round((positif / total) * 100),
     total
   };
 };
 
-const calculateUrgencyStats = (records: AirtableRecord[]) => {
+const calculateUrgencyStats = (records: VoicemailWithAnalysis[]) => {
   const urgencies = records.map(record => 
-    normalizeAnalysisValue(record.fields['Urgence Analysis'])
+    getAnalysisByType(record, 'Urgence')
   ).filter(Boolean);
 
   const total = urgencies.length;
-  if (total === 0) return { notUrgent: 0, urgent: 0, moderate: 0, total: 0 };
+  if (total === 0) return { nonUrgent: 0, urgent: 0, modere: 0, total: 0 };
 
-  const notUrgent = urgencies.filter(u => u.toLowerCase() === 'not urgent').length;
-  const urgent = urgencies.filter(u => u.toLowerCase() === 'urgent').length;
-  const moderate = urgencies.filter(u => u.toLowerCase() === 'moderate').length;
+  const nonUrgent = urgencies.filter(u => u === 'Non Urgent').length;
+  const urgent = urgencies.filter(u => u === 'Urgent').length;
+  const modere = urgencies.filter(u => u === 'Modéré').length;
 
   return {
-    notUrgent: Math.round((notUrgent / total) * 100),
+    nonUrgent: Math.round((nonUrgent / total) * 100),
     urgent: Math.round((urgent / total) * 100),
-    moderate: Math.round((moderate / total) * 100),
+    modere: Math.round((modere / total) * 100),
     total
   };
 };
 
-const calculateCaseStageStats = (records: AirtableRecord[]) => {
+const calculateCaseStageStats = (records: VoicemailWithAnalysis[]) => {
   const stages = records.map(record => 
-    normalizeAnalysisValue(record.fields['Case Stage Analysis'])
+    getAnalysisByType(record, 'Étape du dossier')
   ).filter(Boolean);
 
   const total = stages.length;
-  if (total === 0) return { ongoing: 0, newCase: 0, total: 0 };
+  if (total === 0) return { dossierEnCours: 0, nouveauDossier: 0, total: 0 };
 
-  const ongoing = stages.filter(s => s.toLowerCase() === 'ongoing case').length;
-  const newCase = stages.filter(s => s.toLowerCase() === 'new case').length;
+  const dossierEnCours = stages.filter(s => s === 'Dossier En Cours').length;
+  const nouveauDossier = stages.filter(s => s === 'Nouveau Dossier').length;
 
   return {
-    ongoing: Math.round((ongoing / total) * 100),
-    newCase: Math.round((newCase / total) * 100),
+    dossierEnCours: Math.round((dossierEnCours / total) * 100),
+    nouveauDossier: Math.round((nouveauDossier / total) * 100),
     total
   };
 };
 
-const calculateRequestCategoryStats = (records: AirtableRecord[]) => {
+const calculateRequestCategoryStats = (records: VoicemailWithAnalysis[]) => {
   const categories = records.map(record => 
-    normalizeAnalysisValue(record.fields['Request category Analysis'])
+    getAnalysisByType(record, 'Catégorie')
   ).filter(Boolean);
 
   const total = categories.length;
   if (total === 0) return { total: 0 };
 
   const categoryList = [
-    'Legal advice needed',
-    'Case update requested', 
-    'Payment inquiry',
-    'Document to provide',
-    'Document to receive',
-    'Meeting requested',
-    'Urgent action required',
-    'Ongoing case'
+    'Conseil Juridique Requis',
+    'Demande De Paiement',
+    'Document À Fournir',
+    'Document À Recevoir'
   ];
 
   const stats: { [key: string]: number } = {};
   
   categoryList.forEach(category => {
-    const count = categories.filter(c => c.toLowerCase() === category.toLowerCase()).length;
+    const count = categories.filter(c => c === category).length;
     stats[category] = Math.round((count / total) * 100);
   });
 
   return { ...stats, total };
 };
 
-const calculateFieldOfLawStats = (records: AirtableRecord[]) => {
+const calculateFieldOfLawStats = (records: VoicemailWithAnalysis[]) => {
   const fields = records.map(record => 
-    normalizeAnalysisValue(record.fields['Field of law Analysis'])
+    getAnalysisByType(record, 'Domaine juridique')
   ).filter(Boolean);
 
   const total = fields.length;
   if (total === 0) return { total: 0 };
 
   const fieldList = [
-    'Contract law',
-    'Family law',
-    'Employment law',
-    'Civil law',
-    'Administrative and public law',
-    'Undetermined.',
-    'Criminal law',
-    'Business and commercial law',
-    'Consumer law',
-    'Banking and finance law',
-    'Inheritance and succession law',
-    'Real estate law',
-    'Ongoing case'
+    'Droit Administratif Et Public',
+    'Indéterminé',
+    'Droit Pénal'
   ];
 
   const stats: { [key: string]: number } = {};
   
   fieldList.forEach(field => {
-    const count = fields.filter(f => {
-      const normalized = f.toLowerCase();
-      const fieldNormalized = field.toLowerCase();
-      return normalized === fieldNormalized || 
-             (field === 'Undetermined.' && normalized === 'undetermined.');
-    }).length;
+    const count = fields.filter(f => f === field).length;
     stats[field] = Math.round((count / total) * 100);
   });
 
@@ -202,9 +169,37 @@ export function Statistics({ records }: StatisticsProps) {
 
   // Calculate general metrics
   const totalMessages = safeRecords.length;
-  const averagePerDay = totalMessages > 0 ? Math.round(totalMessages / 30) : 0; // Assuming 30 days
+  
+  // Calculate real average per day based on actual date range
+  const calculateAveragePerDay = () => {
+    if (totalMessages === 0) return 0;
+    
+    // Get all valid received_at dates
+    const dates = safeRecords
+      .map(record => record.received_at)
+      .filter(Boolean)
+      .map(dateStr => new Date(dateStr))
+      .filter(date => !isNaN(date.getTime()));
+    
+    if (dates.length === 0) return 0;
+    
+    // Find earliest and latest dates
+    const earliestDate = new Date(Math.min(...dates.map(d => d.getTime())));
+    const latestDate = new Date(Math.max(...dates.map(d => d.getTime())));
+    
+    // Calculate difference in days
+    const timeDiff = latestDate.getTime() - earliestDate.getTime();
+    const daysDiff = Math.ceil(timeDiff / (1000 * 3600 * 24)) + 1; // +1 to include both start and end days
+    
+    // Avoid division by zero and ensure minimum 1 day
+    const actualDays = Math.max(daysDiff, 1);
+    
+    return Math.round((totalMessages / actualDays) * 10) / 10; // Round to 1 decimal place
+  };
+  
+  const averagePerDay = calculateAveragePerDay();
   const mostUrgent = urgencyStats.urgent || 0;
-  const newCases = caseStageStats.newCase || 0;
+  const newCases = caseStageStats.nouveauDossier || 0;
 
   return (
     <div className="space-y-8">
@@ -220,7 +215,7 @@ export function Statistics({ records }: StatisticsProps) {
         <MetricCard
           title="Moyenne/jour"
           value={averagePerDay}
-          subtitle="Messages par jour"
+          subtitle="Sur la période analysée"
           icon={Clock}
           color="bg-now-green"
         />
@@ -250,14 +245,19 @@ export function Statistics({ records }: StatisticsProps) {
           </div>
           <div className="space-y-4">
             <PercentageBar 
-              label="Neutral" 
-              percentage={sentimentStats.neutral} 
+              label="Neutre" 
+              percentage={sentimentStats.neutre} 
               color="bg-gray-400" 
             />
             <PercentageBar 
-              label="Negative" 
-              percentage={sentimentStats.negative} 
+              label="Négatif" 
+              percentage={sentimentStats.negatif} 
               color="bg-red-500" 
+            />
+            <PercentageBar 
+              label="Positif" 
+              percentage={sentimentStats.positif} 
+              color="bg-green-500" 
             />
           </div>
           <p className="text-sm text-gray-500 mt-4">
@@ -273,13 +273,13 @@ export function Statistics({ records }: StatisticsProps) {
           </div>
           <div className="space-y-4">
             <PercentageBar 
-              label="Not urgent" 
-              percentage={urgencyStats.notUrgent} 
+              label="Non Urgent" 
+              percentage={urgencyStats.nonUrgent} 
               color="bg-green-500" 
             />
             <PercentageBar 
-              label="Moderate" 
-              percentage={urgencyStats.moderate} 
+              label="Modéré" 
+              percentage={urgencyStats.modere} 
               color="bg-yellow-500" 
             />
             <PercentageBar 
@@ -301,13 +301,13 @@ export function Statistics({ records }: StatisticsProps) {
           </div>
           <div className="space-y-4">
             <PercentageBar 
-              label="Ongoing case" 
-              percentage={caseStageStats.ongoing} 
+              label="Dossier En Cours" 
+              percentage={caseStageStats.dossierEnCours} 
               color="bg-blue-500" 
             />
             <PercentageBar 
-              label="New case" 
-              percentage={caseStageStats.newCase} 
+              label="Nouveau Dossier" 
+              percentage={caseStageStats.nouveauDossier} 
               color="bg-green-500" 
             />
           </div>
@@ -391,8 +391,8 @@ export function Statistics({ records }: StatisticsProps) {
           <div className="bg-white rounded-lg p-4 border border-gray-100">
             <p className="text-sm text-gray-600 mb-1">Niveau d'urgence moyen</p>
             <p className="font-bold text-gray-900">
-              {urgencyStats.urgent > 50 ? 'Élevé' : 
-               urgencyStats.moderate > 50 ? 'Modéré' : 'Faible'}
+              {urgencyStats.urgent > 50 ? 'Urgent' : 
+               urgencyStats.modere > 50 ? 'Modéré' : 'Non Urgent'}
             </p>
           </div>
         </div>

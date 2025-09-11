@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { X, Send, Loader2, Calendar } from 'lucide-react';
 import { trackCustomEvent } from '../utils/fbPixel';
-import OpenAI from 'openai';
+import { supabase } from '../supabase';
 
 interface Message {
   id: string;
@@ -10,53 +10,6 @@ interface Message {
   timestamp: Date;
 }
 
-const openai = new OpenAI({
-  apiKey: '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',
-  dangerouslyAllowBrowser: true
-});
-
-const VOXY_SYSTEM_PROMPT = `Tu es Voxy, le chatbot IA de VoxNow, une solution SaaS belge qui automatise la gestion des messages vocaux manqués pour les cabinets d'avocats.
-
-CONTEXTE VOXNOW :
-VoxNow résout le problème des avocats qui ratent des appels importants quand ils sont occupés (audience, réunion, fermé). Ces appels deviennent des messages vocaux qu'ils n'ont pas le temps d'écouter.
-
-SOLUTION VOXNOW :
-
-- Transcription et résumé automatique par IA en quelques secondes
-- Envoi direct par e-mail au cabinet
-- Réponse automatique par SMS au client en fonction de sa demande
-
-FONCTIONNEMENT :
-1. Abonnement mensuel 90€
-2. Enregistrement du message d'accueil sur https://voxnow.be/recording
-3. Réception des codes de déviation à taper sur le téléphone
-4. Redirection automatique et transcription par e-mail
-
-PRIX : 90€/mois TTC, sans engagement, transcriptions illimitées, paiement Stripe, support inclus
-
-CIBLE : Avocats indépendants, cabinets petite/moyenne taille, secrétaires juridiques
-
-TON & STYLE :
-- Toujours en français
-- Chaleureux, professionnel et rassurant
-- Pas trop technique mais clair
-- Réponses TRÈS courtes (maximum 2-3 phrases), sois ultra direct
-- Mets en valeur les bénéfices (gain de temps, réactivité, image pro)
-- IMPÉRATIF : Garde tes réponses courtes, comme un SMS
-
-QUESTIONS FRÉQUENTES :
-- Comment ça fonctionne ? → Redirection + transcription automatique par e-mail
-- Prix ? → 90€/mois TTC sans engagement, tout inclus
-- Compatible ? → Tous téléphones et opérateurs belges
-- Sécurisé ? → Cryptage, serveurs Europe, e-mail privé
-- Installation ? → Non, juste un code de redirection
-- Test ? → Pas d'essai gratuit mais démo personnalisée
-- Plusieurs avocats ? → Une ligne par cabinet ou par avocat
-
-REDIRECTION CTA :
-Après quelques échanges, propose une démo : "Je peux vous proposer une démo personnalisée de VoxNow. Réservez une démo grâce au bouton ci-dessous"
-
-Réponds toujours comme Voxy, de manière utile et engageante !`;
 
 export function Chatbot() {
   const [isOpen, setIsOpen] = useState(false);
@@ -346,23 +299,31 @@ export function Chatbot() {
     });
 
     try {
-      const response = await openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [
-          { role: 'system', content: VOXY_SYSTEM_PROMPT },
-          ...messages.map(msg => ({
-            role: msg.isBot ? 'assistant' as const : 'user' as const,
-            content: msg.text
-          })),
-          { role: 'user', content: userMessage.text }
-        ],
-        max_tokens: 500,
-        temperature: 0.7
+      // Prepare messages for the edge function (system prompt is handled server-side)
+      const chatMessages = [
+        ...messages.map(msg => ({
+          role: msg.isBot ? 'assistant' as const : 'user' as const,
+          content: msg.text
+        })),
+        { role: 'user' as const, content: userMessage.text }
+      ];
+
+      // Call the Supabase edge function
+      const { data, error } = await supabase.functions.invoke('chat-completion', {
+        body: {
+          messages: chatMessages,
+          maxTokens: 500,
+          temperature: 0.7
+        }
       });
+
+      if (error) {
+        throw new Error(error.message || 'Erreur lors de l\'appel de la fonction chat');
+      }
 
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
-        text: response.choices[0]?.message?.content || "Désolé, je n'ai pas pu traiter votre demande. Pouvez-vous reformuler ?",
+        text: data?.content || "Désolé, je n'ai pas pu traiter votre demande. Pouvez-vous reformuler ?",
         isBot: true,
         timestamp: new Date()
       };
@@ -376,7 +337,7 @@ export function Chatbot() {
       });
 
     } catch (error) {
-      console.error('Erreur OpenAI:', error);
+      console.error('Erreur Chat Completion:', error);
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
         text: "Désolé, je rencontre un problème technique. Vous pouvez me reposer votre question ou contacter directement notre équipe à sacha@voxnow.be",

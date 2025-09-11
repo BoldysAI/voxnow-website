@@ -19,7 +19,8 @@ import {
   Users,
   BarChart3,
   TrendingUp,
-  AlertTriangle
+  AlertTriangle,
+  Monitor
 } from 'lucide-react';
 import { Auth } from './components/Auth';
 import { FreeTrialForm } from './components/FreeTrialForm';
@@ -29,6 +30,7 @@ import { SuccessPage } from './components/SuccessPage';
 import { TermsAndConditions } from './components/TermsAndConditions';
 import { trackViewContent, trackCustomEvent } from './utils/fbPixel';
 import { Dashboard } from './components/Dashboard';
+import { Profile } from './components/Profile';
 import { RecordingPage } from './components/RecordingPage';
 import { PaymentPage } from './components/PaymentPage';
 import { OngoingFreeTrialPage } from './components/OngoingFreeTrialPage';
@@ -36,7 +38,7 @@ import { BlogSection } from './components/BlogSection';
 import { BlogList } from './components/BlogList';
 import { BlogPost } from './components/BlogPost';
 import { Chatbot } from './components/Chatbot';
-import { HuezDashboard } from './components/HuezDashboard';
+
 import { BlogArticle1 } from './components/BlogArticle1';
 import { BlogArticle2 } from './components/BlogArticle2';
 import DiscoveryCall from './components/DiscoveryCall';
@@ -1292,10 +1294,18 @@ function Home() {
                     Réserver une démo
                   </button>
                   <button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => {
+                      trackCustomEvent('DemoButtonClick', {
+                        content_name: 'Demo Dashboard',
+                        content_category: 'Demo Access',
+                        location: 'Beta Features Section'
+                      });
+                      navigate('/demo');
+                    }}
                     className="bg-white border-2 border-vox-blue text-vox-blue px-8 py-3 rounded-full font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 flex items-center justify-center"
                   >
-                    Découvrir en démo
+                    <Monitor className="h-5 w-5 mr-2" />
+                    Découvrir le tableau de bord
                   </button>
                 </div>
               </div>
@@ -1435,17 +1445,10 @@ function Home() {
               <p className="text-gray-600 mb-6">
                 Tous les plans incluent 14 jours d'essai gratuit. Aucun engagement, résiliation à tout moment.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/dashboard"
-                  className="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300"
-                  onClick={() => trackCustomEvent('DashboardPreviewClick', {
-                    content_name: 'Dashboard Preview',
-                    content_category: 'Feature Preview'
-                  })}
-                >
-                  Visiter l'espace démo
-                </Link>
+              <div className="text-center">
+                <p className="text-gray-500 text-sm">
+                  Pour plus d'informations sur nos offres, contactez-nous directement.
+                </p>
               </div>
             </div>
           </div>
@@ -1572,7 +1575,9 @@ function App() {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/conditions-generales" element={<TermsAndConditions />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/dashboard-huez" element={<HuezDashboard />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/demo" element={<Dashboard demoMode={true} />} />
+
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/paiement" element={<PaymentPage />} />
         <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />
