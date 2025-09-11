@@ -32,6 +32,7 @@ import { trackViewContent, trackCustomEvent } from './utils/fbPixel';
 import { Dashboard } from './components/Dashboard';
 import { Profile } from './components/Profile';
 import { RecordingPage } from './components/RecordingPage';
+import { GravacaoPage } from './components/GravacaoPage';
 import { PaymentPage } from './components/PaymentPage';
 import { OngoingFreeTrialPage } from './components/OngoingFreeTrialPage';
 import { BlogSection } from './components/BlogSection';
@@ -1579,6 +1580,7 @@ function App() {
         <Route path="/demo" element={<Dashboard demoMode={true} />} />
 
         <Route path="/recording" element={<RecordingPage />} />
+        <Route path="/gravacao" element={<GravacaoPage />} />
         <Route path="/paiement" element={<PaymentPage />} />
         <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />
         <Route path="/blog" element={<BlogList />} />
