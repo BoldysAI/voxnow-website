@@ -281,7 +281,7 @@ export function useAuth() {
     }
   };
 
-  const updatePassword = async (currentPassword: string, newPassword: string) => {
+  const updatePassword = async (newPassword: string) => {
     try {
       // Update password using Supabase Auth
       const { error } = await supabase.auth.updateUser({
