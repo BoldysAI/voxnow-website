@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
-import { ArrowLeft, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, Eye, EyeOff, Monitor } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 export function Auth() {
@@ -199,11 +199,31 @@ export function Auth() {
       <div className="container mx-auto px-4 py-8">
         <button
           onClick={() => navigate('/')}
-          className="text-vox-blue hover:text-now-green transition-colors duration-300 flex items-center mb-8"
+          className="text-vox-blue hover:text-now-green transition-colors duration-300 flex items-center mb-6"
         >
           <ArrowLeft className="h-5 w-5 mr-2" />
           Retour à l'accueil
         </button>
+        
+        {/* Demo Button - Centered and Prominent */}
+        <div className="text-center mb-8">
+          <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-2xl p-6 mb-4 border border-orange-200">
+            <div className="flex items-center justify-center mb-3">
+              <Monitor className="h-8 w-8 text-orange-600 mr-3" />
+              <h3 className="text-xl font-bold text-gray-900">Découvrez VoxNow en action</h3>
+            </div>
+            <p className="text-gray-600 mb-4">
+              Explorez toutes les fonctionnalités du tableau de bord avec des données de démonstration
+            </p>
+            <button
+              onClick={() => navigate('/demo')}
+              className="bg-gradient-to-r from-orange-500 to-yellow-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center mx-auto"
+            >
+              <Monitor className="h-6 w-6 mr-3" />
+              Accéder à la démo interactive
+            </button>
+          </div>
+        </div>
         
         <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 sm:p-8">
           <h2 className="text-3xl font-bold mb-6 gradient-text">

@@ -163,18 +163,6 @@ function Home() {
                 <Lock className="h-5 w-5 mr-2" />
                 Espace Client
               </Link>
-              <Link
-                to="/demo"
-                className="text-gray-600 hover:text-vox-blue transition-colors duration-300 flex items-center font-medium"
-                onClick={() => trackCustomEvent('DemoButtonClick', { 
-                  content_name: 'Demo Dashboard',
-                  content_category: 'Demo Access',
-                  location: 'Header Navigation'
-                })}
-              >
-                <Monitor className="h-5 w-5 mr-2" />
-                Démo Interactive
-              </Link>
               <button
                 onClick={scrollToCalendly}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full hover:shadow-xl transition-all duration-300 flex items-center group font-semibold"
@@ -225,7 +213,7 @@ function Home() {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
+            <div className="flex justify-center mb-8">
               <button
                 onClick={() => {
                   console.log('Button clicked - calling handleTrialFormClick');
@@ -234,21 +222,6 @@ function Home() {
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
                 Essai gratuit de 14 jours
-              </button>
-              
-              <button
-                onClick={() => {
-                  trackCustomEvent('DemoButtonClick', {
-                    content_name: 'Demo Dashboard',
-                    content_category: 'Demo Access',
-                    location: 'Hero Section'
-                  });
-                  navigate('/demo');
-                }}
-                className="bg-white border-2 border-vox-blue text-vox-blue px-8 py-3 rounded-full font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center"
-              >
-                <Monitor className="h-5 w-5 mr-2" />
-                Voir le tableau de bord démo
               </button>
             </div>
 
@@ -1471,19 +1444,10 @@ function Home() {
               <p className="text-gray-600 mb-6">
                 Tous les plans incluent 14 jours d'essai gratuit. Aucun engagement, résiliation à tout moment.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link
-                  to="/demo"
-                  className="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 flex items-center justify-center"
-                  onClick={() => trackCustomEvent('DashboardPreviewClick', {
-                    content_name: 'Demo Dashboard',
-                    content_category: 'Demo Access',
-                    location: 'Pricing Section'
-                  })}
-                >
-                  <Monitor className="h-4 w-4 mr-2" />
-                  Découvrir le tableau de bord démo
-                </Link>
+              <div className="text-center">
+                <p className="text-gray-500 text-sm">
+                  Pour plus d'informations sur nos offres, contactez-nous directement.
+                </p>
               </div>
             </div>
           </div>
