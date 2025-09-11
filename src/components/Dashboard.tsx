@@ -810,14 +810,16 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
                 <p className="text-xs text-gray-500">{user?.email || 'Connecté'}</p>
               </div>
               
-              <button
-                onClick={() => navigate('/profile')}
-                className="flex items-center px-4 py-2 text-gray-600 hover:text-vox-blue transition-colors"
-                title="Mon profil"
-              >
-                <User className="h-5 w-5 mr-2" />
-                Profil
-              </button>
+              {!demoMode && (
+                <button
+                  onClick={() => navigate('/profile')}
+                  className="flex items-center px-4 py-2 text-gray-600 hover:text-vox-blue transition-colors"
+                  title="Mon profil"
+                >
+                  <User className="h-5 w-5 mr-2" />
+                  Profil
+                </button>
+              )}
               
               <button
                 onClick={handleSignOut}
