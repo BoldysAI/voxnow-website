@@ -471,7 +471,7 @@ export function Auth() {
           )}
           
           <div className="mt-6 text-center text-gray-600 text-sm">
-            <p>Email: sacha@voxnow.be | Tél: +32 493 69 08 20</p>
+            <p>Si vous rencontrez des difficultés, merci de nous contacter : Email: sacha@voxnow.be | Tél: +32 493 69 08 20</p>
           </div>
         </div>
       </div>
