@@ -116,7 +116,7 @@ export function Profile() {
     setMessage(null);
 
     try {
-      await updatePassword(passwordData.currentPassword, passwordData.newPassword);
+      await updatePassword(passwordData.newPassword);
       setMessage({ type: 'success', text: 'Mot de passe modifié avec succès' });
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
