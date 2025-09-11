@@ -30,6 +30,7 @@ import { SuccessPage } from './components/SuccessPage';
 import { TermsAndConditions } from './components/TermsAndConditions';
 import { trackViewContent, trackCustomEvent } from './utils/fbPixel';
 import { Dashboard } from './components/Dashboard';
+import { Profile } from './components/Profile';
 import { RecordingPage } from './components/RecordingPage';
 import { PaymentPage } from './components/PaymentPage';
 import { OngoingFreeTrialPage } from './components/OngoingFreeTrialPage';
@@ -1574,6 +1575,7 @@ function App() {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/conditions-generales" element={<TermsAndConditions />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/demo" element={<Dashboard demoMode={true} />} />
 
         <Route path="/recording" element={<RecordingPage />} />

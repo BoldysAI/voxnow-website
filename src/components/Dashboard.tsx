@@ -30,7 +30,8 @@ import {
   AlertTriangle,
   Monitor,
   Scale as ScaleIcon,
-  X
+  X,
+  User
 } from 'lucide-react';
 
 type SortField = 'id' | 'received_at' | 'caller_phone_number' | 'duration_seconds';
@@ -808,9 +809,19 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
                 <p className="text-sm font-medium text-gray-900">{user?.full_name || user?.email || 'Utilisateur'}</p>
                 <p className="text-xs text-gray-500">{user?.email || 'Connecté'}</p>
               </div>
+              
+              <button
+                onClick={() => navigate('/profile')}
+                className="flex items-center px-4 py-2 text-gray-600 hover:text-vox-blue transition-colors"
+                title="Mon profil"
+              >
+                <User className="h-5 w-5 mr-2" />
+                Profil
+              </button>
+              
               <button
                 onClick={handleSignOut}
-                className="flex items-center px-4 py-2 text-gray-600 hover:text-vox-blue transition-colors"
+                className="flex items-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
               >
                 <LogOut className="h-5 w-5 mr-2" />
                 Déconnexion

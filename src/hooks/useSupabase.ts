@@ -243,7 +243,61 @@ export function useAuth() {
     }
   };
 
-  return { user, loading, signOut, isAuthenticated };
+  const updateUserProfile = async (profileData: { full_name: string; phone?: string }) => {
+    if (!user) throw new Error('Utilisateur non connecté');
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          full_name: profileData.full_name,
+          phone: profileData.phone || null,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', user.id);
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      // Update cached user
+      if (cachedUser) {
+        cachedUser.full_name = profileData.full_name;
+        cachedUser.phone = profileData.phone || null;
+        cachedUser.updated_at = new Date().toISOString();
+      }
+
+      // Update local state
+      setUser(prev => prev ? {
+        ...prev,
+        full_name: profileData.full_name,
+        phone: profileData.phone || null,
+        updated_at: new Date().toISOString()
+      } : null);
+
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      throw error;
+    }
+  };
+
+  const updatePassword = async (currentPassword: string, newPassword: string) => {
+    try {
+      // Update password using Supabase Auth
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    } catch (error) {
+      console.error('Error updating password:', error);
+      throw error;
+    }
+  };
+
+  return { user, loading, signOut, isAuthenticated, updateUserProfile, updatePassword };
 }
 
 // Hook to get voicemails with analysis
