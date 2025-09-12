@@ -80,6 +80,7 @@ export function Auth() {
                 id: data.user.id,
                 email: data.user.email!,
                 full_name: data.user.user_metadata?.full_name || data.user.email!.split('@')[0],
+                last_login: new Date().toISOString(),
                 created_at: new Date().toISOString(),
                 updated_at: new Date().toISOString()
               });
@@ -90,6 +91,23 @@ export function Auth() {
               return;
             } else {
               console.log('User profile created successfully');
+            }
+          } else {
+            // User exists, update last_login timestamp
+            console.log('User profile found, updating last_login...');
+            const { error: updateError } = await supabase
+              .from('users')
+              .update({
+                last_login: new Date().toISOString(),
+                updated_at: new Date().toISOString()
+              })
+              .eq('id', data.user.id);
+
+            if (updateError) {
+              console.error('Error updating last_login:', updateError);
+              // Don't fail the login for this, just log the error
+            } else {
+              console.log('Last login timestamp updated successfully');
             }
           }
         } catch (err) {
