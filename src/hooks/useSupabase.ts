@@ -39,6 +39,22 @@ export function useAuth() {
       }
 
       console.log('✅ User profile fetched successfully');
+      
+      // Update last_login timestamp for this user
+      try {
+        await supabase
+          .from('users')
+          .update({
+            last_login: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', authUserId);
+        console.log('✅ Last login timestamp updated');
+      } catch (updateError) {
+        console.warn('⚠️ Failed to update last_login timestamp:', updateError);
+        // Don't fail the profile fetch for this
+      }
+      
       return data;
     } catch (error) {
       console.warn('⚠️ Profile fetch failed, creating minimal user from auth:', error);
