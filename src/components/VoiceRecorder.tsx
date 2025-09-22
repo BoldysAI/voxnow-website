@@ -383,9 +383,11 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
             <p className="text-sm text-gray-500 mb-2">Exemple de message vocal pour vos clients :</p>
             <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
               <p className="text-gray-700 leading-relaxed italic">
-                "Bonjour, ici Maître Delcourt. Veuillez m'expliquer la raison de votre appel, 
-                ainsi que votre nom. Votre message me sera transcrit, résumé et envoyé automatiquement 
-                par e-mail, grâce à VoxNow.be."
+                "Bonjour, vous êtes bien au cabinet [Nom].<br/><br/>
+                Le seul moyen de nous joindre après un appel manqué est de nous laisser un message vocal.<br/><br/>
+                Sans message, nous ne pourrons pas vous recontacter.<br/><br/>
+                Merci d'indiquer clairement l'objet de votre appel ainsi que de nous fournir une explication détaillée.<br/><br/>
+                Parlez après le BIP."
               </p>
             </div>
           </div>
