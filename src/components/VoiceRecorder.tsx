@@ -395,12 +395,24 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
       </div>
 
       {/* UX Tip */}
-      <div className="bg-blue-50 rounded-xl p-4 mb-8 border border-blue-200">
+      <div className="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-200">
         <div className="flex items-start space-x-3">
           <span className="text-blue-600 text-lg">💡</span>
           <p className="text-sm text-blue-800">
             <strong>Conseil :</strong> Incitez vos clients à donner un maximum d'informations 
             dans leur message vocal pour faciliter votre suivi et améliorer votre service.
+          </p>
+        </div>
+      </div>
+
+      {/* Important Note */}
+      <div className="bg-amber-50 rounded-xl p-4 mb-8 border border-amber-200">
+        <div className="flex items-start space-x-3">
+          <span className="text-amber-600 text-lg">⚠️</span>
+          <p className="text-sm text-amber-800">
+            <strong>Important :</strong> Demandez directement de laisser un message vocal dès le début de votre accueil téléphonique. 
+            Évitez les longs préambules car les correspondants risquent de raccrocher sans laisser de message, 
+            ce qui diminuerait la valeur de votre service VoxNow.
           </p>
         </div>
       </div>
