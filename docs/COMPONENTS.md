@@ -16,57 +16,93 @@ This document provides detailed information about the main React components in t
 
 **Routes**:
 - `/` - Home page with marketing content
-- `/auth` - Authentication page
+- `/auth` - Authentication page (with demo access)
 - `/dashboard` - Main dashboard interface
+- `/profile` - User profile management
+- `/demo` - Demo dashboard (public access)
 - `/messagerie` - Voice message recording
 - `/bienvenue` - Welcome form for new users
 - `/paiement` - Payment and subscription page
 - `/blog` - Blog listing and individual posts
 
 ### 2. Dashboard.tsx
-**Purpose**: Main dashboard interface for managing voicemail messages and analytics.
+**Purpose**: Main dashboard interface for managing voicemail messages and analytics with demo mode support.
 
 **Key Features**:
 - Voicemail message listing with pagination
-- Advanced filtering (date, urgency, duration, content)
+- Advanced filtering (date, urgency, duration, content, legal domain)
 - Message status management (read/unread, archived)
 - Audio playback functionality
-- Data export capabilities
+- Data export capabilities (CSV)
 - Real-time statistics display
+- Demo mode for public access
+- Profile button (hidden in demo mode)
+
+**Props**:
+- `demoMode?: boolean` - Enables demo mode with sample data
 
 **State Management**:
-- `voicemails`: Array of voicemail records from Airtable
+- `voicemails`: Array of voicemail records from Supabase
 - `filteredVoicemails`: Filtered results based on user criteria
 - `expandedRows`: Set of expanded message IDs
-- `readMessages`: Set of read message IDs
+- `demoUser`: Mock user data for demo mode
 
 **External Integrations**:
-- Airtable API for voicemail data
-- Firebase Auth for user authentication
+- Supabase for voicemail data and authentication
 - Audio playback for voicemail files
+- Real-time updates via Supabase subscriptions
 
 ### 3. Auth.tsx
-**Purpose**: User authentication component with login/logout functionality.
+**Purpose**: User authentication component with login/logout functionality and demo access.
 
 **Key Features**:
 - Email/password authentication
-- Firebase Auth integration
+- Supabase Auth integration
+- Demo access button for public trials
+- Password reset functionality
 - Automatic redirect after successful login
 - Error handling and user feedback
 
 **Authentication Flow**:
-1. User enters credentials
-2. Firebase Auth validates credentials
+1. User enters credentials or clicks demo access
+2. Supabase Auth validates credentials
 3. Successful login redirects to dashboard
-4. Failed login shows error message
+4. Demo access redirects to demo dashboard
+5. Failed login shows error message
 
-### 4. VoiceRecorder.tsx
+### 4. Profile.tsx
+**Purpose**: User profile management component for editing personal information and changing passwords.
+
+**Key Features**:
+- Profile information editing (name, phone)
+- Password change functionality
+- Email display (read-only)
+- Tab-based interface (Profile/Password)
+- Form validation and error handling
+- Loading states during updates
+
+**Props**:
+- None (uses Supabase Auth context)
+
+**State Management**:
+- `formData`: Profile information (name, phone)
+- `passwordData`: Password change form data
+- `activeTab`: Current tab ('profile' | 'password')
+- `isUpdating`: Loading state for profile updates
+- `isChangingPassword`: Loading state for password changes
+
+**External Integrations**:
+- Supabase Auth for password changes
+- Supabase database for profile updates
+- Real-time state updates
+
+### 5. VoiceRecorder.tsx
 **Purpose**: Audio recording component for capturing voicemail messages.
 
 **Key Features**:
 - Real-time audio recording using MediaRecorder API
 - Audio playback preview
-- File upload to Firebase Storage
+- File upload to Supabase Storage
 - Webhook integration for processing
 - Recording duration tracking
 
@@ -75,10 +111,10 @@ This document provides detailed information about the main React components in t
 2. Start MediaRecorder with audio stream
 3. Capture audio data in chunks
 4. Stop recording and create audio blob
-5. Upload to Firebase Storage
+5. Upload to Supabase Storage
 6. Send webhook for AI processing
 
-### 5. Chatbot.tsx
+### 6. Chatbot.tsx
 **Purpose**: Interactive customer support chatbot with AI-powered responses.
 
 **Key Features**:
@@ -97,7 +133,7 @@ This document provides detailed information about the main React components in t
 
 ## Form Components
 
-### 6. FreeTrialForm.tsx
+### 7. FreeTrialForm.tsx
 **Purpose**: Lead generation form for free trial signups.
 
 **Key Features**:
@@ -113,7 +149,7 @@ This document provides detailed information about the main React components in t
 - Firm size and structure
 - Communication preferences
 
-### 7. WelcomeForm.tsx
+### 8. WelcomeForm.tsx
 **Purpose**: Comprehensive onboarding form for new users.
 
 **Key Features**:
@@ -130,7 +166,7 @@ This document provides detailed information about the main React components in t
 4. Business goals and challenges
 5. Referral information
 
-### 8. PaymentPage.tsx
+### 9. PaymentPage.tsx
 **Purpose**: Subscription and payment management interface.
 
 **Key Features**:
@@ -142,7 +178,7 @@ This document provides detailed information about the main React components in t
 
 ## Content Components
 
-### 9. BlogSection.tsx & BlogList.tsx
+### 10. BlogSection.tsx & BlogList.tsx
 **Purpose**: Blog content management and display components.
 
 **Key Features**:
@@ -158,7 +194,7 @@ This document provides detailed information about the main React components in t
 - Individual blog post pages
 - Category-based organization
 
-### 10. Statistics.tsx
+### 11. Statistics.tsx
 **Purpose**: Analytics dashboard component for voicemail insights.
 
 **Key Features**:
@@ -177,7 +213,7 @@ This document provides detailed information about the main React components in t
 
 ## Specialized Components
 
-### 11. HuezDashboard.tsx
+### 12. HuezDashboard.tsx
 **Purpose**: Specialized dashboard for specific client (Huez law firm).
 
 **Key Features**:
@@ -193,7 +229,7 @@ This document provides detailed information about the main React components in t
 - Secure API endpoints
 - Access logging and monitoring
 
-### 12. VoiceMessage.tsx
+### 13. VoiceMessage.tsx
 **Purpose**: Voice message management and playback component.
 
 **Key Features**:
@@ -205,7 +241,7 @@ This document provides detailed information about the main React components in t
 
 ## Utility Components
 
-### 13. TermsAndConditions.tsx
+### 14. TermsAndConditions.tsx
 **Purpose**: Legal terms and conditions display.
 
 **Key Features**:
@@ -214,7 +250,7 @@ This document provides detailed information about the main React components in t
 - Acceptance tracking
 - GDPR compliance information
 
-### 14. SuccessPage.tsx
+### 15. SuccessPage.tsx
 **Purpose**: Success confirmation page for completed actions.
 
 **Key Features**:
@@ -248,8 +284,7 @@ This document provides detailed information about the main React components in t
 ## Integration Points
 
 ### External Services
-- **Firebase**: Authentication, database, and storage
-- **Airtable**: Structured data management
+- **Supabase**: Authentication, database, and storage
 - **OpenAI**: AI-powered chat responses
 - **EmailJS**: Email notifications
 - **Calendly**: Appointment scheduling
@@ -257,7 +292,7 @@ This document provides detailed information about the main React components in t
 
 ### API Communication
 - **REST APIs**: Standard HTTP requests for external services
-- **Real-time Updates**: Firebase listeners for live data
+- **Real-time Updates**: Supabase subscriptions for live data
 - **Webhook Integration**: Processing pipeline for voicemail analysis
 - **Error Handling**: Retry logic and fallback mechanisms
 

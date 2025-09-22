@@ -1,15 +1,16 @@
 # VoxNow - AI-Powered Voicemail Management for Law Firms
 
-VoxNow is an intelligent voicemail transcription and management platform specifically designed for Belgian law firms. It automatically transcribes voicemails, provides AI-powered summaries, and sends automated SMS responses to clients.
+VoxNow is an intelligent voicemail transcription and management platform specifically designed for Belgian law firms. It automatically transcribes voicemails, provides AI-powered summaries, and offers comprehensive analytics for legal practice management.
 
 ## 🎯 Project Overview
 
 VoxNow transforms how law firms handle voicemail messages by:
 - **Instant Transcription**: Converting voicemails to text using AI
 - **Smart Summaries**: Extracting key information and action items
-- **Automated Responses**: Sending personalized SMS replies to clients
-- **Analytics Dashboard**: Providing insights on message patterns and urgency
-- **Symplicy Integration**: Seamless integration with legal practice management software
+- **AI Analysis**: Sentiment, urgency, legal domain, and case stage analysis
+- **Analytics Dashboard**: Providing insights on message patterns and legal domains
+- **Demo Mode**: Public demonstration with sample data
+- **Profile Management**: User account and settings management
 
 ## 🛠 Technology Stack
 
@@ -22,12 +23,12 @@ VoxNow transforms how law firms handle voicemail messages by:
 - **Forms**: React Hook Form 7.51
 
 ### Backend & Services
-- **Database**: Firebase Firestore
-- **Authentication**: Firebase Auth
-- **File Storage**: Firebase Storage
-- **External Data**: Airtable API integration
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Supabase Auth
+- **File Storage**: Supabase Storage
+- **AI Processing**: Supabase Edge Functions + OpenAI API
 - **Email Service**: EmailJS
-- **AI Processing**: OpenAI API 5.10
+- **Real-time**: Supabase Realtime subscriptions
 
 ### Analytics & Tracking
 - **Facebook Pixel**: Custom tracking implementation
@@ -48,21 +49,29 @@ voxnow-website/
 │   └── _redirects             # Netlify redirect rules
 ├── src/
 │   ├── components/            # React components
-│   │   ├── Auth.tsx          # Authentication component
-│   │   ├── Dashboard.tsx     # Main dashboard interface
+│   │   ├── Auth.tsx          # Authentication component (with demo access)
+│   │   ├── Dashboard.tsx     # Main dashboard interface (with demo mode)
+│   │   ├── Profile.tsx       # User profile management
 │   │   ├── VoiceRecorder.tsx # Voice recording functionality
 │   │   ├── Chatbot.tsx       # Customer support chatbot
 │   │   ├── BlogSection.tsx   # Blog content management
 │   │   └── ...               # Other UI components
+│   ├── hooks/
+│   │   └── useSupabase.ts    # Supabase integration hooks
 │   ├── utils/
 │   │   └── fbPixel.ts        # Facebook Pixel tracking utilities
 │   ├── App.tsx               # Main application component
-│   ├── firebase.ts           # Firebase configuration
+│   ├── supabase.ts           # Supabase client configuration
 │   └── main.tsx              # Application entry point
-├── api/
-│   └── huez-data.js          # Secure API endpoint for Airtable data
-├── firestore.rules           # Firestore security rules
-├── storage.rules             # Firebase Storage security rules
+├── supabase/
+│   └── functions/            # Supabase Edge Functions
+│       ├── analyze-voicemail/
+│       ├── chat-completion/
+│       └── analyze-voicemail-webhook/
+├── docs/                     # Documentation
+│   ├── ARCHITECTURE.md       # System architecture
+│   ├── COMPONENTS.md         # Component documentation
+│   └── DATABASE_SCHEMA.md    # Database schema
 └── package.json              # Dependencies and scripts
 ```
 
@@ -70,9 +79,9 @@ voxnow-website/
 
 ### Prerequisites
 - Node.js 18+ and npm
-- Firebase project with Firestore, Auth, and Storage enabled
-- Airtable account and API key
+- Supabase project with PostgreSQL, Auth, and Storage enabled
 - OpenAI API key
+- EmailJS account (for email notifications)
 
 ### Installation
 
@@ -88,9 +97,18 @@ voxnow-website/
    ```
 
 3. **Environment Setup**
-   - Configure Firebase credentials in [`src/firebase.ts`](src/firebase.ts)
-   - Set up Airtable API key in [`api/huez-data.js`](api/huez-data.js)
-   - Configure OpenAI API key for AI processing
+   - Set up Supabase environment variables:
+     ```bash
+     VITE_SUPABASE_URL=your_supabase_url
+     VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
+     ```
+   - Configure Supabase Edge Functions secrets:
+     ```bash
+     SUPABASE_URL=your_supabase_url
+     SUPABASE_ANON_KEY=your_supabase_anon_key
+     SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+     OPENAI_API_KEY=your_openai_api_key
+     ```
 
 4. **Development Server**
    ```bash
@@ -105,16 +123,22 @@ voxnow-website/
 
 ## 🔧 Configuration
 
-### Firebase Setup
-The project uses Firebase for:
-- **Authentication**: User login/logout
-- **Firestore**: Storing voicemail data and user information
-- **Storage**: Audio file storage
+### Supabase Setup
+The project uses Supabase for:
+- **Authentication**: User login/logout with Row Level Security
+- **Database**: PostgreSQL for storing voicemail data and user information
+- **Storage**: Audio file storage and retrieval
+- **Edge Functions**: AI processing and analysis
 
-Configure your Firebase project credentials in [`src/firebase.ts`](src/firebase.ts).
+Configure your Supabase project credentials in environment variables.
 
-### Airtable Integration
-VoxNow integrates with Airtable to store and retrieve voicemail data. The secure API endpoint is located in [`api/huez-data.js`](api/huez-data.js).
+### Supabase Edge Functions
+Deploy the Edge Functions for AI processing:
+```bash
+supabase functions deploy analyze-voicemail
+supabase functions deploy chat-completion
+supabase functions deploy analyze-voicemail-webhook
+```
 
 ### External Services
 - **EmailJS**: For sending email notifications
@@ -125,32 +149,42 @@ VoxNow integrates with Airtable to store and retrieve voicemail data. The secure
 
 ### 1. Voicemail Processing
 - Real-time audio recording and upload
-- AI-powered transcription
-- Intelligent summarization
-- Urgency and sentiment analysis
+- AI-powered transcription using OpenAI
+- Intelligent summarization and analysis
+- Multi-category analysis: sentiment, urgency, legal domain, case stage
 
 ### 2. Dashboard Analytics
-- Message filtering by date, urgency, and content
-- Statistical insights on legal domains
-- Client interaction tracking
-- Export functionality
+- Message filtering by date, urgency, content, and legal domain
+- Statistical insights on legal domains and case stages
+- Real-time data updates with Supabase
+- Export functionality (CSV)
+- Demo mode for public demonstration
 
-### 3. Automated Client Communication
-- SMS responses based on message content
-- Symplicy integration for case management
-- Calendly integration for appointment booking
+### 3. User Management
+- Secure authentication with Supabase Auth
+- User profile management (name, phone, password)
+- Row Level Security for data protection
+- Demo user access for public trials
 
-### 4. Multi-language Support
+### 4. AI-Powered Analysis
+- Sentiment analysis (Positive, Negative, Neutral)
+- Urgency assessment (Urgent, Moderate, Not Urgent)
+- Legal domain classification
+- Case stage identification
+- Request category analysis
+
+### 5. Multi-language Support
 - French-language interface
 - Specialized legal terminology handling
 - Belgian law firm specific features
 
 ## 🔐 Security
 
-- Firebase security rules for data protection
-- API authentication tokens
+- Supabase Row Level Security (RLS) for data protection
+- JWT tokens for API authentication
 - CORS configuration for secure API access
 - Client-side data sanitization
+- Environment variable protection for sensitive data
 
 ## 📊 Analytics & Tracking
 

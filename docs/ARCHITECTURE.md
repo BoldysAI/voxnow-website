@@ -2,17 +2,16 @@
 
 ## System Overview
 
-VoxNow is a modern web application built with a React frontend and Firebase backend, designed to provide AI-powered voicemail management for Belgian law firms. The system processes audio messages, transcribes them using AI, and provides automated client communication.
+VoxNow is a modern web application built with a React frontend and Supabase backend, designed to provide AI-powered voicemail management for Belgian law firms. The system processes audio messages, transcribes them using AI, and provides comprehensive analytics and user management.
 
 ## High-Level Architecture
 
 ```
 ┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
-│   Client Web    │    │   Firebase       │    │  External APIs  │
+│   Client Web    │    │   Supabase       │    │  External APIs  │
 │   Application   │◄──►│   Backend        │◄──►│                 │
 │   (React/TS)    │    │                  │    │ • OpenAI        │
-└─────────────────┘    └──────────────────┘    │ • Airtable      │
-                                               │ • EmailJS       │
+└─────────────────┘    └──────────────────┘    │ • EmailJS       │
                                                │ • Calendly      │
                                                └─────────────────┘
 ```
@@ -26,15 +25,15 @@ VoxNow is a modern web application built with a React frontend and Firebase back
 - **State Management**: React hooks and context
 - **Routing**: React Router DOM for SPA navigation
 
-### 2. Backend Services (Firebase)
-- **Authentication**: Firebase Auth for user management
-- **Database**: Firestore for real-time data storage
-- **File Storage**: Firebase Storage for audio files
-- **Security**: Custom security rules for data protection
+### 2. Backend Services (Supabase)
+- **Authentication**: Supabase Auth for user management
+- **Database**: PostgreSQL for real-time data storage
+- **File Storage**: Supabase Storage for audio files
+- **AI Processing**: Supabase Edge Functions for AI analysis
+- **Security**: Row Level Security (RLS) for data protection
 
 ### 3. External Integrations
 - **AI Processing**: OpenAI API for transcription and analysis
-- **Data Storage**: Airtable for structured voicemail data
 - **Communication**: EmailJS for email notifications
 - **Scheduling**: Calendly for appointment booking
 - **Analytics**: Facebook Pixel for conversion tracking
@@ -44,17 +43,17 @@ VoxNow is a modern web application built with a React frontend and Firebase back
 ### Voicemail Processing Pipeline
 
 ```
-Audio Recording → Firebase Storage → AI Processing → Airtable Storage → Client Notification
+Audio Recording → Supabase Storage → AI Processing → PostgreSQL → Client Notification
       ↓                ↓                 ↓              ↓                    ↓
-   Web Interface → Secure Upload → OpenAI API → Structured Data → SMS/Email
+   Web Interface → Secure Upload → Supabase Edge Functions → Structured Data → Analytics
 ```
 
 ### User Interaction Flow
 
 ```
-User Login → Dashboard → Message Management → Analytics → Client Communication
+User Login → Dashboard → Message Management → Analytics → Profile Management
     ↓            ↓            ↓                ↓              ↓
-Firebase Auth → Firestore → Airtable API → Statistics → Automated SMS
+Supabase Auth → PostgreSQL → Real-time Updates → Statistics → User Settings
 ```
 
 ## Technology Stack Details
@@ -73,25 +72,25 @@ Firebase Auth → Firestore → Airtable API → Statistics → Automated SMS
 ### Backend & Services
 | Service | Technology | Purpose |
 |---------|------------|---------|
-| Authentication | Firebase Auth | User authentication and authorization |
-| Database | Firestore | Real-time NoSQL database |
-| File Storage | Firebase Storage | Audio file storage and retrieval |
-| AI Processing | OpenAI API | Transcription and text analysis |
-| Data Management | Airtable | Structured data storage and management |
+| Authentication | Supabase Auth | User authentication and authorization |
+| Database | PostgreSQL | Real-time relational database |
+| File Storage | Supabase Storage | Audio file storage and retrieval |
+| AI Processing | Supabase Edge Functions + OpenAI | Transcription and text analysis |
 | Email Service | EmailJS | Client email notifications |
 | Scheduling | Calendly | Appointment booking integration |
 
 ## Security Architecture
 
 ### Authentication & Authorization
-- Firebase Authentication for secure user login
-- Role-based access control for different user types
+- Supabase Authentication for secure user login
+- Row Level Security (RLS) for fine-grained access control
 - JWT tokens for API authentication
+- Demo user access for public trials
 
 ### Data Protection
-- Firestore security rules for database access control
-- Firebase Storage rules for file access permissions
-- API key protection through environment variables
+- PostgreSQL Row Level Security for database access control
+- Supabase Storage policies for file access permissions
+- Environment variable protection for sensitive data
 - CORS configuration for secure cross-origin requests
 
 ### Privacy & Compliance
@@ -109,14 +108,14 @@ Local Development → Vite Dev Server → Firebase Emulators → Hot Reload
 
 ### Production Environment
 ```
-Source Code → Build Process → Netlify CDN → Firebase Production → External APIs
+Source Code → Build Process → Netlify CDN → Supabase Production → External APIs
 ```
 
 ### Build & Deployment Pipeline
 1. **Source Control**: Git repository with feature branches
 2. **Build Process**: Vite builds optimized production bundle
 3. **Static Hosting**: Netlify for fast global CDN delivery
-4. **Backend Services**: Firebase production environment
+4. **Backend Services**: Supabase production environment
 5. **Monitoring**: Real-time error tracking and performance monitoring
 
 ## Performance Considerations
@@ -128,34 +127,32 @@ Source Code → Build Process → Netlify CDN → Firebase Production → Extern
 - Service worker for offline functionality
 
 ### Backend Optimization
-- Firestore query optimization with proper indexing
-- Firebase Storage with compression and caching
-- API rate limiting and request batching
-- Real-time listeners for live data updates
+- PostgreSQL query optimization with proper indexing
+- Supabase Storage with compression and caching
+- Edge Functions for efficient AI processing
+- Real-time subscriptions for live data updates
 
 ## Scalability Design
 
 ### Horizontal Scaling
 - Stateless frontend components
-- Firebase auto-scaling backend services
+- Supabase auto-scaling backend services
 - CDN distribution for global performance
 - Microservice-ready API architecture
 
 ### Data Scaling
-- Firestore subcollections for hierarchical data
-- Airtable for structured business data
-- Firebase Storage with automatic replication
+- PostgreSQL with proper relational design
+- Supabase Storage with automatic replication
+- Edge Functions for distributed AI processing
 - Caching strategies for frequently accessed data
 
 ## Integration Points
 
 ### External Service Integrations
 1. **OpenAI API**: AI-powered transcription and analysis
-2. **Airtable API**: Structured data management
-3. **EmailJS**: Automated email notifications
-4. **Calendly**: Appointment scheduling
-5. **Facebook Pixel**: Analytics and conversion tracking
-6. **Symplicy**: Legal practice management integration
+2. **EmailJS**: Automated email notifications
+3. **Calendly**: Appointment scheduling
+4. **Facebook Pixel**: Analytics and conversion tracking
 
 ### API Architecture
 - RESTful API design principles
