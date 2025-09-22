@@ -384,7 +384,7 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
             <div className="bg-white rounded-lg p-4 shadow-sm border border-gray-100">
               <p className="text-gray-700 leading-relaxed italic">
                 "Bonjour, vous êtes bien au cabinet [Nom].<br/><br/>
-                Le seul moyen de nous joindre après un appel manqué est de nous laisser un message vocal.<br/><br/>
+                Le seul moyen de nous joindre après un appel manqué est de <strong>nous laisser un message vocal.</strong><br/><br/>
                 Sans message, nous ne pourrons pas vous recontacter.<br/><br/>
                 Merci d'indiquer clairement l'objet de votre appel ainsi que de nous fournir une explication détaillée.<br/><br/>
                 Parlez après le BIP."
