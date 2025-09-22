@@ -46,6 +46,7 @@ import DiscoveryCall from './components/DiscoveryCall';
 import { TitulaireDeCompte } from './components/TitulaireDeCompte';
 import { Admin } from './components/Admin';
 
+
 declare global {
   interface Window {
     Calendly: any;
@@ -1592,6 +1593,7 @@ function App() {
         <Route path="/discoverycall" element={<DiscoveryCall />} />
         <Route path="/titulairedecompte" element={<TitulaireDeCompte />} />
         <Route path="/admin" element={<Admin />} />
+
       </Routes>
       <Chatbot />
     </>
