@@ -44,6 +44,7 @@ import { BlogArticle1 } from './components/BlogArticle1';
 import { BlogArticle2 } from './components/BlogArticle2';
 import DiscoveryCall from './components/DiscoveryCall';
 import { TitulaireDeCompte } from './components/TitulaireDeCompte';
+import { Admin } from './components/Admin';
 
 declare global {
   interface Window {
@@ -1590,6 +1591,7 @@ function App() {
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/discoverycall" element={<DiscoveryCall />} />
         <Route path="/titulairedecompte" element={<TitulaireDeCompte />} />
+        <Route path="/admin" element={<Admin />} />
       </Routes>
       <Chatbot />
     </>
