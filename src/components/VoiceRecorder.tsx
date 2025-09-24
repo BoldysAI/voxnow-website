@@ -394,16 +394,6 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
         </div>
       </div>
 
-      {/* UX Tip */}
-      <div className="bg-blue-50 rounded-xl p-4 mb-6 border border-blue-200">
-        <div className="flex items-start space-x-3">
-          <span className="text-blue-600 text-lg">💡</span>
-          <p className="text-sm text-blue-800">
-            <strong>Conseil :</strong> Incitez vos clients à donner un maximum d'informations 
-            dans leur message vocal pour faciliter votre suivi et améliorer votre service.
-          </p>
-        </div>
-      </div>
 
       {/* Important Note */}
       <div className="bg-amber-50 rounded-xl p-4 mb-8 border border-amber-200">
@@ -552,6 +542,22 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
             </div>
           </div>
         )}
+
+        {/* UX Tip - Moved below recording controls */}
+        <div className="bg-blue-50 rounded-xl p-4 mt-6 border border-blue-200">
+          <div className="flex items-start space-x-3">
+            <span className="text-blue-600 text-lg">💡</span>
+            <div className="text-sm text-blue-800">
+              <p className="mb-2">
+                <strong>Conseil :</strong> Incitez vos clients à donner un maximum d'informations 
+                dans leur message vocal pour faciliter votre suivi et améliorer votre service.
+              </p>
+              <p>
+                Il n'est pas utile de demander les coordonnées du correspondant car cette info est d'office retransmise par VoxNow.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
