@@ -44,7 +44,7 @@ import { Chatbot } from './components/Chatbot';
 import { BlogArticle1 } from './components/BlogArticle1';
 import { BlogArticle2 } from './components/BlogArticle2';
 import DiscoveryCall from './components/DiscoveryCall';
-import { TitulaireDeCompte } from './components/TitulaireDeCompte';
+import { AdministrateurProvisoire } from './components/AdministrateurProvisoire';
 import { Admin } from './components/Admin';
 
 
@@ -1593,7 +1593,7 @@ function App() {
         <Route path="/blog/solution-belge-gestion-appels-manques" element={<BlogArticle2 />} />
         <Route path="/blog/:slug" element={<BlogPost />} />
         <Route path="/discoverycall" element={<DiscoveryCall />} />
-        <Route path="/titulairedecompte" element={<TitulaireDeCompte />} />
+        <Route path="/administrateurprovisoire" element={<AdministrateurProvisoire />} />
         <Route path="/admin" element={<Admin />} />
 
       </Routes>
