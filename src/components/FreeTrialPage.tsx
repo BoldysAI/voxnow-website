@@ -64,64 +64,6 @@ export function FreeTrialPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Essai gratuit de <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">14 jours</span>
             </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              L'essai gratuit de 14 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email, ainsi que la réponse SMS automatique qui accuse réception du message à votre correspondant.
-            </p>
-
-            <div className="grid md:grid-cols-4 gap-6 mb-8 max-w-4xl mx-auto">
-              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
-                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-vox-blue to-now-green rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle2 className="h-4 w-4 text-white" />
-                </div>
-                <p className="text-sm text-gray-700 font-medium text-left">
-                  Transcription instantanée par email
-                </p>
-              </div>
-              
-              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
-                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-now-green to-light-green rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle2 className="h-4 w-4 text-white" />
-                </div>
-                <p className="text-sm text-gray-700 font-medium text-left">
-                  Résumé intelligent par IA
-                </p>
-              </div>
-
-              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
-                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-light-blue to-vox-blue rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle2 className="h-4 w-4 text-white" />
-                </div>
-                <p className="text-sm text-gray-700 font-medium text-left">
-                  SMS automatique inclus
-                </p>
-              </div>
-
-              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
-                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-light-green to-now-green rounded-full flex items-center justify-center shadow-lg">
-                  <CheckCircle2 className="h-4 w-4 text-white" />
-                </div>
-                <p className="text-sm text-gray-700 font-medium text-left">
-                  Aucun engagement
-                </p>
-              </div>
-            </div>
-
-            <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 max-w-2xl mx-auto mb-6">
-              <p className="text-gray-600 mb-4">
-                Pour intégrer des automatisations avancées (intégration agenda, transferts vers collaborateurs, workflows personnalisés), 
-                réservez une démo personnalisée avec notre équipe.
-              </p>
-              <a
-                href="https://calendly.com/hey-sachadelcourt/voxnow"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
-              >
-                <Calendar className="mr-2 h-5 w-5" />
-                Réserver une démo
-              </a>
-            </div>
           </div>
         </div>
       </section>
@@ -131,6 +73,31 @@ export function FreeTrialPage() {
         <div className="container mx-auto">
           <div className="max-w-2xl mx-auto">
             <FreeTrialForm />
+            
+            {/* Info sections after form */}
+            <div className="mt-12 space-y-6">
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
+                <p className="text-gray-600 text-center">
+                  L'essai gratuit de 14 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email, ainsi que la réponse SMS automatique qui accuse réception du message à votre correspondant.
+                </p>
+              </div>
+
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 text-center">
+                <p className="text-gray-600 mb-4">
+                  Pour intégrer des automatisations avancées (intégration agenda, transferts vers collaborateurs, workflows personnalisés), 
+                  réservez une démo personnalisée avec notre équipe.
+                </p>
+                <a
+                  href="https://calendly.com/hey-sachadelcourt/voxnow"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
+                >
+                  <Calendar className="mr-2 h-5 w-5" />
+                  Réserver une démo
+                </a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
