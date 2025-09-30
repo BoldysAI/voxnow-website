@@ -165,6 +165,20 @@ export function FreeTrialPage() {
                     <CheckCircle2 className="h-6 w-6 text-white" />
                   </div>
                   <div>
+                    <h3 className="font-bold text-gray-900 text-lg mb-2">Réponse SMS automatique</h3>
+                    <p className="text-gray-600">
+                      Un SMS est envoyé automatiquement au correspondant pour récapituler sa demande et lui assurer bonne réception.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-gradient-to-r from-vox-blue to-now-green rounded-full p-3 flex-shrink-0">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
                     <h3 className="font-bold text-gray-900 text-lg mb-2">Installation simple</h3>
                     <p className="text-gray-600">
                       Activation en 30 secondes via un simple code de déviation. Aucune installation technique requise.
