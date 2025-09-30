@@ -451,7 +451,6 @@ export function AdministrateurProvisoire() {
                           </div>
                           <div>
                             <p className="font-semibold">VoxNow</p>
-                            <p className="text-xs text-white/80">Service automatisé</p>
                           </div>
                         </div>
 
