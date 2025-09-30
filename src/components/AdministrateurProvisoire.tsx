@@ -717,7 +717,7 @@ export function AdministrateurProvisoire() {
             {/* CTA Button to Demo Dashboard */}
             <div className="mt-12 text-center">
               <Link
-                to="/free_trial"
+                to="/free-trial"
                 className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 animate-fade-in"
               >
                 <Monitor className="mr-3 h-6 w-6" />
