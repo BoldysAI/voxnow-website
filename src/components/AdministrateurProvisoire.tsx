@@ -437,7 +437,7 @@ export function AdministrateurProvisoire() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Gérez toutes vos demandes <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">depuis un seul tableau de bord</span>
+                En plus de tout recevoir transcris et résumé instantanément sur votre email, gérez toutes vos demandes <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">depuis un tableau de bord unique</span>
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Visualisez et traitez toutes les demandes de vos clients en un coup d'œil
