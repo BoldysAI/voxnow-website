@@ -44,7 +44,7 @@ export function FreeTrialPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-12 px-4 bg-gradient-to-br from-vox-blue/5 via-white to-now-green/5 relative overflow-hidden">
+      <section className="pt-32 pb-4 px-4 bg-gradient-to-br from-vox-blue/5 via-white to-now-green/5 relative overflow-hidden">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-vox-blue/10 to-now-green/10 rounded-full blur-3xl"></div>
           <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-vox-blue/5 to-now-green/5 rounded-full blur-3xl"></div>
