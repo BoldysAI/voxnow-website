@@ -227,7 +227,7 @@ export function AdministrateurProvisoire() {
                 Comment VoxNow <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">simplifie votre rôle</span>
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Une solution complète qui transforme votre gestion des appels clients
+                En plus de tout recevoir transcris et résumé instantanément sur votre email, gérez toutes vos demandes depuis un tableau de bord unique
               </p>
             </div>
 
