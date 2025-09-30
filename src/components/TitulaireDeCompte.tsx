@@ -275,6 +275,382 @@ export function TitulaireDeCompte() {
         </div>
       </section>
 
+      {/* Exemple Email Section */}
+      <section className="py-24 px-4 bg-white">
+        <div className="container mx-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Voici ce que vous recevez <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">instantanément par email</span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Exemple concret : un client demande un virement pour payer sa facture d'électricité
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200">
+              <div className="flex flex-col lg:flex-row items-center gap-12">
+                <div className="w-full lg:w-1/2">
+                  <div className="space-y-6">
+                    <div className="flex items-start space-x-4 bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                      <div className="mt-1 bg-vox-blue rounded-full p-3 flex-shrink-0">
+                        <Phone className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900 text-lg mb-2">Identification immédiate</p>
+                        <p className="text-gray-600">Numéro et nom du client pour savoir qui vous contacte</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4 bg-green-50 p-6 rounded-2xl border border-green-100">
+                      <div className="mt-1 bg-now-green rounded-full p-3 flex-shrink-0">
+                        <FileText className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900 text-lg mb-2">Transcription complète</p>
+                        <p className="text-gray-600">Chaque mot transcrit avec précision</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start space-x-4 bg-purple-50 p-6 rounded-2xl border border-purple-100">
+                      <div className="mt-1 bg-light-blue rounded-full p-3 flex-shrink-0">
+                        <Brain className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <p className="font-bold text-gray-900 text-lg mb-2">Résumé intelligent</p>
+                        <p className="text-gray-600">L'IA extrait les points clés et l'action à faire</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-vox-blue/10 to-now-green/10 p-6 rounded-2xl border-2 border-dashed border-gray-300">
+                      <p className="text-center font-bold text-gray-900 text-lg">
+                        ⏱️ Temps de lecture : <span className="text-now-green">5 secondes</span><br/>
+                        <span className="text-sm text-gray-600">vs 2 minutes pour écouter le message</span>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="w-full lg:w-1/2 flex items-center">
+                  <div className="relative h-[600px] w-full">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1753823463/VoxNow_-_Exemple_-_Final_veeuom.png"
+                      alt="Exemple d'email VoxNow pour un titulaire de compte"
+                      className="w-full h-full object-contain drop-shadow-2xl"
+                    />
+                    <div className="absolute -z-10 w-full h-full blur-3xl opacity-20 bg-gradient-to-r from-vox-blue via-now-green to-light-blue rounded-full"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Exemple SMS Section */}
+      <section className="py-24 px-4 bg-gradient-to-b from-gray-50 to-white">
+        <div className="container mx-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Vos clients reçoivent <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">une réponse automatique</span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Exemple de SMS envoyé automatiquement au client qui a appelé
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-3xl p-8 md:p-12 border border-gray-200">
+              <div className="flex flex-col lg:flex-row items-center gap-12">
+                <div className="w-full lg:w-1/2">
+                  <div className="space-y-8">
+                    <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-12 h-12 bg-vox-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
+                          <Phone className="h-6 w-6 text-vox-blue" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-2">Message vocal laissé</h4>
+                          <p className="text-gray-600 italic">
+                            "Bonjour Maître, c'est Monsieur Dupont. J'ai reçu une facture d'électricité de 150€ à payer. Pourriez-vous me faire un virement s'il vous plaît ?"
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-center">
+                      <div className="w-1 h-12 bg-gradient-to-b from-vox-blue to-now-green rounded-full"></div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100">
+                      <div className="flex items-start space-x-4">
+                        <div className="w-12 h-12 bg-now-green/10 rounded-full flex items-center justify-center flex-shrink-0">
+                          <MessageCircle className="h-6 w-6 text-now-green" />
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-900 mb-2">SMS envoyé instantanément</h4>
+                          <p className="text-gray-600">
+                            Le client reçoit une confirmation immédiate que sa demande a été prise en compte, avec les informations utiles.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gradient-to-r from-now-green/10 to-light-green/10 p-6 rounded-2xl border border-green-200">
+                      <div className="space-y-3">
+                        <div className="flex items-center space-x-3">
+                          <CheckCircle2 className="h-5 w-5 text-now-green flex-shrink-0" />
+                          <p className="text-gray-700 font-medium">Client rassuré instantanément</p>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <CheckCircle2 className="h-5 w-5 text-now-green flex-shrink-0" />
+                          <p className="text-gray-700 font-medium">Image professionnelle du cabinet</p>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <CheckCircle2 className="h-5 w-5 text-now-green flex-shrink-0" />
+                          <p className="text-gray-700 font-medium">Zéro intervention de votre part</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="w-full lg:w-1/2 flex items-center justify-center">
+                  <div className="relative">
+                    <img
+                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1753825610/VoxNow_-_exemple_SMS_final_xk36ye.png"
+                      alt="Exemple de SMS automatique envoyé par VoxNow"
+                      className="max-w-xs h-auto drop-shadow-2xl rounded-2xl mx-auto"
+                    />
+                    <div className="absolute -z-10 w-full h-full blur-3xl opacity-20 bg-gradient-to-r from-vox-blue via-now-green to-light-blue rounded-full transform scale-110"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Exemple Dashboard Section */}
+      <section className="py-24 px-4 bg-white">
+        <div className="container mx-auto">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
+                Gérez toutes vos demandes <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">depuis un seul tableau de bord</span>
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Visualisez et traitez toutes les demandes de vos clients en un coup d'œil
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-3xl shadow-2xl p-8 border border-gray-700 overflow-hidden">
+              {/* Dashboard Header */}
+              <div className="bg-gradient-to-r from-vox-blue to-now-green p-4 rounded-t-2xl mb-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-white font-bold text-xl">Demandes Récentes - Titulaire de Compte</h3>
+                  <div className="flex items-center space-x-4">
+                    <span className="bg-white/20 text-white px-3 py-1 rounded-full text-sm">12 nouvelles</span>
+                    <button className="bg-white text-vox-blue px-4 py-2 rounded-lg font-medium hover:bg-gray-100 transition-colors">
+                      Tout marquer comme lu
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dashboard List */}
+              <div className="space-y-4">
+                {/* Demande 1 - Virement */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-red-500 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">URGENT</span>
+                        <span className="text-gray-500 text-sm">Il y a 15 minutes</span>
+                      </div>
+                      <h4 className="font-bold text-gray-900 text-lg mb-2">Mme Dubois - Demande de virement</h4>
+                      <p className="text-gray-600 mb-3">
+                        <strong>Résumé:</strong> Demande virement de 85€ pour payer facture Internet urgente sous 48h
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <span className="flex items-center text-gray-500">
+                          <Phone className="h-4 w-4 mr-1" />
+                          +32 476 12 34 56
+                        </span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-vox-blue font-medium">Type: Virement urgent</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <button className="bg-now-green text-white px-4 py-2 rounded-lg hover:bg-now-green/90 transition-colors font-medium">
+                        Traiter
+                      </button>
+                      <button className="text-vox-blue hover:text-now-green transition-colors text-sm">
+                        Écouter l'audio
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Demande 2 - Document */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-orange-500 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <span className="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-sm font-semibold">PRIORITAIRE</span>
+                        <span className="text-gray-500 text-sm">Il y a 1 heure</span>
+                      </div>
+                      <h4 className="font-bold text-gray-900 text-lg mb-2">M. Martin - Envoi de document</h4>
+                      <p className="text-gray-600 mb-3">
+                        <strong>Résumé:</strong> Demande envoi de l'attestation de détention au service des allocations
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <span className="flex items-center text-gray-500">
+                          <Phone className="h-4 w-4 mr-1" />
+                          +32 485 98 76 54
+                        </span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-vox-blue font-medium">Type: Envoi document</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <button className="bg-now-green text-white px-4 py-2 rounded-lg hover:bg-now-green/90 transition-colors font-medium">
+                        Traiter
+                      </button>
+                      <button className="text-vox-blue hover:text-now-green transition-colors text-sm">
+                        Écouter l'audio
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Demande 3 - Avance */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-yellow-500 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">NORMAL</span>
+                        <span className="text-gray-500 text-sm">Il y a 3 heures</span>
+                      </div>
+                      <h4 className="font-bold text-gray-900 text-lg mb-2">M. Legrand - Demande d'avance</h4>
+                      <p className="text-gray-600 mb-3">
+                        <strong>Résumé:</strong> Demande avance de 30€ pour Netflix et 15€ pour téléphone mobile
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <span className="flex items-center text-gray-500">
+                          <Phone className="h-4 w-4 mr-1" />
+                          +32 471 23 45 67
+                        </span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-vox-blue font-medium">Type: Avance frais</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <button className="bg-now-green text-white px-4 py-2 rounded-lg hover:bg-now-green/90 transition-colors font-medium">
+                        Traiter
+                      </button>
+                      <button className="text-vox-blue hover:text-now-green transition-colors text-sm">
+                        Écouter l'audio
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Demande 4 - Virement facture */}
+                <div className="bg-white rounded-2xl p-6 shadow-lg border-l-4 border-blue-500 hover:shadow-xl transition-all duration-300">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-semibold">NORMAL</span>
+                        <span className="text-gray-500 text-sm">Il y a 5 heures</span>
+                      </div>
+                      <h4 className="font-bold text-gray-900 text-lg mb-2">Mme Petit - Virement facture électricité</h4>
+                      <p className="text-gray-600 mb-3">
+                        <strong>Résumé:</strong> Demande virement de 120€ pour facture Electrabel échéance fin du mois
+                      </p>
+                      <div className="flex items-center space-x-4 text-sm">
+                        <span className="flex items-center text-gray-500">
+                          <Phone className="h-4 w-4 mr-1" />
+                          +32 492 87 65 43
+                        </span>
+                        <span className="text-gray-400">•</span>
+                        <span className="text-vox-blue font-medium">Type: Virement facture</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-end space-y-2">
+                      <button className="bg-now-green text-white px-4 py-2 rounded-lg hover:bg-now-green/90 transition-colors font-medium">
+                        Traiter
+                      </button>
+                      <button className="text-vox-blue hover:text-now-green transition-colors text-sm">
+                        Écouter l'audio
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dashboard Stats */}
+              <div className="mt-8 grid grid-cols-3 gap-6">
+                <div className="bg-gradient-to-br from-vox-blue to-light-blue rounded-2xl p-6 text-white">
+                  <p className="text-white/80 text-sm mb-2">Aujourd'hui</p>
+                  <p className="text-3xl font-bold">12</p>
+                  <p className="text-white/80 text-sm mt-1">nouvelles demandes</p>
+                </div>
+                <div className="bg-gradient-to-br from-now-green to-light-green rounded-2xl p-6 text-white">
+                  <p className="text-white/80 text-sm mb-2">Temps gagné</p>
+                  <p className="text-3xl font-bold">1h45</p>
+                  <p className="text-white/80 text-sm mt-1">économisées aujourd'hui</p>
+                </div>
+                <div className="bg-gradient-to-br from-light-blue to-vox-blue rounded-2xl p-6 text-white">
+                  <p className="text-white/80 text-sm mb-2">Cette semaine</p>
+                  <p className="text-3xl font-bold">68</p>
+                  <p className="text-white/80 text-sm mt-1">demandes traitées</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Key Benefits Below Dashboard */}
+            <div className="mt-12 grid md:grid-cols-3 gap-6">
+              <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100">
+                <div className="flex items-center mb-3">
+                  <div className="bg-vox-blue rounded-full p-2 mr-3">
+                    <Zap className="h-5 w-5 text-white" />
+                  </div>
+                  <h4 className="font-bold text-gray-900">Tout centralisé</h4>
+                </div>
+                <p className="text-gray-600 text-sm">
+                  Plus besoin de jongler entre messagerie vocale, emails et notes. Tout au même endroit.
+                </p>
+              </div>
+
+              <div className="bg-green-50 p-6 rounded-2xl border border-green-100">
+                <div className="flex items-center mb-3">
+                  <div className="bg-now-green rounded-full p-2 mr-3">
+                    <CheckCircle2 className="h-5 w-5 text-white" />
+                  </div>
+                  <h4 className="font-bold text-gray-900">Priorisation facile</h4>
+                </div>
+                <p className="text-gray-600 text-sm">
+                  Identifiez en un coup d'œil les demandes urgentes et traitez-les en priorité.
+                </p>
+              </div>
+
+              <div className="bg-purple-50 p-6 rounded-2xl border border-purple-100">
+                <div className="flex items-center mb-3">
+                  <div className="bg-light-blue rounded-full p-2 mr-3">
+                    <TrendingUp className="h-5 w-5 text-white" />
+                  </div>
+                  <h4 className="font-bold text-gray-900">Statistiques utiles</h4>
+                </div>
+                <p className="text-gray-600 text-sm">
+                  Suivez le temps gagné et le nombre de demandes traitées quotidiennement.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Bénéfices concrets */}
       <section className="py-24 px-4 bg-white">
         <div className="container mx-auto">
