@@ -417,13 +417,79 @@ export function AdministrateurProvisoire() {
                 </div>
                 
                 <div className="w-full lg:w-1/2 flex items-center justify-center">
-                  <div className="relative">
-                    <img
-                      src="/lovable-uploads/sms-matelas-admin.png"
-                      alt="Exemple de SMS automatique envoyé par VoxNow"
-                      className="max-w-xs h-auto drop-shadow-2xl rounded-2xl mx-auto"
-                    />
-                    <div className="absolute -z-10 w-full h-full blur-3xl opacity-20 bg-gradient-to-r from-vox-blue via-now-green to-light-blue rounded-full transform scale-110"></div>
+                  {/* Phone Mockup Illustration */}
+                  <div className="relative max-w-sm w-full">
+                    {/* Phone Frame */}
+                    <div className="bg-gray-900 rounded-[3rem] p-3 shadow-2xl border-8 border-gray-800">
+                      {/* Phone Screen */}
+                      <div className="bg-white rounded-[2.5rem] overflow-hidden">
+                        {/* Status Bar */}
+                        <div className="bg-gray-50 px-6 py-3 flex items-center justify-between text-xs">
+                          <span className="font-semibold">9:41</span>
+                          <div className="flex items-center space-x-1">
+                            <div className="flex space-x-0.5">
+                              <div className="w-1 h-3 bg-gray-900 rounded-sm"></div>
+                              <div className="w-1 h-3 bg-gray-900 rounded-sm"></div>
+                              <div className="w-1 h-3 bg-gray-400 rounded-sm"></div>
+                              <div className="w-1 h-3 bg-gray-400 rounded-sm"></div>
+                            </div>
+                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                            </svg>
+                            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        </div>
+
+                        {/* Messages Header */}
+                        <div className="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-4 flex items-center space-x-3">
+                          <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="font-semibold">VoxNow</p>
+                            <p className="text-xs text-white/80">Service automatisé</p>
+                          </div>
+                        </div>
+
+                        {/* Messages Content */}
+                        <div className="p-6 space-y-4 bg-gray-50 min-h-[400px]">
+                          {/* Received Message */}
+                          <div className="flex justify-start">
+                            <div className="bg-white rounded-2xl rounded-tl-sm px-5 py-4 shadow-md max-w-[85%] border border-gray-200">
+                              <p className="text-gray-800 text-sm leading-relaxed">
+                                Bonjour, nous avons bien reçu votre demande pour les <span className="font-semibold">120€ pour acheter un matelas</span>. Celle-ci sera traitée au plus vite.
+                              </p>
+                              <p className="text-gray-800 text-sm leading-relaxed mt-3">
+                                Cordialement,<br/>
+                                <span className="font-semibold">Maître Sacha Delcourt</span>
+                              </p>
+                              <p className="text-xs text-gray-400 mt-2">10:23</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Message Input */}
+                        <div className="bg-white border-t border-gray-200 px-4 py-3 flex items-center space-x-2">
+                          <button className="text-gray-400 hover:text-gray-600">
+                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                          </button>
+                          <div className="flex-1 bg-gray-100 rounded-full px-4 py-2">
+                            <p className="text-sm text-gray-400">Message...</p>
+                          </div>
+                          <button className="text-vox-blue">
+                            <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                              <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            </svg>
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
