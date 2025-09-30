@@ -107,7 +107,7 @@ export function FreeTrialPage() {
       </section>
 
       {/* Form Section */}
-      <section className="py-16 px-4">
+      <section className="py-8 px-4">
         <div className="container mx-auto">
           <div className="max-w-2xl mx-auto">
             <FreeTrialForm />
