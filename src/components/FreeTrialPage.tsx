@@ -64,6 +64,44 @@ export function FreeTrialPage() {
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
               Essai gratuit de <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">14 jours</span>
             </h1>
+
+            <div className="grid md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
+              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-vox-blue to-now-green rounded-full flex items-center justify-center shadow-lg">
+                  <CheckCircle2 className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-sm text-gray-700 font-medium text-left">
+                  Transcription instantanée
+                </p>
+              </div>
+              
+              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-now-green to-light-green rounded-full flex items-center justify-center shadow-lg">
+                  <CheckCircle2 className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-sm text-gray-700 font-medium text-left">
+                  Résumé IA
+                </p>
+              </div>
+
+              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-light-blue to-vox-blue rounded-full flex items-center justify-center shadow-lg">
+                  <CheckCircle2 className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-sm text-gray-700 font-medium text-left">
+                  SMS automatique
+                </p>
+              </div>
+
+              <div className="flex items-start space-x-3 bg-white/70 backdrop-blur-sm p-4 rounded-xl border border-gray-100 shadow-sm">
+                <div className="flex-shrink-0 w-6 h-6 bg-gradient-to-r from-light-green to-now-green rounded-full flex items-center justify-center shadow-lg">
+                  <CheckCircle2 className="h-4 w-4 text-white" />
+                </div>
+                <p className="text-sm text-gray-700 font-medium text-left">
+                  Dashboard personnalisé
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
