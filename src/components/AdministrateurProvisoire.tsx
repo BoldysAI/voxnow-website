@@ -16,11 +16,11 @@ import {
 } from 'lucide-react';
 import { trackViewContent, trackCustomEvent } from '../utils/fbPixel';
 
-export function TitulaireDeCompte() {
+export function AdministrateurProvisoire() {
   useEffect(() => {
     // Track page view
     trackViewContent({
-      content_name: 'Titulaire de Compte Landing Page',
+      content_name: 'Administrateur Provisoire Landing Page',
       content_category: 'Landing Page'
     });
 
@@ -29,8 +29,8 @@ export function TitulaireDeCompte() {
   }, []);
 
   const handleTrialClick = () => {
-    trackCustomEvent('TitulaireTrialClick', {
-      content_name: 'Titulaire Trial Form Access',
+    trackCustomEvent('AdminProvTrialClick', {
+      content_name: 'Admin Prov Trial Form Access',
       content_category: 'Lead Generation'
     });
   };
@@ -72,7 +72,7 @@ export function TitulaireDeCompte() {
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-5xl mx-auto">
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-8 leading-tight">
-              Avocats titulaires, <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">reprenez le contrôle</span> de vos appels
+              Administrateurs provisoires, <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">reprenez le contrôle</span> de vos appels
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 mb-12 max-w-4xl mx-auto leading-relaxed">
@@ -96,11 +96,11 @@ export function TitulaireDeCompte() {
                     <div className="space-y-3">
                       <div className="flex items-center space-x-3">
                         <div className="w-3 h-3 bg-now-green rounded-full"></div>
-                        <span className="text-sm font-medium">Résumé: Demande virement 30€</span>
+                        <span className="text-sm font-medium">Résumé: Demande 120€ matelas</span>
                       </div>
                       <div className="flex items-center space-x-3">
                         <div className="w-3 h-3 bg-light-blue rounded-full"></div>
-                        <span className="text-sm font-medium">Client: M. Dupont</span>
+                        <span className="text-sm font-medium">Client: M. Martin</span>
                       </div>
                       <div className="flex items-center space-x-3">
                         <div className="w-3 h-3 bg-light-green rounded-full"></div>
@@ -130,7 +130,7 @@ export function TitulaireDeCompte() {
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                Le quotidien épuisant des titulaires de compte
+                Le quotidien épuisant des administrateurs provisoires
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
                 Chaque jour, vous recevez des dizaines d'appels pour des demandes répétitives
@@ -143,8 +143,8 @@ export function TitulaireDeCompte() {
                   <div className="flex items-start space-x-4">
                     <Phone className="h-6 w-6 text-red-500 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-red-800 mb-2">"Maître, pouvez-vous me faire un virement de 30€ ?"</p>
-                      <p className="text-red-700 text-sm">15 appels par jour pour des virements</p>
+                      <p className="font-semibold text-red-800 mb-2">"Maître, pouvez-vous me faire un virement de 120€ pour acheter un matelas ?"</p>
+                      <p className="text-red-700 text-sm">15 appels par jour pour des demandes d'avances</p>
                     </div>
                   </div>
                 </div>
@@ -153,8 +153,8 @@ export function TitulaireDeCompte() {
                   <div className="flex items-start space-x-4">
                     <Phone className="h-6 w-6 text-orange-500 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-orange-800 mb-2">"Maître, j'ai besoin d'argent pour mon abonnement Netflix"</p>
-                      <p className="text-orange-700 text-sm">Demandes d'avances pour dépenses personnelles</p>
+                      <p className="font-semibold text-orange-800 mb-2">"Maître, j'ai besoin d'argent pour mes courses alimentaires"</p>
+                      <p className="text-orange-700 text-sm">Demandes d'avances pour dépenses quotidiennes</p>
                     </div>
                   </div>
                 </div>
@@ -163,8 +163,8 @@ export function TitulaireDeCompte() {
                   <div className="flex items-start space-x-4">
                     <Phone className="h-6 w-6 text-yellow-600 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-yellow-800 mb-2">"Maître, pouvez-vous envoyer un document à tel service ?"</p>
-                      <p className="text-yellow-700 text-sm">Demandes administratives répétitives</p>
+                      <p className="font-semibold text-yellow-800 mb-2">"Maître, pouvez-vous payer ma facture d'eau ?"</p>
+                      <p className="text-yellow-700 text-sm">Demandes de paiement de factures</p>
                     </div>
                   </div>
                 </div>
@@ -173,8 +173,8 @@ export function TitulaireDeCompte() {
                   <div className="flex items-start space-x-4">
                     <Phone className="h-6 w-6 text-purple-500 mt-1 flex-shrink-0" />
                     <div>
-                      <p className="font-semibold text-purple-800 mb-2">"Maître, pouvez-vous avancer les frais ?"</p>
-                      <p className="text-purple-700 text-sm">Demandes de financement de procédures</p>
+                      <p className="font-semibold text-purple-800 mb-2">"Maître, avez-vous reçu mon courrier ?"</p>
+                      <p className="text-purple-700 text-sm">Demandes de suivi administratif</p>
                     </div>
                   </div>
                 </div>
@@ -284,7 +284,7 @@ export function TitulaireDeCompte() {
                 Voici ce que vous recevez <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">instantanément par email</span>
               </h2>
               <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Exemple concret : un client demande un virement pour payer sa facture d'électricité
+                Exemple concret : un client demande un virement pour acheter un matelas
               </p>
             </div>
 
@@ -335,7 +335,7 @@ export function TitulaireDeCompte() {
                   <div className="relative h-[600px] w-full">
                     <img
                       src="https://res.cloudinary.com/drdqov4zs/image/upload/v1753823463/VoxNow_-_Exemple_-_Final_veeuom.png"
-                      alt="Exemple d'email VoxNow pour un titulaire de compte"
+                      alt="Exemple d'email VoxNow pour un administrateur provisoire"
                       className="w-full h-full object-contain drop-shadow-2xl"
                     />
                     <div className="absolute -z-10 w-full h-full blur-3xl opacity-20 bg-gradient-to-r from-vox-blue via-now-green to-light-blue rounded-full"></div>
@@ -372,7 +372,7 @@ export function TitulaireDeCompte() {
                         <div>
                           <h4 className="font-bold text-gray-900 mb-2">Message vocal laissé</h4>
                           <p className="text-gray-600 italic">
-                            "Bonjour Maître, c'est Monsieur Dupont. J'ai reçu une facture d'électricité de 150€ à payer. Pourriez-vous me faire un virement s'il vous plaît ?"
+                            "Bonjour Maître, c'est Monsieur Martin. J'ai besoin de 120€ pour acheter un matelas. Pourriez-vous me faire un virement s'il vous plaît ?"
                           </p>
                         </div>
                       </div>
@@ -418,7 +418,7 @@ export function TitulaireDeCompte() {
                 <div className="w-full lg:w-1/2 flex items-center justify-center">
                   <div className="relative">
                     <img
-                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1753825610/VoxNow_-_exemple_SMS_final_xk36ye.png"
+                      src="/lovable-uploads/sms-admin-provisoire.png"
                       alt="Exemple de SMS automatique envoyé par VoxNow"
                       className="max-w-xs h-auto drop-shadow-2xl rounded-2xl mx-auto"
                     />
