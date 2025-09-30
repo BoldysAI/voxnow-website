@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { Auth } from './components/Auth';
 import { FreeTrialForm } from './components/FreeTrialForm';
+import { FreeTrialPage } from './components/FreeTrialPage';
 import { VoiceMessage } from './components/VoiceMessage';
 import { WelcomeForm } from './components/WelcomeForm';
 import { SuccessPage } from './components/SuccessPage';
@@ -1586,6 +1587,7 @@ function App() {
         <Route path="/gravacao" element={<GravacaoPage />} />
         <Route path="/paiement" element={<PaymentPage />} />
         <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />
+        <Route path="/free-trial" element={<FreeTrialPage />} />
         <Route path="/blog" element={<BlogList />} />
         <Route path="/blog/avocats-belgique-gagner-temps-voxnow" element={<BlogArticle1 />} />
         <Route path="/blog/solution-belge-gestion-appels-manques" element={<BlogArticle2 />} />
