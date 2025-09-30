@@ -185,6 +185,20 @@ export function FreeTrialPage() {
                   </div>
                 </div>
               </div>
+
+              <div className="bg-white rounded-2xl p-6 shadow-lg border border-gray-100">
+                <div className="flex items-start space-x-4">
+                  <div className="bg-gradient-to-r from-vox-blue to-light-blue rounded-full p-3 flex-shrink-0">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-lg mb-2">Dashboard personnalisé</h3>
+                    <p className="text-gray-600">
+                      Accès à votre dashboard personnalisé pour récapituler tous vos emails et vos demandes en un coup d'œil.
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Trust indicator */}
