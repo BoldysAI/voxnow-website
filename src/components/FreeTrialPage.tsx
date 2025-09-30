@@ -66,7 +66,7 @@ export function FreeTrialPage() {
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed">
-              L'essai gratuit de 14 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email, ainsi que la réponse SMS automatique sans setup complémentaire.
+              L'essai gratuit de 14 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email, ainsi que la réponse SMS automatique qui accuse réception du message à votre correspondant.
             </p>
 
             <div className="grid md:grid-cols-4 gap-6 mb-8 max-w-4xl mx-auto">
