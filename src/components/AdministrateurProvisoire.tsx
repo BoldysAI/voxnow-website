@@ -1,22 +1,7 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  CheckCircle2, 
-  Mail,
-  MessageCircle,
-  Phone,
-  Zap,
-  Shield,
-  FileText,
-  Brain,
-  TrendingUp,
-  Users,
-  Timer,
-  Monitor
-} from 'lucide-react';
+import { ArrowRight, CheckCircle2, Mail, MessageCircle, Phone, Zap, Shield, FileText, Brain, TrendingUp, Users, Timer, Monitor } from 'lucide-react';
 import { trackViewContent, trackCustomEvent } from '../utils/fbPixel';
-
 export function AdministrateurProvisoire() {
   useEffect(() => {
     // Track page view
@@ -28,34 +13,24 @@ export function AdministrateurProvisoire() {
     // Scroll to top
     window.scrollTo(0, 0);
   }, []);
-
   const handleTrialClick = () => {
     trackCustomEvent('AdminProvTrialClick', {
       content_name: 'Admin Prov Trial Form Access',
       content_category: 'Lead Generation'
     });
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+  return <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-sm fixed w-full z-50 border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Link to="/">
-                <img 
-                  src="https://res.cloudinary.com/drdqov4zs/image/upload/v1741862267/My%20Brand/LOGO_VoxNow_d6fbzq.png"
-                  alt="VoxNow Logo"
-                  className="h-12 hover:opacity-80 transition-opacity cursor-pointer"
-                />
+                <img src="https://res.cloudinary.com/drdqov4zs/image/upload/v1741862267/My%20Brand/LOGO_VoxNow_d6fbzq.png" alt="VoxNow Logo" className="h-12 hover:opacity-80 transition-opacity cursor-pointer" />
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <Link
-                to="/"
-                className="text-vox-blue hover:text-now-green transition-colors duration-300 font-medium"
-              >
+              <Link to="/" className="text-vox-blue hover:text-now-green transition-colors duration-300 font-medium">
                 ← Retour à l'accueil
               </Link>
             </div>
@@ -113,11 +88,7 @@ export function AdministrateurProvisoire() {
               </div>
             </div>
 
-            <Link
-              to="/free-trial"
-              onClick={handleTrialClick}
-              className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-            >
+            <Link to="/free-trial" onClick={handleTrialClick} className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">
               👉 Essayez VoxNow gratuitement
               <ArrowRight className="ml-3 h-6 w-6" />
             </Link>
@@ -284,9 +255,7 @@ export function AdministrateurProvisoire() {
               <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
                 Voici ce que vous recevez <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">instantanément par email</span>
               </h2>
-              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-                Exemple concret : un client demande un virement pour acheter un matelas
-              </p>
+              
             </div>
 
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-200">
@@ -325,7 +294,7 @@ export function AdministrateurProvisoire() {
 
                     <div className="bg-gradient-to-r from-vox-blue/10 to-now-green/10 p-6 rounded-2xl border-2 border-dashed border-gray-300">
                       <p className="text-center font-bold text-gray-900 text-lg">
-                        ⏱️ Temps de lecture : <span className="text-now-green">5 secondes</span><br/>
+                        ⏱️ Temps de lecture : <span className="text-now-green">5 secondes</span><br />
                         <span className="text-sm text-gray-600">vs 2 minutes pour écouter le message</span>
                       </p>
                     </div>
@@ -334,11 +303,7 @@ export function AdministrateurProvisoire() {
                 
                 <div className="w-full lg:w-1/2 flex items-center">
                   <div className="relative h-[600px] w-full">
-                    <img
-                      src="https://res.cloudinary.com/drdqov4zs/image/upload/v1753823463/VoxNow_-_Exemple_-_Final_veeuom.png"
-                      alt="Exemple d'email VoxNow pour un administrateur provisoire"
-                      className="w-full h-full object-contain drop-shadow-2xl"
-                    />
+                    <img src="https://res.cloudinary.com/drdqov4zs/image/upload/v1753823463/VoxNow_-_Exemple_-_Final_veeuom.png" alt="Exemple d'email VoxNow pour un administrateur provisoire" className="w-full h-full object-contain drop-shadow-2xl" />
                     <div className="absolute -z-10 w-full h-full blur-3xl opacity-20 bg-gradient-to-r from-vox-blue via-now-green to-light-blue rounded-full"></div>
                   </div>
                 </div>
@@ -463,7 +428,7 @@ export function AdministrateurProvisoire() {
                                 Bonjour, nous avons bien reçu votre demande pour les <span className="font-semibold">120€ pour acheter un matelas</span>. Celle-ci sera traitée au plus vite.
                               </p>
                               <p className="text-gray-800 text-sm leading-relaxed mt-3">
-                                Cordialement,<br/>
+                                Cordialement,<br />
                                 <span className="font-semibold">Maître Sacha Delcourt</span>
                               </p>
                               <p className="text-xs text-gray-400 mt-2">10:23</p>
@@ -716,10 +681,7 @@ export function AdministrateurProvisoire() {
 
             {/* CTA Button to Demo Dashboard */}
             <div className="mt-12 text-center">
-              <Link
-                to="/demo"
-                className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 animate-fade-in"
-              >
+              <Link to="/dashboard/demo" className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 animate-fade-in">
                 <Monitor className="mr-3 h-6 w-6" />
                 Découvrir le tableau de bord en démo
                 <ArrowRight className="ml-3 h-6 w-6" />
@@ -925,11 +887,7 @@ export function AdministrateurProvisoire() {
               </div>
             </div>
 
-            <Link
-              to="/free-trial"
-              onClick={handleTrialClick}
-              className="inline-flex items-center bg-white text-vox-blue px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
-            >
+            <Link to="/free-trial" onClick={handleTrialClick} className="inline-flex items-center bg-white text-vox-blue px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105">
               Commencer mon essai gratuit
               <ArrowRight className="ml-3 h-6 w-6" />
             </Link>
@@ -940,6 +898,5 @@ export function AdministrateurProvisoire() {
           </div>
         </div>
       </section>
-    </div>
-  );
+    </div>;
 }
