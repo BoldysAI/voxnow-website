@@ -1,9 +1,35 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-}
+// Secure CORS configuration - only allow requests from specific origins
+const getAllowedOrigins = () => {
+  const allowedOrigins = [
+    'https://voxnow.be',
+    'https://voxnow.pt',
+    'https://www.voxnow.be',
+    'http://localhost:8080', // Development
+    'http://localhost:3000', // Alternative dev port
+  ];
+  
+  // Add environment-specific origins if needed
+  const customOrigin = Deno.env.get('ALLOWED_ORIGIN');
+  if (customOrigin) {
+    allowedOrigins.push(customOrigin);
+  }
+  
+  return allowedOrigins;
+};
+
+const getCorsHeaders = (origin?: string) => {
+  const allowedOrigins = getAllowedOrigins();
+  const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : 'null';
+  
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+};
 
 const VOXY_SYSTEM_PROMPT = `Tu es Voxy, le chatbot IA de VoxNow, une solution SaaS belge qui automatise la gestion des messages vocaux manqués pour les cabinets d'avocats.
 
@@ -60,6 +86,10 @@ interface ChatCompletionRequest {
 }
 
 serve(async (req) => {
+  // Get origin from request headers for CORS validation
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })

@@ -161,21 +161,14 @@ export function Admin() {
   }, [isAuthenticated]);
 
   const handlePasswordAuth = () => {
-    // Add debugging to help troubleshoot
-    console.log('Environment password exists:', !!ADMIN_PASSWORD);
-    console.log('Input length:', passwordInput.length);
-    console.log('Expected length:', ADMIN_PASSWORD?.length || 0);
-    
     if (passwordInput === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       setAuthError('');
       const timestamp = Date.now().toString();
       sessionStorage.setItem('voxnow_admin_authenticated', 'true');
       sessionStorage.setItem('voxnow_admin_auth_timestamp', timestamp);
-      console.log('Authentication successful');
     } else {
       setAuthError('Mot de passe incorrect');
-      console.log('Authentication failed - password mismatch');
       // Add delay to prevent brute force attacks
       setTimeout(() => {}, 1000);
     }
