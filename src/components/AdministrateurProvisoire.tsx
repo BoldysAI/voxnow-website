@@ -418,7 +418,7 @@ export function AdministrateurProvisoire() {
                 <div className="w-full lg:w-1/2 flex items-center justify-center">
                   <div className="relative">
                     <img
-                      src="/lovable-uploads/sms-admin-provisoire.png"
+                      src="/lovable-uploads/sms-matelas-admin.png"
                       alt="Exemple de SMS automatique envoyé par VoxNow"
                       className="max-w-xs h-auto drop-shadow-2xl rounded-2xl mx-auto"
                     />
