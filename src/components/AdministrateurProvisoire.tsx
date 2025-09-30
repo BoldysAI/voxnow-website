@@ -12,7 +12,8 @@ import {
   Brain,
   TrendingUp,
   Users,
-  Timer
+  Timer,
+  Monitor
 } from 'lucide-react';
 import { trackViewContent, trackCustomEvent } from '../utils/fbPixel';
 
@@ -646,6 +647,18 @@ export function AdministrateurProvisoire() {
                   Suivez le temps gagné et le nombre de demandes traitées quotidiennement.
                 </p>
               </div>
+            </div>
+
+            {/* CTA Button to Demo Dashboard */}
+            <div className="mt-12 text-center">
+              <Link
+                to="/dashboard/demo"
+                className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 animate-fade-in"
+              >
+                <Monitor className="mr-3 h-6 w-6" />
+                Découvrir le tableau de bord en démo
+                <ArrowRight className="ml-3 h-6 w-6" />
+              </Link>
             </div>
           </div>
         </div>
