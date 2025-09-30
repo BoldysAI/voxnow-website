@@ -850,6 +850,140 @@ export function AdministrateurProvisoire() {
         </div>
       </section>
 
+      {/* Pricing Section */}
+      <section className="py-24 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-6">
+                Tarifs transparents et adaptés
+              </h2>
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Solution complète pour automatiser toute votre gestion d'appels. 
+                Incluant transcription, résumé par IA et réponses automatiques par SMS.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              {/* Main Plan */}
+              <div className="bg-gradient-to-br from-white to-green-50/30 rounded-3xl p-8 border-2 border-now-green shadow-xl hover:shadow-2xl transition-all duration-300 relative">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-2 rounded-full text-sm font-semibold">
+                    Le plus populaire
+                  </span>
+                </div>
+                
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-now-green mb-2">VoxNow</h3>
+                  <p className="text-gray-600 mb-6">Solution complète pour votre cabinet</p>
+                  <div className="mb-6">
+                    <span className="text-4xl font-bold text-gray-900">90€</span>
+                    <span className="text-gray-600">/mois/user</span>
+                  </div>
+                  <p className="text-sm text-gray-500">Jusqu'à 300 messages/mois</p>
+                </div>
+                
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Transcription instantanée</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Résumé par IA</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>SMS automatiques</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Symplicy (si client)</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Stockage illimité des vocaux</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Accès aux fonctionnalités beta</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Support prioritaire</span>
+                  </li>
+                </ul>
+                
+                <Link
+                  to="/free-trial"
+                  onClick={handleTrialClick}
+                  className="w-full bg-gradient-to-r from-vox-blue to-now-green text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 block text-center"
+                >
+                  Commencer l'essai gratuit
+                </Link>
+              </div>
+
+              {/* Custom Plan */}
+              <div className="bg-gradient-to-br from-white to-purple-50/30 rounded-3xl p-8 border border-gray-200 shadow-lg hover:shadow-xl transition-all duration-300">
+                <div className="text-center mb-8">
+                  <h3 className="text-2xl font-bold text-light-blue mb-2">Custom</h3>
+                  <p className="text-gray-600 mb-6">Pour les gros cabinets et besoins spécifiques</p>
+                  <div className="mb-6">
+                    <span className="text-3xl font-bold text-gray-900">Sur mesure</span>
+                  </div>
+                  <p className="text-sm text-gray-500">Messages illimités</p>
+                </div>
+                
+                <ul className="space-y-4 mb-8">
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Toutes les fonctionnalités VoxNow</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Automatisation complète des appels</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Utilisateurs multiples</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>API personnalisée</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Formation dédiée</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Support téléphonique</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
+                    <span>Intégrations sur mesure</span>
+                  </li>
+                </ul>
+                
+                <Link
+                  to="/demo"
+                  className="w-full bg-gradient-to-r from-light-blue to-light-green text-white py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 block text-center"
+                >
+                  Réserver une démo
+                </Link>
+              </div>
+            </div>
+
+            {/* Additional Info */}
+            <div className="text-center mt-12">
+              <p className="text-gray-600 mb-6">
+                Tous nos plans incluent 14 jours d'essai gratuit • Sans engagement • Support inclus
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* CTA Final */}
       <section className="py-24 px-4 bg-gradient-to-br from-vox-blue to-now-green">
         <div className="container mx-auto">
