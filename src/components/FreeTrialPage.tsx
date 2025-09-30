@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { CheckCircle2, Gift, ArrowRight, Calendar } from 'lucide-react';
 import { FreeTrialForm } from './FreeTrialForm';
 import { trackViewContent } from '../utils/fbPixel';
-
 export function FreeTrialPage() {
   useEffect(() => {
     // Track page view
@@ -15,27 +14,18 @@ export function FreeTrialPage() {
     // Scroll to top
     window.scrollTo(0, 0);
   }, []);
-
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
+  return <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
       <header className="bg-white/95 backdrop-blur-sm fixed w-full z-50 border-b border-gray-100 shadow-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
               <Link to="/">
-                <img 
-                  src="https://res.cloudinary.com/drdqov4zs/image/upload/v1741862267/My%20Brand/LOGO_VoxNow_d6fbzq.png"
-                  alt="VoxNow Logo"
-                  className="h-12 hover:opacity-80 transition-opacity cursor-pointer"
-                />
+                <img src="https://res.cloudinary.com/drdqov4zs/image/upload/v1741862267/My%20Brand/LOGO_VoxNow_d6fbzq.png" alt="VoxNow Logo" className="h-12 hover:opacity-80 transition-opacity cursor-pointer" />
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <Link
-                to="/"
-                className="text-vox-blue hover:text-now-green transition-colors duration-300 font-medium"
-              >
+              <Link to="/" className="text-vox-blue hover:text-now-green transition-colors duration-300 font-medium">
                 ← Retour à l'accueil
               </Link>
             </div>
@@ -52,9 +42,7 @@ export function FreeTrialPage() {
         
         <div className="container mx-auto text-center relative z-10">
           <div className="max-w-4xl mx-auto">
-            <button
-              className="mb-8 inline-flex items-center bg-white/90 backdrop-blur-sm border border-gray-200 px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
-            >
+            <button className="mb-8 inline-flex items-center bg-white/90 backdrop-blur-sm border border-gray-200 px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group">
               <Gift className="h-6 w-6 text-now-green mr-3 group-hover:scale-110 transition-transform" />
               <span className="text-gray-700 group-hover:text-gray-900 transition-colors font-semibold">
                 Offres exclusives early adopters 🎁
@@ -114,23 +102,14 @@ export function FreeTrialPage() {
             
             {/* Info sections after form */}
             <div className="mt-12 space-y-6">
-              <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200">
-                <p className="text-gray-600 text-center">
-                  L'essai gratuit de 14 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email, ainsi que la réponse SMS automatique qui accuse réception du message à votre correspondant.
-                </p>
-              </div>
+              
 
               <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 text-center">
                 <p className="text-gray-600 mb-4">
                   Pour intégrer des automatisations avancées (intégration agenda, transferts vers collaborateurs, workflows personnalisés), 
                   réservez une démo personnalisée avec notre équipe.
                 </p>
-                <a
-                  href="https://calendly.com/hey-sachadelcourt/voxnow"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
-                >
+                <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
                   <Calendar className="mr-2 h-5 w-5" />
                   Réserver une démo
                 </a>
@@ -260,12 +239,12 @@ export function FreeTrialPage() {
             <p className="text-xl text-gray-600 mb-8">
               Rejoignez les avocats qui économisent plus de 2 heures par semaine avec VoxNow
             </p>
-            <button
-              onClick={() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-              }}
-              className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-10 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1"
-            >
+            <button onClick={() => {
+            window.scrollTo({
+              top: 0,
+              behavior: 'smooth'
+            });
+          }} className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-10 py-4 rounded-full text-lg font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
               Commencer l'essai gratuit
               <ArrowRight className="ml-3 h-6 w-6" />
             </button>
@@ -281,6 +260,5 @@ export function FreeTrialPage() {
           </p>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }
