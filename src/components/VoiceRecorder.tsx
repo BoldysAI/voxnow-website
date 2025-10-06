@@ -226,7 +226,12 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
       formData.append('timestamp', new Date().toISOString());
       formData.append('source', 'VoxNow Recording Page');
 
-      const response = await fetch('https://hook.eu2.make.com/1ukcagcallyap8brulithyopsq37sg8r', {
+      const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_URL;
+      if (!webhookUrl) {
+        throw new Error('Configuration manquante. Veuillez contacter le support.');
+      }
+
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         body: formData,
         headers: {
