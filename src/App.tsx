@@ -780,7 +780,7 @@ function Home() {
                       <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
                       <div className="flex space-x-2">
                         <a
-                          href="https://www.linkedin.com/in/samuel-pochet-827866169/"
+                          href="https://www.linkedin.com/in/samuel-pochet-a32ba476/"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-vox-blue hover:text-now-green transition-colors text-sm"
@@ -978,7 +978,7 @@ function Home() {
                       <p className="text-gray-600 text-sm mb-2">Avocat au Barreau</p>
                       <div className="flex space-x-2">
                         <a
-                          href="https://www.linkedin.com/in/samuel-pochet-827866169/"
+                          href="https://www.linkedin.com/in/samuel-pochet-a32ba476/"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-vox-blue hover:text-now-green transition-colors text-sm"
