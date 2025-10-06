@@ -7,6 +7,7 @@ const getAllowedOrigins = () => {
     'https://voxnow.be',
     'https://voxnow.pt',
     'https://www.voxnow.be',
+    'https://staging.voxnow.be', // Staging
     'http://localhost:8080', // Development
     'http://localhost:3000', // Alternative dev port
     'https://lovable.dev/', // Lovable Preview
