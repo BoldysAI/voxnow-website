@@ -9,6 +9,7 @@ const getAllowedOrigins = () => {
     'https://www.voxnow.be',
     'http://localhost:8080', // Development
     'http://localhost:3000', // Alternative dev port
+    'https://lovable.dev/', // Lovable Preview
   ];
   
   // Add environment-specific origins if needed
