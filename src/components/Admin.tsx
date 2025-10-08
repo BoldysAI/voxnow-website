@@ -52,11 +52,25 @@ interface UpdateUserData {
   email_confirm?: boolean;
 }
 
-const ADMIN_PASSWORD = 'VoxnowAdmin5723!#';
+// Get admin password from environment variables
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
-// Get Supabase URL and anon key from environment or use fallbacks
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://hxyyqidiixyshsszqmqd.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4eXlxaWRpaXh5c2hzc3pxbXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MjE0NTEsImV4cCI6MjA3MTE5NzQ1MX0.WAfEvVIKtT2DOWGI8oRDZSsqroloYZ1PAb3cN1GSjGU';
+// Get Supabase URL and anon key from environment variables
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Validate required environment variables
+if (!SUPABASE_URL || !SUPABASE_URL.startsWith('https://')) {
+  throw new Error('VITE_SUPABASE_URL is required and must be a valid HTTPS URL');
+}
+
+if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 50) {
+  throw new Error('VITE_SUPABASE_ANON_KEY is required and must be a valid JWT token');
+}
+
+if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 8) {
+  throw new Error('VITE_ADMIN_PASSWORD is required and must be at least 8 characters long');
+}
 const ADMIN_FUNCTION_BASE_URL = `${SUPABASE_URL}/functions/v1/admin-users`;
 
 // Helper function to get authenticated headers for Edge Functions
@@ -101,10 +115,43 @@ export function Admin() {
   // Check if user is already authenticated on component mount
   useEffect(() => {
     const adminAuth = sessionStorage.getItem('voxnow_admin_authenticated');
-    if (adminAuth === 'true') {
-      setIsAuthenticated(true);
+    const authTimestamp = sessionStorage.getItem('voxnow_admin_auth_timestamp');
+    
+    if (adminAuth === 'true' && authTimestamp) {
+      const now = Date.now();
+      const authTime = parseInt(authTimestamp, 10);
+      const sessionTimeout = 30 * 60 * 1000; // 30 minutes
+      
+      if (now - authTime < sessionTimeout) {
+        setIsAuthenticated(true);
+      } else {
+        // Session expired, clear storage
+        sessionStorage.removeItem('voxnow_admin_authenticated');
+        sessionStorage.removeItem('voxnow_admin_auth_timestamp');
+      }
     }
   }, []);
+
+  // Auto-logout after session timeout
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    
+    const checkSession = () => {
+      const authTimestamp = sessionStorage.getItem('voxnow_admin_auth_timestamp');
+      if (authTimestamp) {
+        const now = Date.now();
+        const authTime = parseInt(authTimestamp, 10);
+        const sessionTimeout = 30 * 60 * 1000; // 30 minutes
+        
+        if (now - authTime >= sessionTimeout) {
+          handleLogout();
+        }
+      }
+    };
+    
+    const interval = setInterval(checkSession, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
 
   // Load users when authenticated
   useEffect(() => {
@@ -117,9 +164,13 @@ export function Admin() {
     if (passwordInput === ADMIN_PASSWORD) {
       setIsAuthenticated(true);
       setAuthError('');
+      const timestamp = Date.now().toString();
       sessionStorage.setItem('voxnow_admin_authenticated', 'true');
+      sessionStorage.setItem('voxnow_admin_auth_timestamp', timestamp);
     } else {
       setAuthError('Mot de passe incorrect');
+      // Add delay to prevent brute force attacks
+      setTimeout(() => {}, 1000);
     }
     setPasswordInput('');
   };
@@ -127,6 +178,7 @@ export function Admin() {
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('voxnow_admin_authenticated');
+    sessionStorage.removeItem('voxnow_admin_auth_timestamp');
     navigate('/');
   };
 

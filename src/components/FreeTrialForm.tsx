@@ -62,7 +62,12 @@ export function FreeTrialForm() {
       };
 
       // Send to webhook
-      const response = await fetch('https://hook.eu2.make.com/2lsxs99c8ja75y3rgmxuwpt5gmrqux8j', {
+      const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_TRIAL_URL;
+      if (!webhookUrl) {
+        throw new Error('Configuration manquante. Veuillez contacter le support.');
+      }
+
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

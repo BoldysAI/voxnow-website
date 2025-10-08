@@ -227,7 +227,12 @@ export function GravadorVoz({ onRecordingComplete }: GravadorVozProps) {
       formData.append('timestamp', new Date().toISOString());
       formData.append('source', 'VoxNow Gravacao Page');
 
-      const response = await fetch('https://hook.eu2.make.com/tvyvuq1qyuxjfhokwhbxdgbwbye5a2j6', {
+      const webhookUrl = import.meta.env.VITE_MAKE_WEBHOOK_PT_URL;
+      if (!webhookUrl) {
+        throw new Error('Configuração em falta. Por favor contacte o suporte.');
+      }
+
+      const response = await fetch(webhookUrl, {
         method: 'POST',
         body: formData,
         headers: {

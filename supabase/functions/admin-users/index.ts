@@ -1,11 +1,38 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
-}
+// Secure CORS configuration - only allow requests from specific origins
+const getAllowedOrigins = () => {
+  const allowedOrigins = [
+    'https://voxnow.be',
+    'https://voxnow.pt',
+    'https://www.voxnow.be',
+    'https://staging.voxnow.be', // Staging
+    'http://localhost:8080', // Development
+    'http://localhost:3000', // Alternative dev port
+    'https://lovable.dev/', // Lovable Preview
+  ];
+  
+  // Add environment-specific origins if needed
+  const customOrigin = Deno.env.get('ALLOWED_ORIGIN');
+  if (customOrigin) {
+    allowedOrigins.push(customOrigin);
+  }
+  
+  return allowedOrigins;
+};
+
+const getCorsHeaders = (origin?: string) => {
+  const allowedOrigins = getAllowedOrigins();
+  const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : 'null';
+  
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Credentials': 'true',
+  };
+};
 
 interface CreateUserRequest {
   email: string
@@ -23,6 +50,10 @@ interface UpdateUserRequest {
 }
 
 serve(async (req) => {
+  // Get origin from request headers for CORS validation
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+  
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
