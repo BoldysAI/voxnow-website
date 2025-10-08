@@ -21,7 +21,7 @@ const getAllowedOrigins = () => {
   return allowedOrigins;
 };
 
-const getCorsHeaders = (origin?: string) => {
+const getCorsHeaders = (origin?: string | null) => {
   const allowedOrigins = getAllowedOrigins();
   const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : 'null';
   
