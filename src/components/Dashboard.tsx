@@ -1544,6 +1544,19 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
                                     </div>
                                   )}
                                   
+                                  {/* SMS envoyé */}
+                                  {voicemail.sms_sent && (
+                                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-200">
+                                      <div className="flex items-center mb-3">
+                                        <MessageSquare className="h-5 w-5 text-purple-600 mr-2" />
+                                        <h4 className="font-semibold text-gray-900">SMS envoyé</h4>
+                                      </div>
+                                      <p className="text-gray-700 leading-relaxed">
+                                        {voicemail.sms_sent}
+                                      </p>
+                                    </div>
+                                  )}
+                                  
                                   {/* Informations supplémentaires */}
                                   <div className="grid md:grid-cols-2 gap-4">
                                     <div className="bg-white rounded-lg p-4 border border-gray-200">
