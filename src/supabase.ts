@@ -65,6 +65,7 @@ export interface Voicemail {
   audio_url?: string
   transcription?: string
   ai_summary?: string
+  sms_sent?: string
   original_language: string
   status: 'Nouveau' | 'En cours' | 'Examiné' | 'Archivé' | 'Supprimé'
   priority: 'Faible' | 'Normal' | 'Élevé' | 'Urgent'
