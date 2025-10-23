@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  CheckCircle2, 
-  Clock, 
-  Zap, 
+import {
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Zap,
   Calendar,
-  MessageCircle, 
+  MessageCircle,
   Lock,
   FileText,
   Mail,
@@ -40,6 +40,7 @@ import { BlogSection } from './components/BlogSection';
 import { BlogList } from './components/BlogList';
 import { BlogPost } from './components/BlogPost';
 import { Chatbot } from './components/Chatbot';
+import { useDomainConfig } from './hooks/useDomainConfig';
 
 import { BlogArticle1 } from './components/BlogArticle1';
 import { BlogArticle2 } from './components/BlogArticle2';
@@ -55,6 +56,7 @@ declare global {
 }
 
 function Home() {
+  const config = useDomainConfig();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const navigate = useNavigate();
   const testimonials = [
@@ -235,7 +237,11 @@ function Home() {
             <div className="text-center mb-8">
               <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full shadow-sm">
                 <div className="w-2 h-2 bg-gradient-to-r from-vox-blue to-now-green rounded-full mr-2 animate-pulse"></div>
-                <span className="text-gray-700 font-medium text-sm">+20 cabinets belges nous font déjà confiance</span>
+                <span className="text-gray-700 font-medium text-sm">
+                  {config.domain === 'be'
+                    ? '+20 cabinets belges nous font déjà confiance'
+                    : '+20 cabinets nous font déjà confiance'}
+                </span>
               </div>
             </div>
 
@@ -442,28 +448,52 @@ function Home() {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-vox-blue/5 to-now-green/5 p-6 rounded-2xl border border-gray-200">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-light-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
-                          <FileText className="h-6 w-6 text-light-blue" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-gray-900 mb-3">Intégration Symplicy</h4>
-                          <p className="text-gray-600 mb-3">
-                            Pour les clients utilisant <a href="https://symplicy.com" target="_blank" rel="noopener noreferrer" className="text-vox-blue hover:text-now-green font-semibold underline">Symplicy.com</a>, 
-                            VoxNow peut automatiquement envoyer un formulaire d'ouverture de dossier personnalisé.
-                          </p>
-                          <div className="bg-white p-4 rounded-lg border border-gray-100">
-                            <p className="text-sm text-gray-700 font-medium">
-                              ✨ Formulaire d'ouverture de dossier envoyé automatiquement
+                    {config.domain === 'be' ? (
+                      <div className="bg-gradient-to-r from-vox-blue/5 to-now-green/5 p-6 rounded-2xl border border-gray-200">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-12 h-12 bg-light-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <FileText className="h-6 w-6 text-light-blue" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900 mb-3">Intégration Symplicy</h4>
+                            <p className="text-gray-600 mb-3">
+                              Pour les clients utilisant <a href="https://symplicy.com" target="_blank" rel="noopener noreferrer" className="text-vox-blue hover:text-now-green font-semibold underline">Symplicy.com</a>,
+                              VoxNow peut automatiquement envoyer un formulaire d'ouverture de dossier personnalisé.
                             </p>
-                            <p className="text-sm text-gray-600 mt-1">
-                              Le client peut remplir ses informations avant même votre premier contact
-                            </p>
+                            <div className="bg-white p-4 rounded-lg border border-gray-100">
+                              <p className="text-sm text-gray-700 font-medium">
+                                ✨ Formulaire d'ouverture de dossier envoyé automatiquement
+                              </p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                Le client peut remplir ses informations avant même votre premier contact
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    ) : config.domain === 'fr' ? (
+                      <div className="bg-gradient-to-r from-vox-blue/5 to-now-green/5 p-6 rounded-2xl border border-gray-200">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-12 h-12 bg-light-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <FileText className="h-6 w-6 text-light-blue" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900 mb-3">Formulaire d'ouverture de dossier personnalisé</h4>
+                            <p className="text-gray-600 mb-3">
+                              VoxNow peut automatiquement envoyer un formulaire d'ouverture de dossier personnalisé à vos clients potentiels.
+                            </p>
+                            <div className="bg-white p-4 rounded-lg border border-gray-100">
+                              <p className="text-sm text-gray-700 font-medium">
+                                ✨ Formulaire d'ouverture de dossier envoyé automatiquement
+                              </p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                Le client peut remplir ses informations avant même votre premier contact
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
                 
@@ -1370,7 +1400,7 @@ function Home() {
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Symplicy (si client)</span>
+                    <span>{config.domain === 'be' ? 'Symplicy (si client)' : 'Formulaire d\'ouverture de dossier'}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
