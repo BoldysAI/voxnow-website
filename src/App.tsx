@@ -21,7 +21,6 @@ import {
   TrendingUp,
   AlertTriangle,
   Monitor,
-  Play,
   Star
 } from 'lucide-react';
 import { Auth } from './components/Auth';
