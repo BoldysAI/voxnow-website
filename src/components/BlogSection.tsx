@@ -1,6 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { Calendar, User, ArrowRight, Clock } from 'lucide-react';
+import { useDomainConfig } from '../hooks/useDomainConfig';
 
 interface BlogPost {
   id: string;
@@ -117,6 +118,8 @@ const blogPosts: BlogPost[] = [
 ];
 
 export function BlogSection() {
+  const config = useDomainConfig();
+  
   return (
     <section className="py-24 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4">
@@ -130,7 +133,39 @@ export function BlogSection() {
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-          {blogPosts.map((post, index) => (
+          {blogPosts
+            .map((post) => {
+              // Update Belgian references based on domain
+              if (post.id === '8') {
+                return {
+                  ...post,
+                  title: config.domain === 'be'
+                    ? 'Comment les avocats belges gagnent 5h par semaine avec la transcription automatique VoxNow'
+                    : 'Comment les avocats français gagnent 5h par semaine avec la transcription automatique VoxNow'
+                };
+              }
+              if (post.id === '9') {
+                return {
+                  ...post,
+                  title: config.domain === 'be'
+                    ? "VoxNow, l'assistant virtuel belge pour gérer vos appels manqués"
+                    : "VoxNow, l'assistant virtuel français pour gérer vos appels manqués"
+                };
+              }
+              if (post.id === '4') {
+                return {
+                  ...post,
+                  title: config.domain === 'be'
+                    ? 'Transcrire ou écouter ? Ce que 100 avocats belges préfèrent en 2025'
+                    : 'Transcrire ou écouter ? Ce que 100 avocats français préfèrent en 2025',
+                  excerpt: config.domain === 'be'
+                    ? 'Une étude exclusive auprès de 100 avocats belges révèle leurs habitudes face à la gestion des messages vocaux et les bénéfices de la transcription.'
+                    : 'Une étude exclusive auprès de 100 avocats français révèle leurs habitudes face à la gestion des messages vocaux et les bénéfices de la transcription.'
+                };
+              }
+              return post;
+            })
+            .map((post, index) => (
             <article 
               key={post.id} 
               className={`${

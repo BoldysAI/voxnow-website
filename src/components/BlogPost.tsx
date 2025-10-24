@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Calendar, User, Clock, Share2, Mail, Phone } from 'lucide-react';
 import { trackViewContent, trackCustomEvent } from '../utils/fbPixel';
+import { useDomainConfig } from '../hooks/useDomainConfig';
 
 interface BlogPostData {
   id: string;
@@ -1562,7 +1563,37 @@ const blogPosts: Record<string, BlogPostData> = {
 };
 
 export function BlogPost() {
+  const config = useDomainConfig();
   const { slug } = useParams<{ slug: string }>();
+  
+  // Helper function to replace Belgian references with French ones
+  const adaptContentToDomain = (content: string): string => {
+    if (config.domain === 'fr') {
+      return content
+        .replace(/En Belgique,/g, 'En France,')
+        .replace(/en Belgique/g, 'en France')
+        .replace(/belges/g, 'français')
+        .replace(/belge/g, 'français')
+        .replace(/Belgique/g, 'France')
+        .replace(/Bruxelles/g, 'Paris')
+        .replace(/à Liège/g, 'à Lyon')
+        .replace(/Liège/g, 'Lyon')
+        .replace(/basée en Belgique/g, 'basée en France')
+        .replace(/basé en Belgique/g, 'basé en France')
+        .replace(/Support basé en Belgique 🇧🇪/g, 'Support basé en France 🇫🇷')
+        .replace(/juridiques belges/g, 'juridiques français')
+        .replace(/juridique belge/g, 'juridique français')
+        .replace(/avocats en Belgique/g, 'avocats en France')
+        .replace(/100 avocats en Belgique/g, '100 avocats en France')
+        .replace(/3 régions belges/g, '3 régions françaises')
+        .replace(/cabinets belges/g, 'cabinets français')
+        .replace(/professionnels belges/g, 'professionnels français')
+        .replace(/équipe basée en Belgique/g, 'équipe basée en France')
+        .replace(/spécificités juridiques belges/g, 'spécificités juridiques françaises');
+    }
+    return content;
+  };
+  
   const post = slug ? blogPosts[slug] : null;
 
   useEffect(() => {
@@ -1702,8 +1733,8 @@ export function BlogPost() {
 
           {/* Article Content */}
           <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-gray-100">
-            <div 
-              dangerouslySetInnerHTML={{ __html: post.content }}
+            <div
+              dangerouslySetInnerHTML={{ __html: adaptContentToDomain(post.content) }}
               className="article-content"
             />
           </div>

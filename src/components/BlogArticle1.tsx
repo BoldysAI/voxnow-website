@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Clock, CheckCircle2 } from 'lucide-react';
+import { useDomainConfig } from '../hooks/useDomainConfig';
 
 export function BlogArticle1() {
+  const config = useDomainConfig();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -34,7 +36,7 @@ export function BlogArticle1() {
           <span className="mx-2">›</span>
           <Link to="/blog" className="hover:text-vox-blue">Blog</Link>
           <span className="mx-2">›</span>
-          <span>Comment les avocats belges gagnent 5h par semaine</span>
+          <span>{config.domain === 'be' ? 'Comment les avocats belges gagnent 5h par semaine' : 'Comment les avocats français gagnent 5h par semaine'}</span>
         </nav>
 
         {/* Header */}
@@ -47,7 +49,9 @@ export function BlogArticle1() {
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            Comment les avocats belges gagnent 5h par semaine avec la transcription automatique VoxNow
+            {config.domain === 'be'
+              ? 'Comment les avocats belges gagnent 5h par semaine avec la transcription automatique VoxNow'
+              : 'Comment les avocats français gagnent 5h par semaine avec la transcription automatique VoxNow'}
           </h1>
           
           <p className="text-xl text-gray-600 leading-relaxed">
@@ -66,7 +70,9 @@ export function BlogArticle1() {
             </h2>
             <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-100">
               <p className="text-gray-700 leading-relaxed mb-4">
-                En Belgique, un avocat reçoit en moyenne entre 10 et 20 messages vocaux par semaine. 
+                {config.domain === 'be'
+                  ? 'En Belgique, un avocat reçoit en moyenne entre 10 et 20 messages vocaux par semaine.'
+                  : 'En France, un avocat reçoit en moyenne entre 10 et 20 messages vocaux par semaine.'}
                 Les écouter, les retranscrire et y répondre peut représenter 2 à 5 heures de travail non facturable.
               </p>
               <div className="bg-orange-50 border-l-4 border-orange-400 p-4 rounded">
@@ -182,7 +188,9 @@ export function BlogArticle1() {
                 "Depuis que j'utilise VoxNow, je peux prioriser mes appels urgents et traiter les autres plus sereinement. 
                 C'est un vrai changement."
               </blockquote>
-              <cite className="text-vox-blue font-medium">Me L., avocat à Bruxelles</cite>
+              <cite className="text-vox-blue font-medium">
+                {config.domain === 'be' ? 'Me L., avocat à Bruxelles' : 'Me L., avocat à Paris'}
+              </cite>
             </div>
           </section>
 
@@ -193,7 +201,7 @@ export function BlogArticle1() {
             </h2>
             <div className="bg-gradient-to-r from-vox-blue to-now-green p-8 rounded-2xl text-white">
               <p className="text-lg mb-6">
-                VoxNow n'est pas un simple outil de transcription. C'est un assistant virtuel spécialisé pour les avocats belges.
+                VoxNow n'est pas un simple outil de transcription. C'est un assistant virtuel spécialisé pour les avocats{config.domain === 'be' ? ' belges' : ' français'}.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Link
@@ -222,10 +230,12 @@ export function BlogArticle1() {
               className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all group"
             >
               <h4 className="font-bold text-gray-900 mb-2 group-hover:text-vox-blue transition-colors">
-                VoxNow, l'assistant virtuel belge pour gérer vos appels manqués
+                {config.domain === 'be'
+                  ? "VoxNow, l'assistant virtuel belge pour gérer vos appels manqués"
+                  : "VoxNow, l'assistant virtuel français pour gérer vos appels manqués"}
               </h4>
               <p className="text-gray-600 text-sm">
-                Découvrez comment VoxNow aide les professionnels belges à centraliser, transcrire et répondre plus vite...
+                Découvrez comment VoxNow aide les professionnels{config.domain === 'be' ? ' belges' : ' français'} à centraliser, transcrire et répondre plus vite...
               </p>
             </Link>
             <Link
