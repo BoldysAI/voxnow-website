@@ -1,6 +1,6 @@
 # VoxNow - AI-Powered Voicemail Management for Law Firms
 
-VoxNow is an intelligent voicemail transcription and management platform specifically designed for Belgian law firms. It automatically transcribes voicemails, provides AI-powered summaries, and offers comprehensive analytics for legal practice management.
+VoxNow is an intelligent voicemail transcription and management platform designed for law firms in Belgium and France. It automatically transcribes voicemails, provides AI-powered summaries, and offers comprehensive analytics for legal practice management.
 
 ## 🎯 Project Overview
 
@@ -41,6 +41,14 @@ VoxNow transforms how law firms handle voicemail messages by:
 - **PostCSS**: CSS processing with Autoprefixer
 - **Deployment**: Netlify (inferred from `_redirects` file)
 
+## 🌍 Multi-Domain Support
+
+VoxNow supports multiple domains with localized content:
+- **Belgian version** (`voxnow.be`): Belgian-specific content and Symplicy integration
+- **French version** (`voxnow.fr`): French-specific content and custom file opening forms
+
+Content automatically adapts based on domain using [`useDomainConfig()`](src/hooks/useDomainConfig.ts) hook.
+
 ## 📁 Project Structure
 
 ```
@@ -54,13 +62,27 @@ voxnow-website/
 │   │   ├── Profile.tsx       # User profile management
 │   │   ├── VoiceRecorder.tsx # Voice recording functionality
 │   │   ├── Chatbot.tsx       # Customer support chatbot
-│   │   ├── BlogSection.tsx   # Blog content management
+│   │   ├── BlogSection.tsx   # Blog content management (domain-aware)
+│   │   ├── BlogList.tsx      # Blog listing (domain-aware)
+│   │   ├── BlogArticle1.tsx  # Blog article (domain-aware)
+│   │   ├── BlogArticle2.tsx  # Blog article (domain-aware)
+│   │   ├── BlogPost.tsx      # Dynamic blog posts (domain-aware)
 │   │   └── ...               # Other UI components
+│   ├── config/               # Configuration
+│   │   ├── types.ts          # Domain config types
+│   │   ├── index.ts          # Config exports
+│   │   └── domains/          # Domain-specific configs
+│   │       ├── be.config.ts  # Belgian configuration
+│   │       ├── fr.config.ts  # French configuration
+│   │       └── default.config.ts
+│   ├── contexts/
+│   │   └── DomainContext.tsx # Domain context provider
 │   ├── hooks/
+│   │   ├── useDomainConfig.ts # Domain configuration hook
 │   │   └── useSupabase.ts    # Supabase integration hooks
 │   ├── utils/
 │   │   └── fbPixel.ts        # Facebook Pixel tracking utilities
-│   ├── App.tsx               # Main application component
+│   ├── App.tsx               # Main application component (domain-aware)
 │   ├── supabase.ts           # Supabase client configuration
 │   └── main.tsx              # Application entry point
 ├── supabase/
@@ -222,4 +244,4 @@ For technical support or questions:
 
 ---
 
-**VoxNow** - Transforming voicemail management for Belgian law firms through AI-powered automation.
+**VoxNow** - Transforming voicemail management for law firms through AI-powered automation.
