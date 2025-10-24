@@ -1,12 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Routes, Route, Link, useNavigate } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  CheckCircle2, 
-  Clock, 
-  Zap, 
+import {
+  ArrowRight,
+  CheckCircle2,
+  Clock,
+  Zap,
   Calendar,
-  MessageCircle, 
+  MessageCircle,
   Lock,
   FileText,
   Mail,
@@ -20,7 +20,8 @@ import {
   BarChart3,
   TrendingUp,
   AlertTriangle,
-  Monitor
+  Monitor,
+  Star
 } from 'lucide-react';
 import { Auth } from './components/Auth';
 import { FreeTrialForm } from './components/FreeTrialForm';
@@ -40,6 +41,7 @@ import { BlogSection } from './components/BlogSection';
 import { BlogList } from './components/BlogList';
 import { BlogPost } from './components/BlogPost';
 import { Chatbot } from './components/Chatbot';
+import { useDomainConfig } from './hooks/useDomainConfig';
 
 import { BlogArticle1 } from './components/BlogArticle1';
 import { BlogArticle2 } from './components/BlogArticle2';
@@ -55,8 +57,11 @@ declare global {
 }
 
 function Home() {
+  const config = useDomainConfig();
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const navigate = useNavigate();
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
   const testimonials = [
     {
       text: "VoxNow me fait gagner un temps précieux : plus besoin d'écouter chaque message vocal, je reçois une transcription claire par mail. Cela me permet d'agir immédiatement selon l'urgence, avec la certitude de ne rien oublier et de tout gérer.",
@@ -142,6 +147,47 @@ function Home() {
     const trialFormSection = document.querySelector('#free-trial-section');
     if (trialFormSection) {
       trialFormSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Intersection Observer for video autoplay (muted initially due to browser policies)
+  useEffect(() => {
+    const videoElement = videoRef.current;
+    if (!videoElement) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // Start playing muted (required by browsers for autoplay)
+            videoElement.muted = true;
+            videoElement.play().catch((error) => {
+              console.log('Autoplay prevented:', error);
+            });
+          } else {
+            videoElement.pause();
+          }
+        });
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(videoElement);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  // Handle unmute button click
+  const handleUnmute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = false;
+      setIsVideoMuted(false);
+      trackCustomEvent('TestimonialVideoUnmute', {
+        content_name: 'Testimonial Video Unmuted',
+        content_category: 'Video Engagement'
+      });
     }
   };
 
@@ -235,7 +281,11 @@ function Home() {
             <div className="text-center mb-8">
               <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-4 py-2 rounded-full shadow-sm">
                 <div className="w-2 h-2 bg-gradient-to-r from-vox-blue to-now-green rounded-full mr-2 animate-pulse"></div>
-                <span className="text-gray-700 font-medium text-sm">+20 cabinets belges nous font déjà confiance</span>
+                <span className="text-gray-700 font-medium text-sm">
+                  {config.domain === 'be'
+                    ? '+20 cabinets belges nous font déjà confiance'
+                    : '+20 cabinets nous font déjà confiance'}
+                </span>
               </div>
             </div>
 
@@ -442,28 +492,52 @@ function Home() {
                       </div>
                     </div>
 
-                    <div className="bg-gradient-to-r from-vox-blue/5 to-now-green/5 p-6 rounded-2xl border border-gray-200">
-                      <div className="flex items-start space-x-4">
-                        <div className="w-12 h-12 bg-light-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
-                          <FileText className="h-6 w-6 text-light-blue" />
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-gray-900 mb-3">Intégration Symplicy</h4>
-                          <p className="text-gray-600 mb-3">
-                            Pour les clients utilisant <a href="https://symplicy.com" target="_blank" rel="noopener noreferrer" className="text-vox-blue hover:text-now-green font-semibold underline">Symplicy.com</a>, 
-                            VoxNow peut automatiquement envoyer un formulaire d'ouverture de dossier personnalisé.
-                          </p>
-                          <div className="bg-white p-4 rounded-lg border border-gray-100">
-                            <p className="text-sm text-gray-700 font-medium">
-                              ✨ Formulaire d'ouverture de dossier envoyé automatiquement
+                    {config.domain === 'be' ? (
+                      <div className="bg-gradient-to-r from-vox-blue/5 to-now-green/5 p-6 rounded-2xl border border-gray-200">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-12 h-12 bg-light-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <FileText className="h-6 w-6 text-light-blue" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900 mb-3">Intégration Symplicy</h4>
+                            <p className="text-gray-600 mb-3">
+                              Pour les clients utilisant <a href="https://symplicy.com" target="_blank" rel="noopener noreferrer" className="text-vox-blue hover:text-now-green font-semibold underline">Symplicy.com</a>,
+                              VoxNow peut automatiquement envoyer un formulaire d'ouverture de dossier personnalisé.
                             </p>
-                            <p className="text-sm text-gray-600 mt-1">
-                              Le client peut remplir ses informations avant même votre premier contact
-                            </p>
+                            <div className="bg-white p-4 rounded-lg border border-gray-100">
+                              <p className="text-sm text-gray-700 font-medium">
+                                ✨ Formulaire d'ouverture de dossier envoyé automatiquement
+                              </p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                Le client peut remplir ses informations avant même votre premier contact
+                              </p>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
+                    ) : config.domain === 'fr' ? (
+                      <div className="bg-gradient-to-r from-vox-blue/5 to-now-green/5 p-6 rounded-2xl border border-gray-200">
+                        <div className="flex items-start space-x-4">
+                          <div className="w-12 h-12 bg-light-blue/10 rounded-full flex items-center justify-center flex-shrink-0">
+                            <FileText className="h-6 w-6 text-light-blue" />
+                          </div>
+                          <div>
+                            <h4 className="font-bold text-gray-900 mb-3">Formulaire d'ouverture de dossier personnalisé</h4>
+                            <p className="text-gray-600 mb-3">
+                              VoxNow peut automatiquement envoyer un formulaire d'ouverture de dossier personnalisé à vos clients potentiels.
+                            </p>
+                            <div className="bg-white p-4 rounded-lg border border-gray-100">
+                              <p className="text-sm text-gray-700 font-medium">
+                                ✨ Formulaire d'ouverture de dossier envoyé automatiquement
+                              </p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                Le client peut remplir ses informations avant même votre premier contact
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
                 
@@ -1088,23 +1162,117 @@ function Home() {
         </div>
       </section>
 
+      {/* Testimonial Video Section */}
+      <section className="py-24 bg-gradient-to-br from-blue-50 via-purple-50/30 to-green-50/20 relative overflow-hidden">
+        {/* Background decoration */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute top-20 -left-40 w-96 h-96 bg-gradient-to-br from-vox-blue/10 to-now-green/10 rounded-full blur-3xl"></div>
+          <div className="absolute -bottom-20 -right-40 w-96 h-96 bg-gradient-to-tr from-light-blue/10 to-light-green/10 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-5xl mx-auto">
+            {/* Header with decorative elements */}
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-6 py-3 rounded-full shadow-sm mb-6">
+                <Star className="h-5 w-5 text-yellow-500 mr-2 fill-current" />
+                <span className="text-gray-700 font-medium">Témoignages clients</span>
+              </div>
+              
+              <h2 className="text-3xl md:text-5xl font-bold mb-6">
+                <span className="bg-gradient-to-r from-vox-blue via-light-blue to-now-green bg-clip-text text-transparent">
+                  Voici ce que pensent nos clients
+                </span>
+                <br />
+                <span className="text-gray-900">de la solution VoxNow</span>
+              </h2>
+              
+              <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+                Découvrez comment VoxNow transforme la gestion des appels pour les cabinets d'avocats
+              </p>
+            </div>
+            
+            {/* Video Container with enhanced design */}
+            <div className="relative">
+              <div className="bg-gradient-to-br from-white to-gray-50 rounded-3xl shadow-2xl p-4 md:p-8 border border-gray-200">
+                <div className="relative rounded-2xl overflow-hidden shadow-xl bg-black">
+                  {/* Video aspect ratio container */}
+                  <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                    <video
+                      ref={videoRef}
+                      controls
+                      playsInline
+                      className="absolute top-0 left-0 w-full h-full"
+                      poster="https://res.cloudinary.com/drdqov4zs/image/upload/v1741862267/My%20Brand/LOGO_VoxNow_d6fbzq.png"
+                      onPlay={() => trackCustomEvent('TestimonialVideoPlay', {
+                        content_name: 'Testimonial Video',
+                        content_category: 'Video Engagement'
+                      })}
+                    >
+                      <source src="/testimonial_video.mp4" type="video/mp4" />
+                      Votre navigateur ne supporte pas la lecture de vidéos.
+                    </video>
+                    
+                    {/* Unmute button overlay - appears when video is muted */}
+                    {isVideoMuted && (
+                      <button
+                        onClick={handleUnmute}
+                        className="absolute top-4 right-4 bg-white/95 backdrop-blur-sm text-gray-900 px-4 py-2 rounded-full shadow-lg hover:bg-white transition-all duration-300 flex items-center space-x-2 z-10 animate-pulse"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2" />
+                        </svg>
+                        <span className="font-medium">Cliquez pour activer le son</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Video caption */}
+                <div className="mt-6 text-center">
+                  <p className="text-gray-600 italic">
+                    "Nos clients partagent leur expérience avec VoxNow"
+                  </p>
+                </div>
+              </div>
+              
+              {/* Decorative elements */}
+              <div className="absolute -top-6 -left-6 w-24 h-24 bg-gradient-to-br from-vox-blue/20 to-now-green/20 rounded-full blur-2xl"></div>
+              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-gradient-to-tr from-light-blue/20 to-light-green/20 rounded-full blur-2xl"></div>
+            </div>
+
+            {/* Trust indicators below video */}
+            <div className="mt-12 grid md:grid-cols-3 gap-6">
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-gray-200 shadow-lg text-center">
+                <div className="text-3xl font-bold gradient-text mb-2">+20</div>
+                <p className="text-gray-600">Cabinets satisfaits</p>
+              </div>
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-gray-200 shadow-lg text-center">
+                <div className="text-3xl font-bold gradient-text mb-2">1h/jour</div>
+                <p className="text-gray-600">Temps économisé</p>
+              </div>
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl border border-gray-200 shadow-lg text-center">
+                <div className="text-3xl font-bold gradient-text mb-2">100%</div>
+                <p className="text-gray-600">Messages traités</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Beta Features Section */}
       <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
-              <div className="inline-flex items-center bg-gradient-to-r from-orange-100 to-yellow-100 border border-orange-200 px-6 py-3 rounded-full shadow-sm mb-6">
-                <Zap className="h-5 w-5 text-orange-600 mr-2" />
-                <span className="text-orange-700 font-medium">En développement - Bêta</span>
-              </div>
-              
               <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-6">
-                Fonctionnalités à venir
+                Fonctionnalités supplémentaires
               </h2>
               
               <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-                Votre gestion de prise de contact centralisée. En plus des emails et des SMS automatiques, 
-                centralisez tout pour avoir un suivi en un clin d'œil.
+                Votre gestion de prise de contact centralisée. En plus des emails et des SMS automatiques,
+                accédez à des outils avancés pour un suivi complet et optimisé.
               </p>
             </div>
 
@@ -1280,15 +1448,15 @@ function Home() {
               </div>
             </div>
 
-            {/* CTA for Beta Access */}
+            {/* CTA for Additional Features */}
             <div className="mt-16 text-center">
-              <div className="bg-gradient-to-r from-orange-50 to-yellow-50 rounded-3xl p-8 md:p-12 border border-orange-200">
+              <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-3xl p-8 md:p-12 border border-gray-200">
                 <h3 className="text-2xl font-bold gradient-text mb-4">
-                  Accès anticipé aux fonctionnalités bêta
+                  Accédez à toutes les fonctionnalités
                 </h3>
                 <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-                  En tant qu'utilisateur VoxNow, vous aurez un accès prioritaire à ces nouvelles fonctionnalités 
-                  dès leur sortie, sans coût supplémentaire.
+                  En tant qu'utilisateur VoxNow, vous bénéficiez de toutes ces fonctionnalités avancées
+                  incluses dans votre abonnement, sans coût supplémentaire.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <button
@@ -1370,7 +1538,7 @@ function Home() {
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />
-                    <span>Symplicy (si client)</span>
+                    <span>{config.domain === 'be' ? 'Symplicy (si client)' : 'Formulaire d\'ouverture de dossier'}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle2 className="h-5 w-5 text-now-green mr-3" />

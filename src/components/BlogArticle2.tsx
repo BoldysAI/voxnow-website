@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
 import { ArrowLeft, Clock, Shield, Users, CheckCircle2, Phone, Mail } from 'lucide-react';
+import { useDomainConfig } from '../hooks/useDomainConfig';
 
 export function BlogArticle2() {
+  const config = useDomainConfig();
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -34,7 +36,7 @@ export function BlogArticle2() {
           <span className="mx-2">›</span>
           <Link to="/blog" className="hover:text-vox-blue">Blog</Link>
           <span className="mx-2">›</span>
-          <span>L'assistant virtuel belge pour gérer vos appels manqués</span>
+          <span>{config.domain === 'be' ? "L'assistant virtuel belge pour gérer vos appels manqués" : "L'assistant virtuel français pour gérer vos appels manqués"}</span>
         </nav>
 
         {/* Header */}
@@ -47,7 +49,9 @@ export function BlogArticle2() {
           </div>
           
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-            VoxNow, l'assistant virtuel belge pour gérer vos appels manqués
+            {config.domain === 'be'
+              ? "VoxNow, l'assistant virtuel belge pour gérer vos appels manqués"
+              : "VoxNow, l'assistant virtuel français pour gérer vos appels manqués"}
           </h1>
           
           <p className="text-xl text-gray-600 leading-relaxed">
@@ -68,7 +72,9 @@ export function BlogArticle2() {
               <div className="bg-red-50 border-l-4 border-red-400 p-6 rounded mb-6">
                 <h3 className="font-bold text-red-800 mb-2">📊 Statistique alarmante</h3>
                 <p className="text-red-700 text-lg font-medium">
-                  En Belgique, 32% des prospects ne rappellent pas après être tombés sur un répondeur.
+                  {config.domain === 'be'
+                    ? 'En Belgique, 32% des prospects ne rappellent pas après être tombés sur un répondeur.'
+                    : 'En France, 32% des prospects ne rappellent pas après être tombés sur un répondeur.'}
                 </p>
               </div>
               <p className="text-gray-700 leading-relaxed">
@@ -259,7 +265,9 @@ export function BlogArticle2() {
               className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all group"
             >
               <h4 className="font-bold text-gray-900 mb-2 group-hover:text-vox-blue transition-colors">
-                Comment les avocats belges gagnent 5h par semaine avec VoxNow
+                {config.domain === 'be'
+                  ? 'Comment les avocats belges gagnent 5h par semaine avec VoxNow'
+                  : 'Comment les avocats français gagnent 5h par semaine avec VoxNow'}
               </h4>
               <p className="text-gray-600 text-sm">
                 Découvrez comment optimiser votre temps et augmenter votre productivité...
