@@ -155,7 +155,14 @@ export function PaymentPage() {
           </div>
 
           {/* Subscription Card */}
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 border border-gray-100 mb-12">
+          <div className="bg-gradient-to-br from-blue-50 via-purple-50/30 to-green-50/20 relative overflow-hidden rounded-3xl shadow-xl p-8 md:p-12 border border-gray-100 mb-12">
+            {/* Background decoration */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute top-20 -left-40 w-96 h-96 bg-gradient-to-br from-vox-blue/10 to-now-green/10 rounded-full blur-3xl"></div>
+              <div className="absolute -bottom-20 -right-40 w-96 h-96 bg-gradient-to-tr from-light-blue/10 to-light-green/10 rounded-full blur-3xl"></div>
+            </div>
+            
+            <div className="relative z-10">
             <div className="text-center mb-8">
               <div className="w-20 h-20 bg-gradient-to-br from-vox-blue to-now-green rounded-full flex items-center justify-center mx-auto mb-6">
                 <CreditCard className="h-10 w-10 text-white" />
@@ -229,9 +236,10 @@ export function PaymentPage() {
                 </div>
               </div>
             </div>
+            </div>
 
             {/* Testimonials Section */}
-            <section className="py-12 bg-gradient-to-b from-gray-50/50 to-white">
+            <section className="py-12">
               <div className="max-w-4xl mx-auto">
                 <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 gradient-text">
                   Ce qu'en disent nos utilisateurs
@@ -314,14 +322,8 @@ export function PaymentPage() {
             </section>
 
             {/* Testimonial Video Section */}
-            <section className="py-12 bg-gradient-to-br from-blue-50 via-purple-50/30 to-green-50/20 relative overflow-hidden">
-              {/* Background decoration */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 -left-40 w-96 h-96 bg-gradient-to-br from-vox-blue/10 to-now-green/10 rounded-full blur-3xl"></div>
-                <div className="absolute -bottom-20 -right-40 w-96 h-96 bg-gradient-to-tr from-light-blue/10 to-light-green/10 rounded-full blur-3xl"></div>
-              </div>
-
-              <div className="relative z-10 max-w-5xl mx-auto">
+            <section className="py-12">
+              <div className="max-w-5xl mx-auto">
                 {/* Header with decorative elements */}
                 <div className="text-center mb-12">
                   <div className="inline-flex items-center bg-white/80 backdrop-blur-sm border border-gray-200 px-6 py-3 rounded-full shadow-sm mb-6">
