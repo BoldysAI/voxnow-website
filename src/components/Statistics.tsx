@@ -1,9 +1,10 @@
 
-import { TrendingUp, Users, Clock, AlertTriangle, Scale, FileText, Brain, BarChart3 } from 'lucide-react';
+import { TrendingUp, Users, Clock, AlertTriangle, Scale, FileText, Brain, BarChart3, Phone } from 'lucide-react';
 import { VoicemailWithAnalysis, getAnalysisByType } from '../hooks/useSupabase';
 
 interface StatisticsProps {
   records: VoicemailWithAnalysis[];
+  allVoicemails?: VoicemailWithAnalysis[];
 }
 
 // No normalization needed - use exact database values
@@ -156,9 +157,10 @@ const PercentageBar = ({ label, percentage, color }: {
   </div>
 );
 
-export function Statistics({ records }: StatisticsProps) {
+export function Statistics({ records, allVoicemails }: StatisticsProps) {
   // Ensure records is always an array to prevent undefined errors
   const safeRecords = records ?? [];
+  const safeAllVoicemails = allVoicemails ?? [];
 
   // Calculate all statistics
   const sentimentStats = calculateSentimentStats(safeRecords);
@@ -200,17 +202,25 @@ export function Statistics({ records }: StatisticsProps) {
   const averagePerDay = calculateAveragePerDay();
   const mostUrgent = urgencyStats.urgent || 0;
   const newCases = caseStageStats.nouveauDossier || 0;
+  const missedCallsCount = safeAllVoicemails.filter(vm => vm.missed_call).length;
 
   return (
     <div className="space-y-8">
       {/* Overview Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <MetricCard
           title="Total Messages"
           value={totalMessages}
           subtitle="Messages vocaux reçus"
           icon={FileText}
           color="bg-vox-blue"
+        />
+        <MetricCard
+          title="Appels manqués"
+          value={missedCallsCount}
+          subtitle="Appels non décrochés"
+          icon={Phone}
+          color="bg-orange-500"
         />
         <MetricCard
           title="Moyenne/jour"

@@ -180,6 +180,7 @@ export type Database = {
           is_read: boolean | null
           is_starred: boolean | null
           metadata: Json | null
+          missed_call: boolean | null
           notes: string | null
           original_language: string | null
           priority: string | null
@@ -206,6 +207,7 @@ export type Database = {
           is_read?: boolean | null
           is_starred?: boolean | null
           metadata?: Json | null
+          missed_call?: boolean | null
           notes?: string | null
           original_language?: string | null
           priority?: string | null
@@ -232,6 +234,7 @@ export type Database = {
           is_read?: boolean | null
           is_starred?: boolean | null
           metadata?: Json | null
+          missed_call?: boolean | null
           notes?: string | null
           original_language?: string | null
           priority?: string | null

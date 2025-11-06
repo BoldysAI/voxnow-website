@@ -67,7 +67,8 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
   
   // UI state
   const [filteredVoicemails, setFilteredVoicemails] = useState<VoicemailWithAnalysis[]>([]);
-  const [activeTab, setActiveTab] = useState<'messages' | 'statistics'>('messages');
+  const [filteredMissedCalls, setFilteredMissedCalls] = useState<VoicemailWithAnalysis[]>([]);
+  const [activeTab, setActiveTab] = useState<'messages' | 'missed-calls' | 'statistics'>('messages');
   const [sortField, setSortField] = useState<SortField>('received_at');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [currentPage, setCurrentPage] = useState(1);
@@ -148,7 +149,11 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
 
     // Apply filters when dependencies change
   useEffect(() => {
-    let filtered = voicemails.filter(vm => vm.status !== 'Supprimé');
+    // Separate missed calls from regular voicemails
+    const regularVoicemails = voicemails.filter(vm => vm.status !== 'Supprimé' && !vm.missed_call);
+    const missedCalls = voicemails.filter(vm => vm.status !== 'Supprimé' && vm.missed_call);
+    
+    let filtered = regularVoicemails;
 
     // Search filter
     if (searchTerm.trim() !== '') {
@@ -295,7 +300,69 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
       });
     }
 
+    // Apply same filters to missed calls but only basic ones (search, period, quick filters)
+    let filteredMissed = missedCalls;
+    
+    // Search filter for missed calls
+    if (searchTerm.trim() !== '') {
+      const searchLower = searchTerm.toLowerCase();
+      filteredMissed = filteredMissed.filter(voicemail => {
+        const transcription = (voicemail.transcription || '').toLowerCase();
+        const summary = (voicemail.ai_summary || '').toLowerCase();
+        const id = (voicemail.id || '').toLowerCase();
+        const phone = (voicemail.caller_phone_number || '').toLowerCase();
+        
+        return transcription.includes(searchLower) || 
+               summary.includes(searchLower) || 
+               id.includes(searchLower) ||
+               phone.includes(searchLower);
+      });
+    }
+
+    // Period filter for missed calls
+    if (periodFilter !== 'all') {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const monthAgo = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+      filteredMissed = filteredMissed.filter(voicemail => {
+        if (!voicemail.received_at) return false;
+        const messageDate = new Date(voicemail.received_at);
+        
+        switch (periodFilter) {
+          case 'today':
+            return messageDate >= today;
+          case 'week':
+            return messageDate >= weekAgo;
+          case 'month':
+            return messageDate >= monthAgo;
+          default:
+            return true;
+        }
+      });
+    }
+
+    // Quick filters for missed calls
+    if (quickTodayFilter) {
+      const today = new Date();
+      const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+      
+      filteredMissed = filteredMissed.filter(voicemail => {
+        if (!voicemail.received_at) return false;
+        const messageDate = new Date(voicemail.received_at);
+        return messageDate >= todayStart;
+      });
+    }
+
+    if (quickUnreadFilter) {
+      filteredMissed = filteredMissed.filter(voicemail => {
+        return !voicemail.is_read;
+      });
+    }
+
     setFilteredVoicemails(filtered);
+    setFilteredMissedCalls(filteredMissed);
     setCurrentPage(1);
   }, [voicemails, searchTerm, periodFilter, durationFilter, contentFilter, sentimentFilter, urgencyFilter, caseStageFilter, requestCategoryFilter, fieldOfLawFilter, quickTodayFilter, quickUrgentFilter, quickUnreadFilter]);
 
@@ -439,6 +506,21 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
       // when voicemails data is updated via updateVoicemailStatus
     } catch (error) {
       console.error('Error updating read status:', error);
+    }
+  };
+
+  const markAsRead = async (id: string) => {
+    // Find the voicemail to check if it's already read
+    const voicemail = voicemails.find(vm => vm.id === id);
+    if (!voicemail || voicemail.is_read) return;
+    
+    try {
+      await updateVoicemailStatus(id, { 
+        is_read: true,
+        read_at: new Date().toISOString() 
+      });
+    } catch (error) {
+      console.error('Error marking as read:', error);
     }
   };
 
@@ -704,10 +786,11 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
   };
 
   // Statistics calculations
-  const totalMessages = voicemails.length;
+  const totalMessages = voicemails.filter(vm => !vm.missed_call).length;
+  const totalMissedCalls = voicemails.filter(vm => vm.missed_call).length;
   const processedMessages = voicemails.filter(vm => vm.transcription || vm.ai_summary).length;
   const totalDuration = voicemails.reduce((sum, vm) => sum + (vm.duration_seconds || 0), 0);
-  const unreadMessages = voicemails.filter(vm => !vm.is_read).length;
+  const unreadMessages = voicemails.filter(vm => !vm.is_read && !vm.missed_call).length;
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
@@ -835,7 +918,7 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
 
       <div className="container mx-auto px-4 py-8">
         {/* Statistics Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
@@ -844,6 +927,18 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
               </div>
               <div className="w-12 h-12 bg-vox-blue/10 rounded-full flex items-center justify-center">
                 <MessageSquare className="h-6 w-6 text-vox-blue" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Appels manqués</p>
+                <p className="text-2xl font-bold text-orange-600">{totalMissedCalls}</p>
+              </div>
+              <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
+                <Phone className="h-6 w-6 text-orange-600" />
               </div>
             </div>
           </div>
@@ -1123,6 +1218,19 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
                     {unreadMessages} non lu{unreadMessages > 1 ? 's' : ''}
                   </span>
                 )}
+              </div>
+            </button>
+            <button
+              onClick={() => setActiveTab('missed-calls')}
+              className={`flex-1 px-6 py-4 text-center font-medium transition-colors ${
+                activeTab === 'missed-calls'
+                  ? 'text-vox-blue border-b-2 border-vox-blue bg-blue-50'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <div className="flex items-center justify-center space-x-2">
+                <Phone className="h-5 w-5" />
+                <span>Appels manqués ({filteredMissedCalls.length})</span>
               </div>
             </button>
             <button
@@ -1690,6 +1798,217 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
           </div>
         )}
 
+        {/* Missed Calls Tab */}
+        {activeTab === 'missed-calls' && (
+          <div>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-100 mb-8">
+              <div className="p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-bold text-orange-600">Appels manqués</h2>
+                    <div className="flex items-center space-x-2 mt-1">
+                      <p className="text-gray-600">
+                        {filteredMissedCalls.length} appel{filteredMissedCalls.length !== 1 ? 's' : ''} manqué{filteredMissedCalls.length !== 1 ? 's' : ''}
+                        {searchTerm && ` (filtré${filteredMissedCalls.length !== 1 ? 's' : ''} sur ${totalMissedCalls})`}
+                      </p>
+                      {(quickTodayFilter || quickUrgentFilter || quickUnreadFilter) && (
+                        <div className="flex space-x-1">
+                          {quickTodayFilter && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-vox-blue">
+                              <Calendar className="h-3 w-3 mr-1" />
+                              Aujourd'hui
+                            </span>
+                          )}
+                          {quickUnreadFilter && (
+                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-600">
+                              <Circle className="h-3 w-3 mr-1" />
+                              Non lu
+                            </span>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Phone className="h-5 w-5 text-orange-600" />
+                    <span className="text-sm text-gray-600">
+                      Appels non décrochés
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* No Data State */}
+            {!(authLoading || voicemailsLoading) && !error && filteredMissedCalls.length === 0 && (
+              <div className="text-center py-12 px-4">
+                <div className="bg-gray-50 p-8 rounded-lg max-w-md mx-auto">
+                  <Phone className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 font-medium mb-2">Aucun appel manqué pour le moment</p>
+                  <p className="text-gray-500 text-sm">
+                    {searchTerm ? 'Aucun résultat trouvé pour votre recherche.' : 'Tous vos appels ont été décrochés !'}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {filteredMissedCalls.length > 0 && (
+              <>
+                {/* Missed Calls List */}
+                <div className="bg-white rounded-2xl shadow-lg border border-gray-100">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-4 text-left w-12"></th>
+                        <th className="px-6 py-4 text-left w-12"></th>
+                        <th className="px-6 py-4 text-left min-w-[150px]">
+                          <span className="flex items-center space-x-2 text-sm font-medium text-gray-700">
+                            <Calendar className="h-4 w-4" />
+                            <span>Date & Heure</span>
+                          </span>
+                        </th>
+                        <th className="px-6 py-4 text-left min-w-[200px]">
+                          <span className="flex items-center space-x-2 text-sm font-medium text-gray-700">
+                            <Phone className="h-4 w-4" />
+                            <span>Numéro de téléphone</span>
+                          </span>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {filteredMissedCalls.map((missedCall) => (
+                        <Fragment key={missedCall.id}>
+                          <tr className={`transition-colors cursor-pointer ${
+                            !missedCall.is_read 
+                              ? 'bg-white border-l-4 border-l-orange-500 shadow-sm hover:bg-orange-50/20' 
+                              : 'bg-gray-50/60 text-gray-600 hover:bg-gray-100/80'
+                          }`}
+                          onClick={() => {
+                            toggleRowExpansion(missedCall.id);
+                            if (!missedCall.is_read) {
+                              markAsRead(missedCall.id);
+                            }
+                          }}>
+                            <td className="px-6 py-4">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleRowExpansion(missedCall.id);
+                                }}
+                                className="text-gray-400 hover:text-orange-600 transition-colors"
+                              >
+                                {expandedRows.has(missedCall.id) ? (
+                                  <ChevronDown className="h-5 w-5" />
+                                ) : (
+                                  <ChevronRight className="h-5 w-5" />
+                                )}
+                              </button>
+                            </td>
+                            <td className="px-6 py-4">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleReadStatus(missedCall.id);
+                                }}
+                                className={`transition-colors ${
+                                  missedCall.is_read 
+                                    ? 'text-gray-400 hover:text-now-green' 
+                                    : 'text-orange-600 hover:text-now-green animate-pulse'
+                                }`}
+                                title={missedCall.is_read ? "Marquer comme non lu" : "Marquer comme lu"}
+                              >
+                                {missedCall.is_read ? (
+                                  <CheckCircle className="h-5 w-5 text-now-green" />
+                                ) : (
+                                  <Circle className="h-5 w-5 stroke-2" />
+                                )}
+                              </button>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className={`text-sm flex items-center space-x-2 ${
+                                !missedCall.is_read ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}>
+                                <span>{formatTime(missedCall.received_at)}</span>
+                                {!missedCall.is_read && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-semibold bg-orange-500 text-white">
+                                    NOUVEAU
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="px-6 py-4">
+                              <div className={`text-sm flex items-center space-x-2 ${
+                                !missedCall.is_read ? 'text-gray-900 font-medium' : 'text-gray-500'
+                              }`}>
+                                <Phone className="h-4 w-4 text-orange-500" />
+                                <span>{missedCall.caller_phone_number || 'Numéro masqué'}</span>
+                                {missedCall.ai_summary && (
+                                  <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 ml-2">
+                                    <MessageSquare className="h-3 w-3 mr-1" />
+                                    SMS envoyé
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                          
+                          {/* Expanded Row Content - Only SMS and Call Details */}
+                          {expandedRows.has(missedCall.id) && (
+                            <tr>
+                              <td colSpan={4} className="px-6 py-6 bg-gray-50 border-t border-gray-200">
+                                <div className="space-y-6">
+                                  {/* SMS sent section */}
+                                  {missedCall.ai_summary && (
+                                    <div className="bg-white rounded-lg p-6 border border-gray-200">
+                                      <div className="flex items-center mb-3">
+                                        <MessageSquare className="h-5 w-5 text-green-500 mr-2" />
+                                        <h4 className="font-semibold text-gray-900">SMS envoyé automatiquement</h4>
+                                      </div>
+                                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                                        <p className="text-gray-700 leading-relaxed">
+                                          {missedCall.ai_summary}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Call Details card */}
+                                  <div className="bg-white rounded-lg p-6 border border-gray-200">
+                                    <div className="flex items-center mb-3">
+                                      <Phone className="h-5 w-5 text-orange-500 mr-2" />
+                                      <h4 className="font-semibold text-gray-900">Détail de l'appel</h4>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div>
+                                        <p className="text-sm text-gray-600">Numéro</p>
+                                        <p className="font-medium text-gray-900">
+                                          {missedCall.caller_phone_number || 'Numéro masqué'}
+                                        </p>
+                                      </div>
+                                      <div>
+                                        <p className="text-sm text-gray-600">Date et heure</p>
+                                        <p className="font-medium text-gray-900">
+                                          {formatTime(missedCall.received_at)}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </Fragment>
+                      ))}
+                    </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        )}
+
         {/* Statistics Tab */}
         {activeTab === 'statistics' && (
           <div>
@@ -1703,7 +2022,7 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
                 )}
               </h2>
             </div>
-            <Statistics records={filteredVoicemails} />
+            <Statistics records={filteredVoicemails} allVoicemails={voicemails} />
           </div>
         )}
       </div>
