@@ -75,6 +75,7 @@ export interface Voicemail {
   transcription_confidence?: number
   audio_quality_score?: number
   demo_data?: boolean
+  missed_call?: boolean
   tags?: string[]
   notes?: string
   metadata: Record<string, any>
