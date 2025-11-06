@@ -790,7 +790,7 @@ export function Dashboard({ demoMode = false }: DashboardProps) {
   const totalMissedCalls = voicemails.filter(vm => vm.missed_call).length;
   const processedMessages = voicemails.filter(vm => vm.transcription || vm.ai_summary).length;
   const totalDuration = voicemails.reduce((sum, vm) => sum + (vm.duration_seconds || 0), 0);
-  const unreadMessages = voicemails.filter(vm => !vm.is_read).length;
+  const unreadMessages = voicemails.filter(vm => !vm.is_read && !vm.missed_call).length;
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) {
