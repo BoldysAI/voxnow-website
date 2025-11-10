@@ -64,6 +64,22 @@ function Home() {
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const testimonials = [
     {
+      text: "Avant d'utiliser VoxNow, ma boîte vocale était constamment pleine. Par manque de temps ou de contexte, je laissais certains messages sans réponse, parfois sans même m'en rendre compte. VoxNow a changé cela. Grâce à la transcription automatique, je peux capter en un instant l'essentiel d'un appel, y compris d'un détenu ou d'un client en détresse. Cet outil m'a permis de rester humainement disponible, même quand je ne peux pas rappeler immédiatement. VoxNow m'a permis de regagner en sérénité, d'être plus réactif, et surtout de transformer des appels perdus en rencontres professionnelles utiles. Un outil simple, intelligent, et profondément utile à une pratique exigeante.",
+      author: "Maître Gilles Rousseau",
+      role: "Avocat au barreau de Bruxelles",
+      image: "/testimonials/maitre_rousseau.jpeg",
+      linkedin: "https://www.linkedin.com/in/gilles-rousseau-8a56a8144/",
+      email: "gilles.rousseau@avocat.be"
+    },
+    {
+      text: "VoxNow offre un gain de temps considérable puisque cet outil permet de centraliser les informations adressées par les clients, ce qui évite de multiplier les canaux d'informations. Cela permet ensuite de prioriser les demandes reçues afin de conserver un service de qualité auprès de ses clients",
+      author: "Maître Samuel Pochet",
+      role: "Avocat au Barreau de Namur",
+      image: "/testimonials/maitre_pochet.jpeg",
+      linkedin: "https://www.linkedin.com/in/samuel-pochet-a32ba476/",
+      email: "s.pochet@avocat.be"
+    },
+    {
       text: "VoxNow me fait gagner un temps précieux : plus besoin d'écouter chaque message vocal, je reçois une transcription claire par mail. Cela me permet d'agir immédiatement selon l'urgence, avec la certitude de ne rien oublier et de tout gérer.",
       author: "Bastien Lombaerd",
       role: "Avocat au barreau de Bruxelles",
@@ -273,7 +289,7 @@ function Home() {
                 }}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105"
               >
-                Essai gratuit de 14 jours
+                Essai gratuit de 30 jours
               </button>
             </div>
 
@@ -1148,10 +1164,10 @@ function Home() {
             </button>
             
             <h2 className="text-3xl md:text-4xl font-bold gradient-text mb-6">
-              Essai gratuit de 14 jours
+              Essai gratuit de 30 jours
             </h2>
             <p className="text-xl text-gray-600 mb-6">
-              L'essai gratuit de 14 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email.
+              L'essai gratuit de 30 jours comprend la transcription et le résumé instantané de votre messagerie vocale directement dans votre boîte email.
             </p>
             <p className="text-gray-600 mb-12 max-w-3xl mx-auto">
               Pour intégrer des automatisations avancées (SMS automatiques, intégration agenda, transferts vers collaborateurs), 
@@ -1616,7 +1632,7 @@ function Home() {
             {/* Additional Info */}
             <div className="text-center mt-12">
               <p className="text-gray-600 mb-6">
-                Tous les plans incluent 14 jours d'essai gratuit. Aucun engagement, résiliation à tout moment.
+                Tous les plans incluent 30 jours d'essai gratuit. Aucun engagement, résiliation à tout moment.
               </p>
               <div className="text-center">
                 <p className="text-gray-500 text-sm">
