@@ -977,7 +977,7 @@ export function AdministrateurProvisoire() {
             {/* Additional Info */}
             <div className="text-center mt-12">
               <p className="text-gray-600 mb-6">
-                Tous nos plans incluent 14 jours d'essai gratuit • Sans engagement • Support inclus
+                Tous nos plans incluent 30 jours d'essai gratuit • Sans engagement • Support inclus
               </p>
             </div>
           </div>
@@ -989,7 +989,7 @@ export function AdministrateurProvisoire() {
         <div className="container mx-auto">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-8">
-              Essayez VoxNow gratuitement pendant 14 jours
+              Essayez VoxNow gratuitement pendant 30 jours
             </h2>
             <p className="text-xl text-white/90 mb-12 max-w-3xl mx-auto">
               Sans engagement, sans carte bancaire. Installez-le en 3 minutes, gagnez du temps dès aujourd'hui.
@@ -1001,7 +1001,7 @@ export function AdministrateurProvisoire() {
                   <div className="bg-white/20 rounded-full w-16 h-16 flex items-center justify-center mx-auto mb-4">
                     <CheckCircle2 className="h-8 w-8" />
                   </div>
-                  <h3 className="font-bold text-lg mb-2">14 jours gratuits</h3>
+                  <h3 className="font-bold text-lg mb-2">30 jours gratuits</h3>
                   <p className="text-white/80">Testez sans risque</p>
                 </div>
                 <div>
