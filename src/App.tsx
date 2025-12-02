@@ -123,28 +123,17 @@ function Home() {
     // No automatic rotation - stays on Bastien Lombaerd by default
   }, []);
 
-  useEffect(() => {
-    if (window.Calendly) {
-      window.Calendly.initInlineWidget({
-        url: 'https://calendly.com/hey-sachadelcourt/voxnow',
-        parentElement: document.querySelector('.calendly-inline-widget'),
-        prefill: {},
-        utm: {}
-      });
-    }
-  }, []);
-
   const scrollToCalendly = () => {
-    // Track Calendly scroll
+    // Track booking scroll
     trackCustomEvent('CalendlyScroll', {
       content_name: 'Demo Booking Scroll',
       content_category: 'Lead Generation'
     });
     
-    // Scroll to Calendly embed section
-    const calendlySection = document.querySelector('.calendly-inline-widget');
-    if (calendlySection) {
-      calendlySection.scrollIntoView({ behavior: 'smooth' });
+    // Scroll to booking embed section
+    const bookingSection = document.querySelector('#booking-widget');
+    if (bookingSection) {
+      bookingSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
@@ -1663,7 +1652,7 @@ function Home() {
               <p className="text-white/80 mb-3">
                 Si le calendrier ne s'affiche pas ci-dessous, {" "}
                 <a 
-                  href="https://calendly.com/hey-sachadelcourt/voxnow"
+                  href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-white hover:text-blue-200 transition-colors underline font-medium"
@@ -1674,7 +1663,16 @@ function Home() {
             </div>
             
             <div className="bg-white rounded-3xl shadow-2xl overflow-hidden">
-              <div id="calendly" className="calendly-inline-widget" style={{ minWidth: '320px', height: '700px' }}></div>
+              <div id="booking-widget" className="w-full" style={{ minHeight: '700px' }}>
+                <iframe
+                  src="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats"
+                  width="100%"
+                  height="700"
+                  frameBorder="0"
+                  style={{ border: 'none' }}
+                  title="Réserver votre appel découverte"
+                ></iframe>
+              </div>
             </div>
           </div>
         </div>

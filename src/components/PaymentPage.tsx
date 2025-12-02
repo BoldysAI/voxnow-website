@@ -538,7 +538,7 @@ export function PaymentPage() {
                       content_name: 'Demo Booking from Payment',
                       content_category: 'Support'
                     });
-                    window.open('https://calendly.com/hey-sachadelcourt/voxnow', '_blank');
+                    window.open('https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats', '_blank');
                   }}
                   className="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 flex items-center justify-center"
                 >
