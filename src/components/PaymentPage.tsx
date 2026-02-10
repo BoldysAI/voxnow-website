@@ -179,81 +179,6 @@ export function PaymentPage() {
             </div>
             
             <div className="relative z-10">
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-gradient-to-br from-vox-blue to-now-green rounded-full flex items-center justify-center mx-auto mb-6">
-                <CreditCard className="h-10 w-10 text-white" />
-              </div>
-              
-              <h2 className="text-3xl font-bold gradient-text mb-4">
-                Abonnement VoxNow
-              </h2>
-              
-              <div className="flex items-center justify-center mb-6">
-                <span className="text-5xl font-bold text-vox-blue">90€</span>
-                <span className="text-xl text-gray-600 ml-2">/mois</span>
-              </div>
-              
-              <p className="text-gray-600 mb-8">
-                Votre service reste actif • Facturation automatique mensuelle • Sans engagement • Résiliable à tout moment
-              </p>
-            </div>
-
-            {/* Features */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">Service déjà configuré</p>
-                    <p className="text-gray-600 text-sm">Votre messagerie intelligente continue de fonctionner</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">Transcription et résumés</p>
-                    <p className="text-gray-600 text-sm">Continuez à recevoir vos messages transcrits par email</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">Automatisations personnalisées</p>
-                    <p className="text-gray-600 text-sm">Vos SMS automatiques et intégrations restent actifs</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">Aucune interruption</p>
-                    <p className="text-gray-600 text-sm">Transition transparente depuis votre période d'essai</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">Support continu</p>
-                    <p className="text-gray-600 text-sm">Accompagnement et optimisations en cours d'usage</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-3">
-                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-gray-900">Évolutions incluses</p>
-                    <p className="text-gray-600 text-sm">Nouvelles fonctionnalités et améliorations automatiques</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            </div>
-
             {/* Testimonials Section */}
             <section className="py-12">
               <div className="max-w-4xl mx-auto">
@@ -428,8 +353,83 @@ export function PaymentPage() {
               </div>
             </section>
 
-            {/* CTA Button */}
-            <div className="text-center">
+            {/* Price Section at the bottom */}
+            <div className="text-center mb-8">
+              <div className="w-20 h-20 bg-gradient-to-br from-vox-blue to-now-green rounded-full flex items-center justify-center mx-auto mb-6">
+                <CreditCard className="h-10 w-10 text-white" />
+              </div>
+              
+              <h2 className="text-3xl font-bold gradient-text mb-4">
+                Abonnement VoxNow
+              </h2>
+              
+              <div className="flex items-center justify-center mb-6">
+                <span className="text-5xl font-bold text-vox-blue">90€</span>
+                <span className="text-xl text-gray-600 ml-2">/mois</span>
+              </div>
+              
+              <p className="text-gray-600 mb-8">
+                Votre service reste actif • Facturation automatique mensuelle • Sans engagement • Résiliable à tout moment
+              </p>
+            </div>
+
+            {/* Features */}
+            <div className="grid md:grid-cols-2 gap-6 mb-8">
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Service déjà configuré</p>
+                    <p className="text-gray-600 text-sm">Votre messagerie intelligente continue de fonctionner</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Transcription et résumés</p>
+                    <p className="text-gray-600 text-sm">Continuez à recevoir vos messages transcrits par email</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Automatisations personnalisées</p>
+                    <p className="text-gray-600 text-sm">Vos SMS automatiques et intégrations restent actifs</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Aucune interruption</p>
+                    <p className="text-gray-600 text-sm">Transition transparente depuis votre période d'essai</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Support continu</p>
+                    <p className="text-gray-600 text-sm">Accompagnement et optimisations en cours d'usage</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-3">
+                  <CheckCircle className="h-6 w-6 text-now-green mt-1 flex-shrink-0" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Évolutions incluses</p>
+                    <p className="text-gray-600 text-sm">Nouvelles fonctionnalités et améliorations automatiques</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CTA Button at the bottom */}
+            <div className="text-center mt-8">
               <button
                 onClick={handleSubscriptionClick}
                 className="bg-gradient-to-r from-vox-blue to-now-green text-white px-12 py-4 rounded-full text-xl font-bold hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 flex items-center mx-auto"
@@ -441,6 +441,7 @@ export function PaymentPage() {
               <p className="text-gray-500 text-sm mt-4">
                 Paiement sécurisé par Stripe • Facturation automatique mensuelle • Service maintenu sans interruption
               </p>
+            </div>
             </div>
           </div>
 
@@ -543,6 +544,12 @@ export function PaymentPage() {
                   className="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 flex items-center justify-center"
                 >
                   Réserver un appel
+                </button>
+                <button
+                  onClick={handleSubscriptionClick}
+                  className="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 flex items-center justify-center"
+                >
+                  Souscrire au service
                 </button>
               </div>
             </div>

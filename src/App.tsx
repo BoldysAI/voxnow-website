@@ -1728,7 +1728,7 @@ function Home() {
                     Conditions générales
                   </Link>
                   <Link
-                    to="/paiement"
+                    to="/offre"
                     className="bg-gradient-to-r from-vox-blue to-now-green text-white px-4 py-2 rounded-lg hover:shadow-lg transition-all duration-300 inline-block mt-4 font-medium"
                     onClick={() => trackCustomEvent('FooterSubscriptionClick', { 
                       content_name: 'Subscription Page',
@@ -1767,7 +1767,7 @@ function App() {
 
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/gravacao" element={<GravacaoPage />} />
-        <Route path="/paiement" element={<PaymentPage />} />
+        <Route path="/offre" element={<PaymentPage />} />
         <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />
         <Route path="/free-trial" element={<FreeTrialPage />} />
         <Route path="/blog" element={<BlogList />} />
