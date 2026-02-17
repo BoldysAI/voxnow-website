@@ -50,7 +50,7 @@ export function FreeTrialPage() {
             </button>
             
             <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
-              Essai gratuit de <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">14 jours</span>
+              Essai gratuit de <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">30 jours</span>
             </h1>
 
             <div className="grid md:grid-cols-4 gap-4 mb-8 max-w-4xl mx-auto">
@@ -109,7 +109,7 @@ export function FreeTrialPage() {
                   Pour intégrer des automatisations avancées (intégration agenda, transferts vers collaborateurs, workflows personnalisés), 
                   réservez une démo personnalisée avec notre équipe.
                 </p>
-                <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
+                <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
                   <Calendar className="mr-2 h-5 w-5" />
                   Réserver une démo
                 </a>
@@ -128,7 +128,7 @@ export function FreeTrialPage() {
                 Ce qui est inclus dans votre <span className="bg-gradient-to-r from-vox-blue to-now-green bg-clip-text text-transparent">essai gratuit</span>
               </h2>
               <p className="text-xl text-gray-600">
-                Découvrez toute la puissance de VoxNow pendant 14 jours, sans engagement
+                Découvrez toute la puissance de VoxNow pendant 30 jours, sans engagement
               </p>
             </div>
 

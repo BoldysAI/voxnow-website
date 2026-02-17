@@ -22,7 +22,7 @@ This document provides detailed information about the main React components in t
 - `/demo` - Demo dashboard (public access)
 - `/messagerie` - Voice message recording
 - `/bienvenue` - Welcome form for new users
-- `/paiement` - Payment and subscription page
+- `/offre` - Payment and subscription page
 - `/blog` - Blog listing and individual posts
 
 ### 2. Dashboard.tsx

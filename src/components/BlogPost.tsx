@@ -269,7 +269,7 @@ const blogPosts: Record<string, BlogPostData> = {
             <a href="https://voxnow.be/#free-trial-section" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center">
               Essai gratuit 7 jours
             </a>
-            <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
+            <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
               Réserver une démo
             </a>
           </div>
@@ -521,7 +521,7 @@ const blogPosts: Record<string, BlogPostData> = {
             <a href="https://voxnow.be/#free-trial-section" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center">
               Essai gratuit 7 jours
             </a>
-            <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
+            <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
               Réserver une démonstration personnalisée
             </a>
           </div>
@@ -769,7 +769,7 @@ const blogPosts: Record<string, BlogPostData> = {
             <a href="https://voxnow.be/#free-trial-section" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center">
               Essai gratuit 7 jours
             </a>
-            <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
+            <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
               Réserver une démonstration
             </a>
           </div>
@@ -1117,7 +1117,7 @@ const blogPosts: Record<string, BlogPostData> = {
             <a href="https://voxnow.be/#free-trial-section" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center">
               Essai gratuit 7 jours
             </a>
-            <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
+            <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
               Voir une démonstration
             </a>
           </div>
@@ -1302,7 +1302,7 @@ const blogPosts: Record<string, BlogPostData> = {
         <p><strong>Vous n'avez rien à faire</strong> : en souscrivant à VoxNow, vous nous donnerez automatiquement accès à vos formulaires Symplicy.</p>
         
         <div class="bg-gradient-to-r from-vox-blue/10 to-now-green/10 p-8 rounded-2xl border border-gray-200 my-8 text-center">
-          <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full font-bold text-lg hover:shadow-lg transition-all duration-300 inline-block">
+          <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" rel="noopener noreferrer" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full font-bold text-lg hover:shadow-lg transition-all duration-300 inline-block">
             📲 Demander une démo ici
           </a>
         </div>
@@ -1429,7 +1429,7 @@ const blogPosts: Record<string, BlogPostData> = {
             <a href="https://voxnow.be/#free-trial-section" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center">
               Essai gratuit 7 jours
             </a>
-            <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
+            <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
               Réserver une démonstration
             </a>
           </div>
@@ -1542,7 +1542,7 @@ const blogPosts: Record<string, BlogPostData> = {
             <a href="https://voxnow.be/#free-trial-section" class="bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg transition-all duration-300 text-center">
               Essai gratuit 7 jours
             </a>
-            <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
+            <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" class="bg-white border-2 border-vox-blue text-vox-blue px-6 py-3 rounded-lg font-semibold hover:bg-vox-blue hover:text-white transition-all duration-300 text-center">
               Réserver une démonstration
             </a>
           </div>

@@ -1,40 +1,7 @@
 import { CheckCircle2, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 
 const DiscoveryCall = () => {
-  const [calendlyLoaded, setCalendlyLoaded] = useState(false);
-
-  useEffect(() => {
-    // Check if Calendly is already available
-    if (window.Calendly) {
-      setCalendlyLoaded(true);
-      return;
-    }
-
-    // Load Calendly script
-    const script = document.createElement('script');
-    script.src = 'https://assets.calendly.com/assets/external/widget.js';
-    script.async = true;
-    
-    script.onload = () => {
-      setCalendlyLoaded(true);
-    };
-
-    document.head.appendChild(script);
-  }, []);
-
-  useEffect(() => {
-    if (calendlyLoaded && window.Calendly) {
-      // Initialize the inline widget
-      window.Calendly.initInlineWidget({
-        url: 'https://calendly.com/hey-sachadelcourt/voxnow',
-        parentElement: document.querySelector('.calendly-inline-widget'),
-        prefill: {},
-        utm: {}
-      });
-    }
-  }, [calendlyLoaded]);
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
@@ -128,7 +95,7 @@ const DiscoveryCall = () => {
                   <p className="text-gray-600 mb-3">
                     Si le calendrier ne s'affiche pas ci-dessous, {" "}
                     <a 
-                      href="https://calendly.com/hey-sachadelcourt/voxnow"
+                      href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-vox-blue hover:text-now-green transition-colors underline font-medium"
@@ -137,17 +104,17 @@ const DiscoveryCall = () => {
                     </a>
                   </p>
                 </div>
-                {/* Calendly Inline Widget */}
-                {calendlyLoaded ? (
-                  <div 
-                    className="calendly-inline-widget" 
-                    style={{ minWidth: '320px', height: '700px' }}
-                  ></div>
-                ) : (
-                  <div className="flex items-center justify-center h-96">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-vox-blue"></div>
-                  </div>
-                )}
+                {/* iClosed Booking Widget */}
+                <div className="w-full" style={{ minHeight: '700px' }}>
+                  <iframe
+                    src="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats"
+                    width="100%"
+                    height="700"
+                    frameBorder="0"
+                    style={{ border: 'none' }}
+                    title="Réserver votre appel découverte"
+                  ></iframe>
+                </div>
               </div>
             </div>
 
