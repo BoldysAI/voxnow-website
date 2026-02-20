@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../supabase';
 import { ArrowLeft, Mail, Lock, Eye, EyeOff, Monitor } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { domainConfig } from '../config';
 
 export function Auth() {
   const [email, setEmail] = useState('');
@@ -135,7 +136,7 @@ export function Auth() {
 
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
-        redirectTo: `https://voxnow.be/auth?reset=true`,
+        redirectTo: `${domainConfig.domainUrl}/auth?reset=true`,
       });
 
       if (error) {
