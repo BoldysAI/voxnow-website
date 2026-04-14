@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Mic, Square, RotateCcw, Send, Clock, CheckCircle, Mail, User } from 'lucide-react';
 import { trackCustomEvent } from '../utils/fbPixel';
 
@@ -44,6 +45,7 @@ interface VoiceRecorderProps {
 export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
   const [email, setEmail] = useState('');
   const [fullName, setFullName] = useState('');
+  const [acceptCguv, setAcceptCguv] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
@@ -83,6 +85,11 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
 
     if (!fullName.trim()) {
       setSendError("Veuillez saisir votre nom et prénom avant d'enregistrer");
+      return;
+    }
+
+    if (!acceptCguv) {
+      setSendError("Vous devez accepter les CGUV pour continuer");
       return;
     }
 
@@ -183,6 +190,11 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
     // Check minimum duration (2 seconds)
     if (recordingDuration < 2) {
       setSendError("L'enregistrement doit durer au moins 2 secondes");
+      return;
+    }
+
+    if (!acceptCguv) {
+      setSendError("Vous devez accepter les CGUV pour envoyer votre message");
       return;
     }
 
@@ -305,6 +317,7 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
                 // Reset all states for new recording
                 setEmail('');
                 setFullName('');
+                setAcceptCguv(false);
                 setAudioUrl(null);
                 setAudioBlob(null);
                 setSendSuccess(false);
@@ -376,6 +389,29 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
             />
           </div>
         </div>
+
+        <div className="flex items-start gap-3">
+          <input
+            type="checkbox"
+            id="acceptCguv"
+            checked={acceptCguv}
+            onChange={(e) => setAcceptCguv(e.target.checked)}
+            className="mt-1 h-4 w-4 shrink-0 rounded border-gray-300 text-vox-blue focus:ring-vox-blue"
+            required
+          />
+          <label htmlFor="acceptCguv" className="text-sm text-gray-700 leading-snug">
+            J&apos;accepte les{' '}
+            <Link
+              to="/conditions-generales"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-vox-blue font-medium underline underline-offset-2 hover:text-now-green"
+            >
+              Conditions Générales d&apos;Utilisation et de Vente (CGUV)
+            </Link>{' '}
+            *
+          </label>
+        </div>
       </div>
 
       {/* Instructions */}
@@ -419,9 +455,9 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
           {!isRecording && !audioUrl ? (
             <button
               onClick={startRecording}
-              disabled={!email || !fullName.trim()}
+              disabled={!email || !fullName.trim() || !acceptCguv}
               className={`rounded-full p-6 transition-all duration-300 hover:shadow-lg hover:scale-105 transform ${
-                email && fullName.trim()
+                email && fullName.trim() && acceptCguv
                   ? 'bg-gradient-to-r from-vox-blue to-now-green text-white'
                   : 'bg-gray-300 text-gray-500 cursor-not-allowed'
               }`}
@@ -455,9 +491,9 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
             </p>
           ) : (
             <p className="text-gray-600">
-              {email && fullName.trim() 
-                ? "🎤 Cliquez pour enregistrer votre message" 
-                : "Veuillez remplir vos informations avant d'enregistrer"
+              {email && fullName.trim() && acceptCguv
+                ? "🎤 Cliquez pour enregistrer votre message"
+                : "Veuillez remplir vos informations et accepter les CGUV avant d'enregistrer"
               }
             </p>
           )}
@@ -483,9 +519,9 @@ export function VoiceRecorder({ onRecordingComplete }: VoiceRecorderProps) {
             
             <button
               onClick={sendToWebhook}
-              disabled={recordingDuration < 2}
+              disabled={recordingDuration < 2 || !acceptCguv}
               className={`flex items-center px-6 py-2 bg-gradient-to-r from-vox-blue to-now-green text-white rounded-lg transition-all ${
-                recordingDuration < 2 
+                recordingDuration < 2 || !acceptCguv
                   ? 'opacity-70 cursor-not-allowed' 
                   : 'hover:shadow-lg'
               }`}
