@@ -19,8 +19,10 @@ import {
   X,
   Shield,
   LogOut,
-  Loader2
+  Loader2,
+  DollarSign
 } from 'lucide-react';
+import { CostDashboard } from './CostDashboard';
 
 interface User {
   id: string;
@@ -111,6 +113,9 @@ export function Admin() {
   const [formLoading, setFormLoading] = useState(false);
   const [showEditPassword, setShowEditPassword] = useState(false);
   const [showCreatePassword, setShowCreatePassword] = useState(false);
+  
+  // Tab state
+  const [activeTab, setActiveTab] = useState<'users' | 'costs'>('users');
 
   // Check if user is already authenticated on component mount
   useEffect(() => {
@@ -415,7 +420,9 @@ export function Admin() {
               />
               <div>
                 <h1 className="text-xl font-bold text-red-600">Administration</h1>
-                <p className="text-sm text-gray-600">Gestion des utilisateurs</p>
+                <p className="text-sm text-gray-600">
+                  {activeTab === 'users' ? 'Gestion des utilisateurs' : 'Dashboard des coûts'}
+                </p>
               </div>
             </div>
             
@@ -437,8 +444,37 @@ export function Admin() {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* Tabs */}
+        <div className="bg-white rounded-2xl shadow-lg p-2 mb-8 border border-gray-100 inline-flex">
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`px-6 py-3 rounded-lg font-medium transition-colors flex items-center ${
+              activeTab === 'users'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <Users className="h-5 w-5 mr-2" />
+            Utilisateurs
+          </button>
+          <button
+            onClick={() => setActiveTab('costs')}
+            className={`px-6 py-3 rounded-lg font-medium transition-colors flex items-center ${
+              activeTab === 'costs'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <DollarSign className="h-5 w-5 mr-2" />
+            Dashboard
+          </button>
+        </div>
+
+        {/* Users Tab Content */}
+        {activeTab === 'users' && (
+          <>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="bg-white rounded-2xl shadow-lg p-6 border border-gray-100">
             <div className="flex items-center justify-between">
               <div>
@@ -898,6 +934,10 @@ export function Admin() {
             </div>
           </div>
         )}
+        </>)}
+
+        {/* Costs Tab Content */}
+        {activeTab === 'costs' && <CostDashboard />}
       </div>
     </div>
   );
