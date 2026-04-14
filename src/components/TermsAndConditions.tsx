@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft, Download, FileText, Shield, Scale, Phone, Mail, MapPin } from 'lucide-react';
 import { trackViewContent, trackCustomEvent } from '../utils/fbPixel';
 
+const CGUV_PDF_HREF = '/VoxNow-CGUV.pdf';
+
 export function TermsAndConditions() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -14,12 +16,11 @@ export function TermsAndConditions() {
     });
   }, []);
 
-  const handleDownload = () => {
+  const handleDownloadClick = () => {
     trackCustomEvent('TermsDownload', {
       content_name: 'Terms PDF Download',
       content_category: 'Legal'
     });
-    window.open('https://drive.google.com/uc?export=download&id=13LIsxGvJe-DK984J81p7Zvp9YgEmT4Nn', '_blank');
   };
 
   return (
@@ -101,14 +102,15 @@ export function TermsAndConditions() {
               </div>
             </div>
 
-            {/* Download Button */}
-            <button
-              onClick={handleDownload}
-              className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center mx-auto"
+            <a
+              href={CGUV_PDF_HREF}
+              download="VoxNow-CGUV.pdf"
+              onClick={handleDownloadClick}
+              className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex items-center mx-auto w-fit"
             >
               <Download className="h-5 w-5 mr-2" />
               Télécharger les conditions (PDF)
-            </button>
+            </a>
           </div>
 
           {/* Terms Content */}
@@ -244,11 +246,38 @@ export function TermsAndConditions() {
                 </div>
               </div>
 
-              {/* Section 7 */}
+              {/* Section 7 - Références commerciales */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-light-blue/10 rounded-full flex items-center justify-center mr-3">
                     <span className="text-light-blue font-bold">7</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-vox-blue">Références commerciales</h3>
+                </div>
+                <div className="bg-gray-50 rounded-xl p-6 space-y-4">
+                  <p className="text-gray-700 leading-relaxed">
+                    En souscrivant au service VoxNow, le client autorise VoxNow à mentionner son nom et sa qualité d'utilisateur du service auprès de confrères ou de prospects, à titre de référence commerciale.
+                  </p>
+                  <div className="border-t border-gray-200 pt-4">
+                    <p className="text-gray-700 leading-relaxed">
+                      Cette autorisation peut être révoquée à tout moment par simple e-mail adressé à{' '}
+                      <a href="mailto:sacha@voxnow.be" className="text-vox-blue hover:text-now-green transition-colors font-medium">
+                        sacha@voxnow.be
+                      </a>
+                      , avec mention explicite du refus de toute utilisation du nom du client dans les communications de VoxNow.
+                    </p>
+                    <p className="text-gray-700 leading-relaxed mt-3">
+                      La révocation prend effet à compter de la réception de l'e-mail et vaut pour l'ensemble des communications futures, directes ou indirectes.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 8 */}
+              <div className="mb-8">
+                <div className="flex items-center mb-4">
+                  <div className="w-8 h-8 bg-light-blue/10 rounded-full flex items-center justify-center mr-3">
+                    <span className="text-light-blue font-bold">8</span>
                   </div>
                   <h3 className="text-xl font-bold text-vox-blue">Responsabilité</h3>
                 </div>
@@ -263,7 +292,7 @@ export function TermsAndConditions() {
                     </li>
                     <li className="flex items-start">
                       <div className="w-2 h-2 bg-now-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                      VoxNow n'est pas responsable des problèmes liés à une mauvaise redirection d\'appel ou à l\'infrastructure téléphonique du client
+                      VoxNow n'est pas responsable des problèmes liés à une mauvaise redirection d'appel ou à l'infrastructure téléphonique du client
                     </li>
                     <li className="flex items-start">
                       <div className="w-2 h-2 bg-light-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
@@ -273,11 +302,11 @@ export function TermsAndConditions() {
                 </div>
               </div>
 
-              {/* Section 8 */}
+              {/* Section 9 */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-light-green/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-light-green font-bold">8</span>
+                    <span className="text-light-green font-bold">9</span>
                   </div>
                   <h3 className="text-xl font-bold text-vox-blue">Propriété intellectuelle</h3>
                 </div>
@@ -288,11 +317,11 @@ export function TermsAndConditions() {
                 </div>
               </div>
 
-              {/* Section 9 */}
+              {/* Section 10 */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-vox-blue/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-vox-blue font-bold">9</span>
+                    <span className="text-vox-blue font-bold">10</span>
                   </div>
                   <h3 className="text-xl font-bold text-vox-blue">Résiliation</h3>
                 </div>
@@ -306,11 +335,11 @@ export function TermsAndConditions() {
                 </div>
               </div>
 
-              {/* Section 10 */}
+              {/* Section 11 */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-now-green/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-now-green font-bold">10</span>
+                    <span className="text-now-green font-bold">11</span>
                   </div>
                   <h3 className="text-xl font-bold text-vox-blue">Droit applicable et juridiction compétente</h3>
                 </div>
@@ -324,20 +353,20 @@ export function TermsAndConditions() {
                 </div>
               </div>
 
-              {/* Section 11 - Privacy & Security */}
+              {/* Section 12 - Privacy & Security */}
               <div className="mb-8">
                 <div className="flex items-center mb-6">
                   <div className="w-8 h-8 bg-light-blue/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-light-blue font-bold">11</span>
+                    <span className="text-light-blue font-bold">12</span>
                   </div>
                   <h3 className="text-xl font-bold text-vox-blue">Confidentialité, sécurité et traitement des données</h3>
                 </div>
                 
-                {/* 11.a */}
+                {/* 12.a */}
                 <div className="mb-6">
                   <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center">
                     <Shield className="h-5 w-5 text-vox-blue mr-2" />
-                    11.a. Confidentialité et protection des données
+                    12.a. Confidentialité et protection des données
                   </h4>
                   <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 border border-gray-200">
                     <p className="text-gray-700 leading-relaxed mb-4">
@@ -352,9 +381,9 @@ export function TermsAndConditions() {
                   </div>
                 </div>
 
-                {/* 11.b */}
+                {/* 12.b */}
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">11.b. Sécurité technique et organisationnelle</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">12.b. Sécurité technique et organisationnelle</h4>
                   <div className="bg-gray-50 rounded-xl p-6">
                     <p className="text-gray-700 leading-relaxed mb-4">
                       VoxNow met en œuvre des mesures de sécurité avancées pour garantir l'intégrité, la confidentialité et la disponibilité des données :
@@ -376,17 +405,13 @@ export function TermsAndConditions() {
                         <div className="w-2 h-2 bg-light-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
                         Journalisation des accès aux données sensibles
                       </li>
-                      <li className="flex items-start">
-                        <div className="w-2 h-2 bg-vox-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        Environnement cloisonné par projet et par client
-                      </li>
                     </ul>
                   </div>
                 </div>
 
-                {/* 11.c */}
+                {/* 12.c */}
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">11.c. Données et profession réglementée</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">12.c. Données et profession réglementée</h4>
                   <div className="bg-gray-50 rounded-xl p-6">
                     <p className="text-gray-700 leading-relaxed mb-4">
                       Conscient des exigences particulières liées à la profession d'avocat, VoxNow s'engage à :
@@ -398,7 +423,7 @@ export function TermsAndConditions() {
                       </li>
                       <li className="flex items-start">
                         <div className="w-2 h-2 bg-now-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        Protéger l'accès aux transcriptions et messages afin qu\'ils restent exclusivement consultables par le client autorisé
+                        Protéger l'accès aux transcriptions et messages afin qu'ils restent exclusivement consultables par le client autorisé
                       </li>
                       <li className="flex items-start">
                         <div className="w-2 h-2 bg-light-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
@@ -408,9 +433,9 @@ export function TermsAndConditions() {
                   </div>
                 </div>
 
-                {/* 11.d */}
+                {/* 12.d */}
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-3">11.d. Droits du client</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3">12.d. Droits du client</h4>
                   <div className="bg-gradient-to-r from-blue-50 to-green-50 rounded-xl p-6 border border-gray-200">
                     <p className="text-gray-700 leading-relaxed mb-4">
                       Conformément aux réglementations en vigueur sur le règlement général de la protection des données, le client peut à tout moment :
@@ -422,7 +447,7 @@ export function TermsAndConditions() {
                       </li>
                       <li className="flex items-start">
                         <div className="w-2 h-2 bg-now-green rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                        Demander la suppression d'un message ou d\'une transcription spécifique
+                        Demander la suppression d'un message ou d'une transcription spécifique
                       </li>
                       <li className="flex items-start">
                         <div className="w-2 h-2 bg-light-blue rounded-full mt-2 mr-3 flex-shrink-0"></div>
@@ -436,11 +461,11 @@ export function TermsAndConditions() {
                 </div>
               </div>
 
-              {/* Section 12 */}
+              {/* Section 13 */}
               <div className="mb-8">
                 <div className="flex items-center mb-4">
                   <div className="w-8 h-8 bg-light-green/10 rounded-full flex items-center justify-center mr-3">
-                    <span className="text-light-green font-bold">12</span>
+                    <span className="text-light-green font-bold">13</span>
                   </div>
                   <h3 className="text-xl font-bold text-vox-blue">Contact</h3>
                 </div>
@@ -463,13 +488,15 @@ export function TermsAndConditions() {
               <p className="text-gray-600 mb-6">
                 Téléchargez une copie PDF de nos conditions générales pour vos archives
               </p>
-              <button
-                onClick={handleDownload}
-                className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 flex items-center mx-auto"
+              <a
+                href={CGUV_PDF_HREF}
+                download="VoxNow-CGUV.pdf"
+                onClick={handleDownloadClick}
+                className="bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300 flex items-center mx-auto w-fit"
               >
                 <Download className="h-5 w-5 mr-2" />
                 Télécharger le PDF
-              </button>
+              </a>
             </div>
           </div>
         </div>
