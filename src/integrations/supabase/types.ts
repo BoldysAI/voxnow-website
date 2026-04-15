@@ -82,41 +82,189 @@ export type Database = {
           },
         ]
       }
-      users: {
+      config: {
         Row: {
           created_at: string
-          demo_user: boolean
-          email: string | null
-          full_name: string | null
-          id: string
-          last_login: string | null
-          phone: string | null
-          status: string | null
-          updated_at: string | null
+          format: string | null
+          id: number
+          nom: string | null
+          referral: string | null
+          regles_obligatoires: string | null
+          simplicy: string | null
+          structure_attendue: string | null
+          uuid: string
         }
         Insert: {
           created_at?: string
-          demo_user?: boolean
-          email?: string | null
-          full_name?: string | null
-          id?: string
-          last_login?: string | null
-          phone?: string | null
-          status?: string | null
-          updated_at?: string | null
+          format?: string | null
+          id?: number
+          nom?: string | null
+          referral?: string | null
+          regles_obligatoires?: string | null
+          simplicy?: string | null
+          structure_attendue?: string | null
+          uuid?: string
         }
         Update: {
           created_at?: string
-          demo_user?: boolean
-          email?: string | null
-          full_name?: string | null
-          id?: string
-          last_login?: string | null
-          phone?: string | null
-          status?: string | null
-          updated_at?: string | null
+          format?: string | null
+          id?: number
+          nom?: string | null
+          referral?: string | null
+          regles_obligatoires?: string | null
+          simplicy?: string | null
+          structure_attendue?: string | null
+          uuid?: string
         }
         Relationships: []
+      }
+      twilio_costs: {
+        Row: {
+          client_id: string | null
+          client_name: string | null
+          cost: number | null
+          created_at: string
+          id: number
+          message: string | null
+          message_type: string | null
+          num_segment: number | null
+          price: number | null
+        }
+        Insert: {
+          client_id?: string | null
+          client_name?: string | null
+          cost?: number | null
+          created_at?: string
+          id?: number
+          message?: string | null
+          message_type?: string | null
+          num_segment?: number | null
+          price?: number | null
+        }
+        Update: {
+          client_id?: string | null
+          client_name?: string | null
+          cost?: number | null
+          created_at?: string
+          id?: number
+          message?: string | null
+          message_type?: string | null
+          num_segment?: number | null
+          price?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "twilio_costs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          additional_prompt_info: string | null
+          appels_manques: boolean | null
+          config: string | null
+          content_SMS_appel_manques: string | null
+          created_at: string
+          demo_user: boolean
+          description_client: string | null
+          email: string | null
+          email_appels_manques: boolean | null
+          email_contact_1: string | null
+          email_contact_2: string | null
+          full_name: string | null
+          function_name: string | null
+          id: string
+          is_simplicy: boolean | null
+          last_login: string | null
+          multilangue: boolean | null
+          personal_phone: string | null
+          phone: string | null
+          referral: string | null
+          signature: string | null
+          simplicy: string | null
+          simplicy_link_first_contact: string | null
+          SMS_appel_manques: boolean | null
+          status: string | null
+          "Symplicy ?": boolean | null
+          "Transcript Whisper": string | null
+          updated_at: string | null
+          wants_referral: boolean | null
+        }
+        Insert: {
+          additional_prompt_info?: string | null
+          appels_manques?: boolean | null
+          config?: string | null
+          content_SMS_appel_manques?: string | null
+          created_at?: string
+          demo_user?: boolean
+          description_client?: string | null
+          email?: string | null
+          email_appels_manques?: boolean | null
+          email_contact_1?: string | null
+          email_contact_2?: string | null
+          full_name?: string | null
+          function_name?: string | null
+          id?: string
+          is_simplicy?: boolean | null
+          last_login?: string | null
+          multilangue?: boolean | null
+          personal_phone?: string | null
+          phone?: string | null
+          referral?: string | null
+          signature?: string | null
+          simplicy?: string | null
+          simplicy_link_first_contact?: string | null
+          SMS_appel_manques?: boolean | null
+          status?: string | null
+          "Symplicy ?"?: boolean | null
+          "Transcript Whisper"?: string | null
+          updated_at?: string | null
+          wants_referral?: boolean | null
+        }
+        Update: {
+          additional_prompt_info?: string | null
+          appels_manques?: boolean | null
+          config?: string | null
+          content_SMS_appel_manques?: string | null
+          created_at?: string
+          demo_user?: boolean
+          description_client?: string | null
+          email?: string | null
+          email_appels_manques?: boolean | null
+          email_contact_1?: string | null
+          email_contact_2?: string | null
+          full_name?: string | null
+          function_name?: string | null
+          id?: string
+          is_simplicy?: boolean | null
+          last_login?: string | null
+          multilangue?: boolean | null
+          personal_phone?: string | null
+          phone?: string | null
+          referral?: string | null
+          signature?: string | null
+          simplicy?: string | null
+          simplicy_link_first_contact?: string | null
+          SMS_appel_manques?: boolean | null
+          status?: string | null
+          "Symplicy ?"?: boolean | null
+          "Transcript Whisper"?: string | null
+          updated_at?: string | null
+          wants_referral?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "users_config_fkey"
+            columns: ["config"]
+            isOneToOne: false
+            referencedRelation: "config"
+            referencedColumns: ["uuid"]
+          },
+        ]
       }
       voicemail_analysis: {
         Row: {
@@ -169,8 +317,8 @@ export type Database = {
         Row: {
           ai_summary: string | null
           audio_file_url: string | null
-          audio_quality_score: number | null
           audio_url: string | null
+          call_sid: string | null
           caller_name: string | null
           caller_phone_number: string | null
           created_at: string | null
@@ -179,25 +327,22 @@ export type Database = {
           id: string
           is_read: boolean | null
           is_starred: boolean | null
-          metadata: Json | null
           missed_call: boolean | null
-          notes: string | null
           original_language: string | null
           priority: string | null
           read_at: string | null
           received_at: string
+          sms_sent: string | null
           status: string | null
-          tags: string[] | null
           transcription: string | null
-          transcription_confidence: number | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
           ai_summary?: string | null
           audio_file_url?: string | null
-          audio_quality_score?: number | null
           audio_url?: string | null
+          call_sid?: string | null
           caller_name?: string | null
           caller_phone_number?: string | null
           created_at?: string | null
@@ -206,25 +351,22 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           is_starred?: boolean | null
-          metadata?: Json | null
           missed_call?: boolean | null
-          notes?: string | null
           original_language?: string | null
           priority?: string | null
           read_at?: string | null
           received_at: string
+          sms_sent?: string | null
           status?: string | null
-          tags?: string[] | null
           transcription?: string | null
-          transcription_confidence?: number | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
           ai_summary?: string | null
           audio_file_url?: string | null
-          audio_quality_score?: number | null
           audio_url?: string | null
+          call_sid?: string | null
           caller_name?: string | null
           caller_phone_number?: string | null
           created_at?: string | null
@@ -233,17 +375,14 @@ export type Database = {
           id?: string
           is_read?: boolean | null
           is_starred?: boolean | null
-          metadata?: Json | null
           missed_call?: boolean | null
-          notes?: string | null
           original_language?: string | null
           priority?: string | null
           read_at?: string | null
           received_at?: string
+          sms_sent?: string | null
           status?: string | null
-          tags?: string[] | null
           transcription?: string | null
-          transcription_confidence?: number | null
           updated_at?: string | null
           user_id?: string
         }
