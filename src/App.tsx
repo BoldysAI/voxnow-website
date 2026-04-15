@@ -48,6 +48,7 @@ import { BlogArticle2 } from './components/BlogArticle2';
 import DiscoveryCall from './components/DiscoveryCall';
 import { AdministrateurProvisoire } from './components/AdministrateurProvisoire';
 import { Admin } from './components/Admin';
+import { VideoPage } from './components/VideoPage';
 
 
 declare global {
@@ -1777,6 +1778,8 @@ function App() {
         <Route path="/discoverycall" element={<DiscoveryCall />} />
         <Route path="/administrateurprovisoire" element={<AdministrateurProvisoire />} />
         <Route path="/admin" element={<Admin />} />
+        <Route path="/presentation_video_de_voxnow" element={<VideoPage title="Présentation vidéo de VoxNow" driveFileId="1aQnxmJFLJTZ4BlKBTDfFIZcyJ7TeSyUe" />} />
+        <Route path="/temoignage_client_maitre_lombaerd" element={<VideoPage title="Témoignage client — Maître Lombaerd" driveFileId="1J0qAKflDA9TOK5htNKoKE3AAuJltRm8o" />} />
 
       </Routes>
       <Chatbot />
