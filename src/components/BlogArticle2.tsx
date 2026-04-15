@@ -246,7 +246,7 @@ export function BlogArticle2() {
                   Essayer VoxNow gratuitement
                 </Link>
                 <Link
-                  to="/#calendly"
+                  to="/#calendly-section"
                   className="border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-vox-blue transition-colors text-center"
                 >
                   Demander une démo

@@ -35,7 +35,7 @@ export const frConfig: DomainConfig = {
   // Feature flags
   features: {
     symplicyIntegration: true,
-    calendlyUrl: 'https://calendly.com/hey-sachadelcourt/voxnow',
+    calendlyUrl: 'https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats',
     blogEnabled: true,
   },
 

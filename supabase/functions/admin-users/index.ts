@@ -22,7 +22,7 @@ const getAllowedOrigins = () => {
   return allowedOrigins;
 };
 
-const getCorsHeaders = (origin?: string) => {
+const getCorsHeaders = (origin?: string | null) => {
   const allowedOrigins = getAllowedOrigins();
   const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : 'null';
   
@@ -123,7 +123,7 @@ serve(async (req) => {
               demo_user: publicUser?.demo_user || false,
               email_confirmed_at: authUser.email_confirmed_at,
               last_sign_in_at: authUser.last_sign_in_at,
-              banned_until: authUser.banned_until
+              banned_until: (authUser as any).banned_until || null
             }
           }).sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
 
@@ -136,7 +136,7 @@ serve(async (req) => {
         } catch (error) {
           console.error('Error in GET users:', error)
           return new Response(
-            JSON.stringify({ error: 'Internal server error', details: error.message }),
+            JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
@@ -201,7 +201,7 @@ serve(async (req) => {
         } catch (error) {
           console.error('Error in POST user:', error)
           return new Response(
-            JSON.stringify({ error: 'Internal server error', details: error.message }),
+            JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
@@ -265,7 +265,7 @@ serve(async (req) => {
             demo_user: publicUser?.demo_user || false,
             email_confirmed_at: updatedAuthUser.user.email_confirmed_at,
             last_sign_in_at: updatedAuthUser.user.last_sign_in_at,
-            banned_until: updatedAuthUser.user.banned_until
+            banned_until: (updatedAuthUser.user as any).banned_until || null
           }
 
           return new Response(
@@ -275,7 +275,7 @@ serve(async (req) => {
         } catch (error) {
           console.error('Error in PUT user:', error)
           return new Response(
-            JSON.stringify({ error: 'Internal server error', details: error.message }),
+            JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
@@ -312,7 +312,7 @@ serve(async (req) => {
         } catch (error) {
           console.error('Error in DELETE user:', error)
           return new Response(
-            JSON.stringify({ error: 'Internal server error', details: error.message }),
+            JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }),
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           )
         }
@@ -326,7 +326,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('Unexpected error:', error)
     return new Response(
-      JSON.stringify({ error: 'Internal server error', details: error.message }),
+      JSON.stringify({ error: 'Internal server error', details: error instanceof Error ? error.message : 'Unknown error' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }

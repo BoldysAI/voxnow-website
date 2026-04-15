@@ -155,7 +155,7 @@ export function GravacaoPage() {
                       content_name: 'Demo Booking from Gravacao Page',
                       content_category: 'Lead Generation'
                     });
-                    window.open('https://calendly.com/hey-sachadelcourt/voxnow', '_blank');
+                    window.open('https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats', '_blank');
                   }}
                   className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-8 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300"
                 >

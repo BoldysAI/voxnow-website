@@ -394,10 +394,10 @@ export function Chatbot() {
       content_category: 'Lead Generation'
     });
     
-    // Scroll to Calendly embed section
-    const calendlySection = document.querySelector('.calendly-inline-widget');
-    if (calendlySection) {
-      calendlySection.scrollIntoView({ behavior: 'smooth' });
+    // Scroll to booking embed section
+    const bookingSection = document.querySelector('#booking-widget');
+    if (bookingSection) {
+      bookingSection.scrollIntoView({ behavior: 'smooth' });
     }
   };
 

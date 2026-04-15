@@ -109,7 +109,7 @@ export function FreeTrialPage() {
                   Pour intégrer des automatisations avancées (intégration agenda, transferts vers collaborateurs, workflows personnalisés), 
                   réservez une démo personnalisée avec notre équipe.
                 </p>
-                <a href="https://calendly.com/hey-sachadelcourt/voxnow" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
+                <a href="https://app.iclosed.io/e/boldysai/VoxNow-pour-avocats" target="_blank" rel="noopener noreferrer" className="inline-flex items-center bg-gradient-to-r from-vox-blue to-now-green text-white px-6 py-3 rounded-full font-semibold hover:shadow-lg transition-all duration-300">
                   <Calendar className="mr-2 h-5 w-5" />
                   Réserver une démo
                 </a>

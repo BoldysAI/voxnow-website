@@ -219,7 +219,7 @@ IMPORTANT:
     
     return new Response(
       JSON.stringify({ 
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
         details: 'Check function logs for more information'
       }),
       { 

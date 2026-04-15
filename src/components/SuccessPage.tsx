@@ -13,14 +13,14 @@ export function SuccessPage() {
   }, []);
 
   const scrollToCalendly = () => {
-    // Track Calendly click from success page
+    // Track booking click from success page
     trackCustomEvent('CalendlyClickFromSuccess', {
       content_name: 'Demo Booking from Success',
       content_category: 'Lead Generation'
     });
     
-    // Navigate back to home and scroll to Calendly
-    window.location.href = '/#calendly';
+    // Navigate back to home and scroll to booking section
+    window.location.href = '/#calendly-section';
   };
 
   return (
