@@ -86,6 +86,18 @@ const getAuthHeaders = () => ({
 
 export function Admin() {
   const navigate = useNavigate();
+  const configError = getConfigError();
+  if (configError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+        <div className="max-w-lg bg-white border border-red-200 rounded-lg p-6 shadow">
+          <h1 className="text-xl font-bold text-red-700 mb-2">Configuration manquante</h1>
+          <p className="text-gray-700 text-sm">{configError}</p>
+          <p className="text-gray-500 text-xs mt-3">Définissez la variable dans Workspace Settings → Build Secrets, puis rechargez la preview.</p>
+        </div>
+      </div>
+    );
+  }
   
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
