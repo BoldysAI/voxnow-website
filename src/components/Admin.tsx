@@ -61,18 +61,20 @@ const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Validate required environment variables
-if (!SUPABASE_URL || !SUPABASE_URL.startsWith('https://')) {
-  throw new Error('VITE_SUPABASE_URL is required and must be a valid HTTPS URL');
-}
-
-if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 50) {
-  throw new Error('VITE_SUPABASE_ANON_KEY is required and must be a valid JWT token');
-}
-
-if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 8) {
-  throw new Error('VITE_ADMIN_PASSWORD is required and must be at least 8 characters long');
-}
+// Lazy validation: errors are surfaced only when the Admin page is actually used,
+// so a missing VITE_ADMIN_PASSWORD does not break the entire app at module load.
+const getConfigError = (): string | null => {
+  if (!SUPABASE_URL || !SUPABASE_URL.startsWith('https://')) {
+    return 'VITE_SUPABASE_URL is required and must be a valid HTTPS URL';
+  }
+  if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 50) {
+    return 'VITE_SUPABASE_ANON_KEY is required and must be a valid JWT token';
+  }
+  if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 8) {
+    return 'VITE_ADMIN_PASSWORD is required and must be at least 8 characters long';
+  }
+  return null;
+};
 const ADMIN_FUNCTION_BASE_URL = `${SUPABASE_URL}/functions/v1/admin-users`;
 
 // Helper function to get authenticated headers for Edge Functions
@@ -84,6 +86,18 @@ const getAuthHeaders = () => ({
 
 export function Admin() {
   const navigate = useNavigate();
+  const configError = getConfigError();
+  if (configError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+        <div className="max-w-lg bg-white border border-red-200 rounded-lg p-6 shadow">
+          <h1 className="text-xl font-bold text-red-700 mb-2">Configuration manquante</h1>
+          <p className="text-gray-700 text-sm">{configError}</p>
+          <p className="text-gray-500 text-xs mt-3">Définissez la variable dans Workspace Settings → Build Secrets, puis rechargez la preview.</p>
+        </div>
+      </div>
+    );
+  }
   
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
