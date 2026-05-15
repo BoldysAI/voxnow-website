@@ -57,19 +57,19 @@ interface UpdateUserData {
 // Get admin password from environment variables
 const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
 
-// Get Supabase URL and anon key from environment variables
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Publishable fallback values (safe to expose) — mirror src/supabase.ts
+const FALLBACK_SUPABASE_URL = 'https://hxyyqidiixyshsszqmqd.supabase.co';
+const FALLBACK_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4eXlxaWRpaXh5c2hzc3pxbXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MjE0NTEsImV4cCI6MjA3MTE5NzQ1MX0.WAfEvVIKtT2DOWGI8oRDZSsqroloYZ1PAb3cN1GSjGU';
 
-// Lazy validation: errors are surfaced only when the Admin page is actually used,
-// so a missing VITE_ADMIN_PASSWORD does not break the entire app at module load.
+const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const envSupabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) as string | undefined;
+
+const SUPABASE_URL = envSupabaseUrl && envSupabaseUrl.startsWith('https://') ? envSupabaseUrl : FALLBACK_SUPABASE_URL;
+const SUPABASE_ANON_KEY = envSupabaseAnonKey && envSupabaseAnonKey.length >= 50 ? envSupabaseAnonKey : FALLBACK_SUPABASE_ANON_KEY;
+
+// Lazy validation: only the admin password is required at runtime now that
+// Supabase URL/anon key fall back to the publishable values.
 const getConfigError = (): string | null => {
-  if (!SUPABASE_URL || !SUPABASE_URL.startsWith('https://')) {
-    return 'VITE_SUPABASE_URL is required and must be a valid HTTPS URL';
-  }
-  if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 50) {
-    return 'VITE_SUPABASE_ANON_KEY is required and must be a valid JWT token';
-  }
   if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 8) {
     return 'VITE_ADMIN_PASSWORD is required and must be at least 8 characters long';
   }
