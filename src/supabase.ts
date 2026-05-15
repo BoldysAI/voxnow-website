@@ -29,23 +29,21 @@ const getSafeStorage = (): Storage => {
   }
 }
 
-// Get Supabase credentials from environment variables
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+// Publishable fallback values (anon key + project URL are safe to expose).
+// These mirror src/integrations/supabase/client.ts and prevent the app from
+// crashing at module load when build-time env vars are missing (e.g. on the
+// published preview where VITE_SUPABASE_* aren't injected).
+const FALLBACK_SUPABASE_URL = 'https://hxyyqidiixyshsszqmqd.supabase.co'
+const FALLBACK_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4eXlxaWRpaXh5c2hzc3pxbXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MjE0NTEsImV4cCI6MjA3MTE5NzQ1MX0.WAfEvVIKtT2DOWGI8oRDZSsqroloYZ1PAb3cN1GSjGU'
 
-// Validate required environment variables
-if (!supabaseUrl || !supabaseUrl.startsWith('https://')) {
-  throw new Error(
-    'VITE_SUPABASE_URL is required and must be a valid HTTPS URL. ' +
-    'Please check your .env file and ensure VITE_SUPABASE_URL is properly configured.'
-  )
-}
+const envUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined
+const envAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
 
-if (!supabaseAnonKey || supabaseAnonKey.length < 50) {
-  throw new Error(
-    'VITE_SUPABASE_ANON_KEY is required and must be a valid JWT token. ' +
-    'Please check your .env file and ensure VITE_SUPABASE_ANON_KEY is properly configured.'
-  )
+const supabaseUrl = envUrl && envUrl.startsWith('https://') ? envUrl : FALLBACK_SUPABASE_URL
+const supabaseAnonKey = envAnonKey && envAnonKey.length >= 50 ? envAnonKey : FALLBACK_SUPABASE_ANON_KEY
+
+if (!envUrl || !envAnonKey) {
+  console.warn('[supabase] VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY missing at build time — using publishable fallback values.')
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
