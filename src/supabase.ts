@@ -1,5 +1,34 @@
 import { createClient } from '@supabase/supabase-js'
 
+const createMemoryStorage = (): Storage => {
+  const store = new Map<string, string>()
+
+  return {
+    get length() {
+      return store.size
+    },
+    clear: () => store.clear(),
+    getItem: (key: string) => store.get(key) ?? null,
+    key: (index: number) => Array.from(store.keys())[index] ?? null,
+    removeItem: (key: string) => store.delete(key),
+    setItem: (key: string, value: string) => {
+      store.set(key, value)
+    },
+  }
+}
+
+const getSafeStorage = (): Storage => {
+  try {
+    const storage = window.localStorage
+    const testKey = '__voxnow_storage_test__'
+    storage.setItem(testKey, testKey)
+    storage.removeItem(testKey)
+    return storage
+  } catch {
+    return createMemoryStorage()
+  }
+}
+
 // Get Supabase credentials from environment variables
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
@@ -24,7 +53,7 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    storage: window.localStorage,
+    storage: getSafeStorage(),
     flowType: 'pkce', // Use PKCE flow for better security and reliability
     debug: false, // Disable debug in production
     storageKey: 'voxnow-auth-token' // Custom storage key
