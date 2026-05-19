@@ -396,6 +396,69 @@ export type Database = {
           },
         ]
       }
+      voxnowmail_mailboxes: {
+        Row: {
+          agent_status: string | null
+          container_id: string | null
+          created_at: string | null
+          id: string
+          imap_email: string
+          imap_host: string | null
+          imap_password_encrypted: string
+          last_ping_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_status?: string | null
+          container_id?: string | null
+          created_at?: string | null
+          id?: string
+          imap_email: string
+          imap_host?: string | null
+          imap_password_encrypted: string
+          last_ping_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_status?: string | null
+          container_id?: string | null
+          created_at?: string | null
+          id?: string
+          imap_email?: string
+          imap_host?: string | null
+          imap_password_encrypted?: string
+          last_ping_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      voxnowmail_profiles: {
+        Row: {
+          cabinet: string | null
+          created_at: string | null
+          id: string
+          nom: string
+          prenom: string
+          trial_ends_at: string | null
+        }
+        Insert: {
+          cabinet?: string | null
+          created_at?: string | null
+          id: string
+          nom: string
+          prenom: string
+          trial_ends_at?: string | null
+        }
+        Update: {
+          cabinet?: string | null
+          created_at?: string | null
+          id?: string
+          nom?: string
+          prenom?: string
+          trial_ends_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
