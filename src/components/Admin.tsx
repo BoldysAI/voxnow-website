@@ -175,20 +175,50 @@ export function Admin() {
     }
   }, [isAuthenticated]);
 
-  const handlePasswordAuth = () => {
-    if (passwordInput.trim().length >= 8) {
-      setIsAuthenticated(true);
-      setAuthError('');
+  const handlePasswordAuth = async () => {
+    const candidate = passwordInput.trim();
+    if (candidate.length < 8) {
+      setAuthError('Mot de passe invalide');
+      setPasswordInput('');
+      return;
+    }
+
+    try {
+      const response = await fetch(ADMIN_FUNCTION_BASE_URL, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+          'x-admin-password': candidate,
+        },
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        setAuthError('Mot de passe invalide');
+        setPasswordInput('');
+        await new Promise((r) => setTimeout(r, 800));
+        return;
+      }
+
+      if (!response.ok) {
+        setAuthError('Erreur de vérification, réessayez');
+        setPasswordInput('');
+        return;
+      }
+
       const timestamp = Date.now().toString();
       sessionStorage.setItem('voxnow_admin_authenticated', 'true');
       sessionStorage.setItem('voxnow_admin_auth_timestamp', timestamp);
-      sessionStorage.setItem('voxnow_admin_password', passwordInput);
-    } else {
-      setAuthError('Mot de passe invalide');
-      // Add delay to prevent brute force attacks
-      setTimeout(() => {}, 1000);
+      sessionStorage.setItem('voxnow_admin_password', candidate);
+      setAuthError('');
+      setIsAuthenticated(true);
+      setPasswordInput('');
+    } catch (err) {
+      console.error('Auth verification failed:', err);
+      setAuthError('Erreur réseau, réessayez');
+      setPasswordInput('');
     }
-    setPasswordInput('');
   };
 
   const handleLogout = () => {
