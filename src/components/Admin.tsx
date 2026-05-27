@@ -55,7 +55,7 @@ interface UpdateUserData {
 }
 
 // Get admin password from environment variables
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'VoxNow2026Admin';
 
 // Publishable fallback values (safe to expose) — mirror src/supabase.ts
 const FALLBACK_SUPABASE_URL = 'https://hxyyqidiixyshsszqmqd.supabase.co';
