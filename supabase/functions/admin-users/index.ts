@@ -45,17 +45,32 @@ const getAllowedOrigins = () => {
     'https://staging.voxnow.be', // Staging
     'http://localhost:8080', // Development
     'http://localhost:3000', // Alternative dev port
-    'https://lovable.dev/', // Lovable Preview
+    'https://lovable.dev', // Lovable
+    'https://lovable.app', // Lovable published
   ];
-  
-  // Add environment-specific origins if needed
+
+  // Allow any Lovable preview/published subdomain dynamically
+  const dynamicPatterns = [
+    /^https:\/\/[a-z0-9-]+\.lovableproject\.com$/i,
+    /^https:\/\/[a-z0-9-]+\.lovable\.app$/i,
+    /^https:\/\/[a-z0-9-]+\.lovable\.dev$/i,
+  ];
+
   const customOrigin = Deno.env.get('ALLOWED_ORIGIN');
   if (customOrigin) {
     allowedOrigins.push(customOrigin);
   }
-  
-  return allowedOrigins;
+
+  return { allowedOrigins, dynamicPatterns };
 };
+
+const getCorsHeaders = (origin?: string | null) => {
+  const { allowedOrigins, dynamicPatterns } = getAllowedOrigins();
+  const isAllowed = !!origin && (
+    allowedOrigins.includes(origin) ||
+    dynamicPatterns.some((re) => re.test(origin))
+  );
+  const allowedOrigin = isAllowed ? origin! : 'null';
 
 const getCorsHeaders = (origin?: string | null) => {
   const allowedOrigins = getAllowedOrigins();
