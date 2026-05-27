@@ -1,8 +1,6 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
-const FALLBACK_ADMIN_PASSWORD_SHA256 = 'c5b698dc74c77c7bc8be5e7609c657e754ccb207030c613c0a88aa9f75d1ca54'
-
 const sha256 = async (value: string) => {
   const data = new TextEncoder().encode(value)
   const hashBuffer = await crypto.subtle.digest('SHA-256', data)
@@ -23,9 +21,17 @@ const isAdminRequest = async (req: Request) => {
   if (!providedPassword) return false
 
   const configuredPassword = Deno.env.get('ADMIN_PASSWORD')
+  const configuredHash = Deno.env.get('ADMIN_PASSWORD_SHA256')
+
+  // Require a server-side secret. No hardcoded fallback.
+  if (!configuredPassword && !configuredHash) {
+    console.error('ADMIN_PASSWORD (or ADMIN_PASSWORD_SHA256) secret is not configured')
+    return false
+  }
+
   const expectedHash = configuredPassword
     ? await sha256(configuredPassword)
-    : Deno.env.get('ADMIN_PASSWORD_SHA256') || FALLBACK_ADMIN_PASSWORD_SHA256
+    : configuredHash!
 
   return safeCompare(await sha256(providedPassword), expectedHash)
 }
