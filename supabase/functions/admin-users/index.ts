@@ -1,6 +1,35 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+const FALLBACK_ADMIN_PASSWORD_SHA256 = 'c5b698dc74c77c7bc8be5e7609c657e754ccb207030c613c0a88aa9f75d1ca54'
+
+const sha256 = async (value: string) => {
+  const data = new TextEncoder().encode(value)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(hashBuffer)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+const safeCompare = (a: string, b: string) => {
+  if (a.length !== b.length) return false
+  let result = 0
+  for (let i = 0; i < a.length; i += 1) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+  return result === 0
+}
+
+const isAdminRequest = async (req: Request) => {
+  const providedPassword = req.headers.get('x-admin-password') ?? ''
+  if (!providedPassword) return false
+
+  const configuredPassword = Deno.env.get('ADMIN_PASSWORD')
+  const expectedHash = configuredPassword
+    ? await sha256(configuredPassword)
+    : Deno.env.get('ADMIN_PASSWORD_SHA256') || FALLBACK_ADMIN_PASSWORD_SHA256
+
+  return safeCompare(await sha256(providedPassword), expectedHash)
+}
+
 // Secure CORS configuration - only allow requests from specific origins
 const getAllowedOrigins = () => {
   const allowedOrigins = [
@@ -28,7 +57,7 @@ const getCorsHeaders = (origin?: string | null) => {
   
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-password',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Credentials': 'true',
   };
@@ -60,6 +89,13 @@ serve(async (req) => {
   }
 
   try {
+    if (!(await isAdminRequest(req))) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Initialize Supabase client with service role
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
