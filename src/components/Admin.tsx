@@ -54,8 +54,7 @@ interface UpdateUserData {
   email_confirm?: boolean;
 }
 
-// Get admin password from environment variables
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'VoxNow2026Admin';
+const getAdminPassword = () => sessionStorage.getItem('voxnow_admin_password') || '';
 
 // Publishable fallback values (safe to expose) — mirror src/supabase.ts
 const FALLBACK_SUPABASE_URL = 'https://hxyyqidiixyshsszqmqd.supabase.co';
@@ -67,12 +66,8 @@ const envSupabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.met
 const SUPABASE_URL = envSupabaseUrl && envSupabaseUrl.startsWith('https://') ? envSupabaseUrl : FALLBACK_SUPABASE_URL;
 const SUPABASE_ANON_KEY = envSupabaseAnonKey && envSupabaseAnonKey.length >= 50 ? envSupabaseAnonKey : FALLBACK_SUPABASE_ANON_KEY;
 
-// Lazy validation: only the admin password is required at runtime now that
 // Supabase URL/anon key fall back to the publishable values.
 const getConfigError = (): string | null => {
-  if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 8) {
-    return 'VITE_ADMIN_PASSWORD is required and must be at least 8 characters long';
-  }
   return null;
 };
 const ADMIN_FUNCTION_BASE_URL = `${SUPABASE_URL}/functions/v1/admin-users`;
@@ -81,7 +76,8 @@ const ADMIN_FUNCTION_BASE_URL = `${SUPABASE_URL}/functions/v1/admin-users`;
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-  'apikey': SUPABASE_ANON_KEY
+  'apikey': SUPABASE_ANON_KEY,
+  'x-admin-password': getAdminPassword()
 });
 
 export function Admin() {
@@ -180,14 +176,15 @@ export function Admin() {
   }, [isAuthenticated]);
 
   const handlePasswordAuth = () => {
-    if (passwordInput === ADMIN_PASSWORD) {
+    if (passwordInput.trim().length >= 8) {
       setIsAuthenticated(true);
       setAuthError('');
       const timestamp = Date.now().toString();
       sessionStorage.setItem('voxnow_admin_authenticated', 'true');
       sessionStorage.setItem('voxnow_admin_auth_timestamp', timestamp);
+      sessionStorage.setItem('voxnow_admin_password', passwordInput);
     } else {
-      setAuthError('Mot de passe incorrect');
+      setAuthError('Mot de passe invalide');
       // Add delay to prevent brute force attacks
       setTimeout(() => {}, 1000);
     }
@@ -198,6 +195,7 @@ export function Admin() {
     setIsAuthenticated(false);
     sessionStorage.removeItem('voxnow_admin_authenticated');
     sessionStorage.removeItem('voxnow_admin_auth_timestamp');
+    sessionStorage.removeItem('voxnow_admin_password');
     navigate('/');
   };
 
