@@ -76,7 +76,8 @@ const ADMIN_FUNCTION_BASE_URL = `${SUPABASE_URL}/functions/v1/admin-users`;
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-  'apikey': SUPABASE_ANON_KEY
+  'apikey': SUPABASE_ANON_KEY,
+  'x-admin-password': getAdminPassword()
 });
 
 export function Admin() {
