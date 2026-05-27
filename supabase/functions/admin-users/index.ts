@@ -72,15 +72,12 @@ const getCorsHeaders = (origin?: string | null) => {
   );
   const allowedOrigin = isAllowed ? origin! : 'null';
 
-const getCorsHeaders = (origin?: string | null) => {
-  const allowedOrigins = getAllowedOrigins();
-  const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : 'null';
-  
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-password',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Credentials': 'true',
+    'Vary': 'Origin',
   };
 };
 
