@@ -211,7 +211,7 @@ export function TermsAndConditions() {
                 </div>
                 <div className="bg-gradient-to-r from-vox-blue/5 to-now-green/5 rounded-xl p-6 border border-gray-200">
                   <p className="text-gray-700 leading-relaxed mb-4">
-                    Le service est proposé au tarif de <span className="font-bold text-vox-blue">90€ HTVA par mois</span>, sans engagement, résiliable à tout moment.
+                    Le service est proposé au tarif de <span className="font-bold text-vox-blue">90€ HTVA par mois par utilisateur</span>, selon les limites d'usage renseignées sur la page de tarification trouvable sur la page d'accueil du site web de voxnow.be. L'abonnement est sans engagement, résiliable à tout moment.
                   </p>
                   <p className="text-gray-700 leading-relaxed">
                     Le paiement s'effectue par domiciliation bancaire, avec des prélèvements mensuels automatiques sécurisés via Stripe, leader mondial du paiement en ligne. Aucune pénalité de résiliation n'est appliquée.
