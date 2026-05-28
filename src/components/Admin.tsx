@@ -54,36 +54,46 @@ interface UpdateUserData {
   email_confirm?: boolean;
 }
 
-// Get admin password from environment variables
-const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD;
+const getAdminPassword = () => sessionStorage.getItem('voxnow_admin_password') || '';
 
-// Get Supabase URL and anon key from environment variables
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Publishable fallback values (safe to expose) — mirror src/supabase.ts
+const FALLBACK_SUPABASE_URL = 'https://hxyyqidiixyshsszqmqd.supabase.co';
+const FALLBACK_SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh4eXlxaWRpaXh5c2hzc3pxbXFkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU2MjE0NTEsImV4cCI6MjA3MTE5NzQ1MX0.WAfEvVIKtT2DOWGI8oRDZSsqroloYZ1PAb3cN1GSjGU';
 
-// Validate required environment variables
-if (!SUPABASE_URL || !SUPABASE_URL.startsWith('https://')) {
-  throw new Error('VITE_SUPABASE_URL is required and must be a valid HTTPS URL');
-}
+const envSupabaseUrl = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const envSupabaseAnonKey = (import.meta.env.VITE_SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) as string | undefined;
 
-if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.length < 50) {
-  throw new Error('VITE_SUPABASE_ANON_KEY is required and must be a valid JWT token');
-}
+const SUPABASE_URL = envSupabaseUrl && envSupabaseUrl.startsWith('https://') ? envSupabaseUrl : FALLBACK_SUPABASE_URL;
+const SUPABASE_ANON_KEY = envSupabaseAnonKey && envSupabaseAnonKey.length >= 50 ? envSupabaseAnonKey : FALLBACK_SUPABASE_ANON_KEY;
 
-if (!ADMIN_PASSWORD || ADMIN_PASSWORD.length < 8) {
-  throw new Error('VITE_ADMIN_PASSWORD is required and must be at least 8 characters long');
-}
+// Supabase URL/anon key fall back to the publishable values.
+const getConfigError = (): string | null => {
+  return null;
+};
 const ADMIN_FUNCTION_BASE_URL = `${SUPABASE_URL}/functions/v1/admin-users`;
 
 // Helper function to get authenticated headers for Edge Functions
 const getAuthHeaders = () => ({
   'Content-Type': 'application/json',
   'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-  'apikey': SUPABASE_ANON_KEY
+  'apikey': SUPABASE_ANON_KEY,
+  'x-admin-password': getAdminPassword()
 });
 
 export function Admin() {
   const navigate = useNavigate();
+  const configError = getConfigError();
+  if (configError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+        <div className="max-w-lg bg-white border border-red-200 rounded-lg p-6 shadow">
+          <h1 className="text-xl font-bold text-red-700 mb-2">Configuration manquante</h1>
+          <p className="text-gray-700 text-sm">{configError}</p>
+          <p className="text-gray-500 text-xs mt-3">Définissez la variable dans Workspace Settings → Build Secrets, puis rechargez la preview.</p>
+        </div>
+      </div>
+    );
+  }
   
   // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -165,25 +175,57 @@ export function Admin() {
     }
   }, [isAuthenticated]);
 
-  const handlePasswordAuth = () => {
-    if (passwordInput === ADMIN_PASSWORD) {
-      setIsAuthenticated(true);
-      setAuthError('');
+  const handlePasswordAuth = async () => {
+    const candidate = passwordInput.trim();
+    if (candidate.length < 8) {
+      setAuthError('Mot de passe invalide');
+      setPasswordInput('');
+      return;
+    }
+
+    try {
+      const response = await fetch(ADMIN_FUNCTION_BASE_URL, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY,
+          'x-admin-password': candidate,
+        },
+      });
+
+      if (response.status === 401 || response.status === 403) {
+        setAuthError('Mot de passe invalide');
+        setPasswordInput('');
+        await new Promise((r) => setTimeout(r, 800));
+        return;
+      }
+
+      if (!response.ok) {
+        setAuthError('Erreur de vérification, réessayez');
+        setPasswordInput('');
+        return;
+      }
+
       const timestamp = Date.now().toString();
       sessionStorage.setItem('voxnow_admin_authenticated', 'true');
       sessionStorage.setItem('voxnow_admin_auth_timestamp', timestamp);
-    } else {
-      setAuthError('Mot de passe incorrect');
-      // Add delay to prevent brute force attacks
-      setTimeout(() => {}, 1000);
+      sessionStorage.setItem('voxnow_admin_password', candidate);
+      setAuthError('');
+      setIsAuthenticated(true);
+      setPasswordInput('');
+    } catch (err) {
+      console.error('Auth verification failed:', err);
+      setAuthError('Erreur réseau, réessayez');
+      setPasswordInput('');
     }
-    setPasswordInput('');
   };
 
   const handleLogout = () => {
     setIsAuthenticated(false);
     sessionStorage.removeItem('voxnow_admin_authenticated');
     sessionStorage.removeItem('voxnow_admin_auth_timestamp');
+    sessionStorage.removeItem('voxnow_admin_password');
     navigate('/');
   };
 

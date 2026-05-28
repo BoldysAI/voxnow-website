@@ -1,6 +1,41 @@
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
+const sha256 = async (value: string) => {
+  const data = new TextEncoder().encode(value)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  return Array.from(new Uint8Array(hashBuffer)).map((byte) => byte.toString(16).padStart(2, '0')).join('')
+}
+
+const safeCompare = (a: string, b: string) => {
+  if (a.length !== b.length) return false
+  let result = 0
+  for (let i = 0; i < a.length; i += 1) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+  return result === 0
+}
+
+const isAdminRequest = async (req: Request) => {
+  const providedPassword = req.headers.get('x-admin-password') ?? ''
+  if (!providedPassword) return false
+
+  const configuredPassword = Deno.env.get('ADMIN_PASSWORD')
+  const configuredHash = Deno.env.get('ADMIN_PASSWORD_SHA256')
+
+  // Require a server-side secret. No hardcoded fallback.
+  if (!configuredPassword && !configuredHash) {
+    console.error('ADMIN_PASSWORD (or ADMIN_PASSWORD_SHA256) secret is not configured')
+    return false
+  }
+
+  const expectedHash = configuredPassword
+    ? await sha256(configuredPassword)
+    : configuredHash!
+
+  return safeCompare(await sha256(providedPassword), expectedHash)
+}
+
 // Secure CORS configuration - only allow requests from specific origins
 const getAllowedOrigins = () => {
   const allowedOrigins = [
@@ -10,27 +45,39 @@ const getAllowedOrigins = () => {
     'https://staging.voxnow.be', // Staging
     'http://localhost:8080', // Development
     'http://localhost:3000', // Alternative dev port
-    'https://lovable.dev/', // Lovable Preview
+    'https://lovable.dev', // Lovable
+    'https://lovable.app', // Lovable published
   ];
-  
-  // Add environment-specific origins if needed
+
+  // Allow any Lovable preview/published subdomain dynamically
+  const dynamicPatterns = [
+    /^https:\/\/[a-z0-9-]+\.lovableproject\.com$/i,
+    /^https:\/\/[a-z0-9-]+\.lovable\.app$/i,
+    /^https:\/\/[a-z0-9-]+\.lovable\.dev$/i,
+  ];
+
   const customOrigin = Deno.env.get('ALLOWED_ORIGIN');
   if (customOrigin) {
     allowedOrigins.push(customOrigin);
   }
-  
-  return allowedOrigins;
+
+  return { allowedOrigins, dynamicPatterns };
 };
 
 const getCorsHeaders = (origin?: string | null) => {
-  const allowedOrigins = getAllowedOrigins();
-  const allowedOrigin = origin && allowedOrigins.includes(origin) ? origin : 'null';
-  
+  const { allowedOrigins, dynamicPatterns } = getAllowedOrigins();
+  const isAllowed = !!origin && (
+    allowedOrigins.includes(origin) ||
+    dynamicPatterns.some((re) => re.test(origin))
+  );
+  const allowedOrigin = isAllowed ? origin! : 'null';
+
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
-    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-admin-password',
     'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
     'Access-Control-Allow-Credentials': 'true',
+    'Vary': 'Origin',
   };
 };
 
@@ -60,6 +107,13 @@ serve(async (req) => {
   }
 
   try {
+    if (!(await isAdminRequest(req))) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     // Initialize Supabase client with service role
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? ''
     const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
