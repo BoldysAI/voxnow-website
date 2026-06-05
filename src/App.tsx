@@ -49,7 +49,7 @@ import DiscoveryCall from './components/DiscoveryCall';
 import { AdministrateurProvisoire } from './components/AdministrateurProvisoire';
 import { Admin } from './components/Admin';
 import { VideoPage } from './components/VideoPage';
-
+import Redirect from './pages/Redirect';
 
 declare global {
   interface Window {
