@@ -125,6 +125,7 @@ export type Database = {
           destination_url: string
           id: string
           label: string | null
+          lawyer_name: string | null
           slug: string
           use_case: string | null
         }
@@ -134,6 +135,7 @@ export type Database = {
           destination_url: string
           id?: string
           label?: string | null
+          lawyer_name?: string | null
           slug: string
           use_case?: string | null
         }
@@ -143,6 +145,7 @@ export type Database = {
           destination_url?: string
           id?: string
           label?: string | null
+          lawyer_name?: string | null
           slug?: string
           use_case?: string | null
         }
