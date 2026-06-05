@@ -143,58 +143,45 @@ export default function SimplicyRedirections() {
     text: string,
     lawyerName?: string
   ): { slug: string; destination_url: string; label: string; use_case: string | null; lawyer_name: string | null }[] {
-    // Split into blocks at each "=>" marker OR blank-line separator (legacy ◊ format).
-    const normalized = text.replace(/\r\n/g, '\n').trim();
-    let blocks: string[];
-    if (/^\s*=>/m.test(normalized)) {
-      blocks = normalized
-        .split(/\n(?=\s*=>)/)
-        .map((b) => b.trim())
-        .filter(Boolean);
-    } else {
-      blocks = normalized.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
-    }
+    // Generic parser: find each URL and infer label (before) + use_case (after).
+    // Supports: "Label\n🔗 URL\nDesc", "Label : URL", "◊ Label\nLIEN : URL", "=> Label : URL".
+    const normalized = text.replace(/\r\n/g, '\n');
+    const matches = [...normalized.matchAll(/https?:\/\/\S+/g)];
     const used = new Set(existingSlugs);
     const rows: { slug: string; destination_url: string; label: string; use_case: string | null; lawyer_name: string | null }[] = [];
-    for (const block of blocks) {
-      let lbl = '';
-      let uc: string | null = null;
-      let url = '';
 
-      if (/^\s*=>/.test(block)) {
-        // New format:  => Label : https://url   (followed by free-form description lines)
-        const cleaned = block.replace(/^\s*=>\s*/, '');
-        const urlMatch = cleaned.match(/https?:\/\/\S+/);
-        if (urlMatch) {
-          url = urlMatch[0].replace(/[.,;)]+$/, '');
-          const before = cleaned.slice(0, urlMatch.index).replace(/[\s:–—-]+$/, '').trim();
-          const firstLine = before.split('\n')[0].trim();
-          lbl = firstLine;
-          const after = cleaned.slice((urlMatch.index ?? 0) + urlMatch[0].length).trim();
-          uc = after ? after.replace(/\s+/g, ' ').trim() : null;
-        }
-      } else {
-        // Legacy format: ◊ Label / USECASE : ... / LIEN : ...
-        const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
-        for (const line of lines) {
-          if (line.startsWith('◊')) {
-            lbl = line.replace(/^◊\s*/, '').trim();
-          } else if (/^USECASE\s*:/i.test(line)) {
-            uc = line.replace(/^USECASE\s*:/i, '').trim() || null;
-          } else if (/^LIEN\s*:/i.test(line)) {
-            url = line.replace(/^LIEN\s*:/i, '').trim();
-          } else if (!lbl) {
-            lbl = line;
-          }
-        }
+    for (let i = 0; i < matches.length; i++) {
+      const m = matches[i];
+      const mIndex = m.index ?? 0;
+      const url = m[0].replace(/[.,;)]+$/, '');
+      const beforeStart = i === 0 ? 0 : (matches[i - 1].index ?? 0) + matches[i - 1][0].length;
+      const beforeText = normalized.slice(beforeStart, mIndex);
+      const afterEnd = i === matches.length - 1 ? normalized.length : (matches[i + 1].index ?? normalized.length);
+      const afterText = normalized.slice(mIndex + m[0].length, afterEnd);
+
+      // Label = last non-empty line of last paragraph before this URL.
+      const beforeClean = beforeText.replace(/🔗/g, '');
+      const beforeParas = beforeClean.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+      let lbl = beforeParas.length ? beforeParas[beforeParas.length - 1] : '';
+      lbl = lbl.split('\n').map((l) => l.trim()).filter(Boolean).pop() || '';
+      lbl = lbl.replace(/^[◊=>\s]+/, '').replace(/^LIEN\s*:\s*/i, '').replace(/[\s:–—-]+$/, '').trim();
+
+      // Use case = first paragraph after the URL, but only if it isn't the next entry's label.
+      const afterClean = afterText.replace(/🔗/g, '');
+      const afterParas = afterClean.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+      let uc: string | null = null;
+      const isLast = i === matches.length - 1;
+      if (afterParas.length >= 2 || (isLast && afterParas.length === 1)) {
+        uc = afterParas[0].replace(/\s+/g, ' ').trim() || null;
       }
 
-      if (!lbl || !url) continue;
+      if (!lbl) continue;
       const slug = generateSlug(lbl, used, lawyerName);
       used.add(slug);
       rows.push({ slug, destination_url: url, label: lbl, use_case: uc, lawyer_name: lawyerName || null });
     }
     return rows;
+
 
   }
 
