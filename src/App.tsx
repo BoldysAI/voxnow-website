@@ -1780,7 +1780,7 @@ function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/presentation_video_de_voxnow" element={<VideoPage title="Présentation vidéo de VoxNow" driveFileId="1aQnxmJFLJTZ4BlKBTDfFIZcyJ7TeSyUe" />} />
         <Route path="/temoignage_client_maitre_lombaerd" element={<VideoPage title="Témoignage client — Maître Lombaerd" driveFileId="1J0qAKflDA9TOK5htNKoKE3AAuJltRm8o" />} />
-
+        <Route path="/a/:slug" element={<Redirect />} />
       </Routes>
       <Chatbot />
     </>
