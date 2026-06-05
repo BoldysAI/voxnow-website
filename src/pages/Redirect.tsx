@@ -19,7 +19,7 @@ export default function Redirect() {
       const { data, error } = await supabase
         .from('redirections')
         .select('destination_url')
-        .eq('slug', slug)
+        .eq('slug', slug!)
         .limit(1)
         .single();
 
