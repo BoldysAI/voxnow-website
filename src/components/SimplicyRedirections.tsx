@@ -8,6 +8,7 @@ type Redirection = {
   destination_url: string;
   label: string | null;
   use_case: string | null;
+  lawyer_name: string | null;
   created_at: string;
 };
 
@@ -17,7 +18,17 @@ function stripAccents(s: string): string {
   return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 }
 
-function generateSlug(label: string, existing: Set<string>): string {
+function generateLawyerSlug(name: string): string {
+  return stripAccents(name.toLowerCase())
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 15)
+    .replace(/-+$/g, '');
+}
+
+function generateSlug(label: string, existing: Set<string>, lawyerName?: string): string {
   const cleaned = stripAccents(label.toLowerCase())
     .replace(/[^a-z0-9\s]/g, ' ')
     .replace(/\s+/g, ' ')
@@ -34,10 +45,17 @@ function generateSlug(label: string, existing: Set<string>): string {
   }
   base = base.slice(0, 20).replace(/-+$/g, '');
 
-  if (!existing.has(base)) return base;
+  const lawyerSlug = lawyerName ? generateLawyerSlug(lawyerName) : '';
+  const compose = (b: string) => {
+    if (lawyerSlug) return `${lawyerSlug}-${b}`.slice(0, 30).replace(/-+$/g, '');
+    return b.slice(0, 20).replace(/-+$/g, '');
+  };
+
+  let candidate = compose(base);
+  if (!existing.has(candidate)) return candidate;
   let i = 2;
-  while (existing.has(`${base}-${i}`)) i++;
-  return `${base}-${i}`.slice(0, 20);
+  while (existing.has(compose(`${base}-${i}`))) i++;
+  return compose(`${base}-${i}`);
 }
 
 export default function SimplicyRedirections() {
@@ -45,11 +63,15 @@ export default function SimplicyRedirections() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [lawyerName, setLawyerName] = useState('');
   const [label, setLabel] = useState('');
   const [useCase, setUseCase] = useState('');
   const [destinationUrl, setDestinationUrl] = useState('');
+  const [customSlug, setCustomSlug] = useState('');
+  const [slugManuallyEdited, setSlugManuallyEdited] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
+  const [bulkLawyerName, setBulkLawyerName] = useState('');
   const [bulkText, setBulkText] = useState('');
   const [importing, setImporting] = useState(false);
   const [importMessage, setImportMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -59,17 +81,24 @@ export default function SimplicyRedirections() {
   const [deleting, setDeleting] = useState(false);
 
   const existingSlugs = useMemo(() => new Set(items.map((i) => i.slug)), [items]);
-  const previewSlug = useMemo(
-    () => (label.trim() ? generateSlug(label, existingSlugs) : ''),
-    [label, existingSlugs]
-  );
+
+  useEffect(() => {
+    if (slugManuallyEdited) return;
+    if (!label.trim()) {
+      setCustomSlug('');
+      return;
+    }
+    setCustomSlug(generateSlug(label, existingSlugs, lawyerName.trim() || undefined));
+  }, [label, lawyerName, existingSlugs, slugManuallyEdited]);
+
+  const slugValid = customSlug === '' || /^[a-z0-9-]+$/.test(customSlug);
 
   async function loadList() {
     setLoading(true);
     setError(null);
     const { data, error } = await supabase
       .from('redirections')
-      .select('id, slug, destination_url, label, use_case, created_at')
+      .select('id, slug, destination_url, label, use_case, lawyer_name, created_at')
       .order('created_at', { ascending: false });
     if (error) {
       setError(error.message);
@@ -86,31 +115,37 @@ export default function SimplicyRedirections() {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!label.trim() || !destinationUrl.trim()) return;
+    if (!label.trim() || !destinationUrl.trim() || !customSlug || !slugValid) return;
     setSubmitting(true);
     setError(null);
-    const slug = generateSlug(label, existingSlugs);
     const { error } = await supabase.from('redirections').insert({
-      slug,
+      slug: customSlug,
       destination_url: destinationUrl.trim(),
       label: label.trim(),
       use_case: useCase.trim() || null,
+      lawyer_name: lawyerName.trim() || null,
     });
     setSubmitting(false);
     if (error) {
       setError(error.message);
       return;
     }
+    setLawyerName('');
     setLabel('');
     setUseCase('');
     setDestinationUrl('');
+    setCustomSlug('');
+    setSlugManuallyEdited(false);
     await loadList();
   }
 
-  function parseBulk(text: string): { slug: string; destination_url: string; label: string; use_case: string | null }[] {
+  function parseBulk(
+    text: string,
+    lawyerName?: string
+  ): { slug: string; destination_url: string; label: string; use_case: string | null; lawyer_name: string | null }[] {
     const blocks = text.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
     const used = new Set(existingSlugs);
-    const rows: { slug: string; destination_url: string; label: string; use_case: string | null }[] = [];
+    const rows: { slug: string; destination_url: string; label: string; use_case: string | null; lawyer_name: string | null }[] = [];
     for (const block of blocks) {
       const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
       let lbl = '';
@@ -128,16 +163,16 @@ export default function SimplicyRedirections() {
         }
       }
       if (!lbl || !url) continue;
-      const slug = generateSlug(lbl, used);
+      const slug = generateSlug(lbl, used, lawyerName);
       used.add(slug);
-      rows.push({ slug, destination_url: url, label: lbl, use_case: uc });
+      rows.push({ slug, destination_url: url, label: lbl, use_case: uc, lawyer_name: lawyerName || null });
     }
     return rows;
   }
 
   async function handleBulkImport() {
     setImportMessage(null);
-    const rows = parseBulk(bulkText);
+    const rows = parseBulk(bulkText, bulkLawyerName.trim() || undefined);
     if (rows.length === 0) {
       setImportMessage({ type: 'error', text: 'Aucune entrée valide détectée.' });
       return;
@@ -151,6 +186,7 @@ export default function SimplicyRedirections() {
     }
     setImportMessage({ type: 'success', text: `${rows.length} lien(s) importé(s) avec succès.` });
     setBulkText('');
+    setBulkLawyerName('');
     await loadList();
   }
 
@@ -194,6 +230,16 @@ export default function SimplicyRedirections() {
           </h3>
           <form onSubmit={handleCreate} className="space-y-4">
             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Nom de l'avocat</label>
+              <input
+                type="text"
+                value={lawyerName}
+                onChange={(e) => setLawyerName(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                placeholder="Rousseau"
+              />
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Label *</label>
               <input
                 type="text"
@@ -203,9 +249,27 @@ export default function SimplicyRedirections() {
                 placeholder="Demande de rendez-vous"
                 required
               />
-              {previewSlug && (
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Slug (modifiable)</label>
+              <input
+                type="text"
+                value={customSlug}
+                onChange={(e) => {
+                  setSlugManuallyEdited(true);
+                  setCustomSlug(e.target.value);
+                }}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent font-mono"
+                placeholder="rousseau-rendezvous"
+              />
+              {!slugValid && (
+                <p className="text-xs text-red-600 mt-2">
+                  Le slug ne peut contenir que des minuscules, des chiffres et des tirets.
+                </p>
+              )}
+              {customSlug && slugValid && (
                 <p className="text-xs text-gray-500 mt-2">
-                  Aperçu : <span className="font-mono text-gray-700">voxnow.be/a/{previewSlug}</span>
+                  <span className="font-mono text-gray-700">voxnow.be/a/{customSlug}</span>
                 </p>
               )}
             </div>
@@ -232,7 +296,7 @@ export default function SimplicyRedirections() {
             </div>
             <button
               type="submit"
-              disabled={submitting || !label.trim() || !destinationUrl.trim()}
+              disabled={submitting || !label.trim() || !destinationUrl.trim() || !customSlug || !slugValid}
               className="w-full bg-red-600 text-white py-3 px-4 rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium flex items-center justify-center"
             >
               {submitting ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Créer le lien'}
@@ -245,6 +309,16 @@ export default function SimplicyRedirections() {
           <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center">
             <Upload className="h-5 w-5 mr-2 text-red-600" /> Import en lot
           </h3>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Nom de l'avocat</label>
+            <input
+              type="text"
+              value={bulkLawyerName}
+              onChange={(e) => setBulkLawyerName(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              placeholder="Rousseau"
+            />
+          </div>
           <textarea
             value={bulkText}
             onChange={(e) => setBulkText(e.target.value)}
@@ -290,6 +364,7 @@ export default function SimplicyRedirections() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
+                  <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Avocat</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Label</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Use case</th>
                   <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Lien court</th>
@@ -300,6 +375,7 @@ export default function SimplicyRedirections() {
               <tbody className="divide-y divide-gray-100">
                 {items.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 text-sm text-gray-900">{item.lawyer_name || '—'}</td>
                     <td className="px-6 py-4 text-sm text-gray-900">{item.label || '—'}</td>
                     <td className="px-6 py-4 text-sm text-gray-600">{item.use_case || '—'}</td>
                     <td className="px-6 py-4 text-sm font-mono text-gray-700">voxnow.be/a/{item.slug}</td>
