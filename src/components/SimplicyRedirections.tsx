@@ -143,31 +143,59 @@ export default function SimplicyRedirections() {
     text: string,
     lawyerName?: string
   ): { slug: string; destination_url: string; label: string; use_case: string | null; lawyer_name: string | null }[] {
-    const blocks = text.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
+    // Split into blocks at each "=>" marker OR blank-line separator (legacy ◊ format).
+    const normalized = text.replace(/\r\n/g, '\n').trim();
+    let blocks: string[];
+    if (/^\s*=>/m.test(normalized)) {
+      blocks = normalized
+        .split(/\n(?=\s*=>)/)
+        .map((b) => b.trim())
+        .filter(Boolean);
+    } else {
+      blocks = normalized.split(/\n\s*\n/).map((b) => b.trim()).filter(Boolean);
+    }
     const used = new Set(existingSlugs);
     const rows: { slug: string; destination_url: string; label: string; use_case: string | null; lawyer_name: string | null }[] = [];
     for (const block of blocks) {
-      const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
       let lbl = '';
       let uc: string | null = null;
       let url = '';
-      for (const line of lines) {
-        if (line.startsWith('◊')) {
-          lbl = line.replace(/^◊\s*/, '').trim();
-        } else if (/^USECASE\s*:/i.test(line)) {
-          uc = line.replace(/^USECASE\s*:/i, '').trim() || null;
-        } else if (/^LIEN\s*:/i.test(line)) {
-          url = line.replace(/^LIEN\s*:/i, '').trim();
-        } else if (!lbl) {
-          lbl = line;
+
+      if (/^\s*=>/.test(block)) {
+        // New format:  => Label : https://url   (followed by free-form description lines)
+        const cleaned = block.replace(/^\s*=>\s*/, '');
+        const urlMatch = cleaned.match(/https?:\/\/\S+/);
+        if (urlMatch) {
+          url = urlMatch[0].replace(/[.,;)]+$/, '');
+          const before = cleaned.slice(0, urlMatch.index).replace(/[\s:–—-]+$/, '').trim();
+          const firstLine = before.split('\n')[0].trim();
+          lbl = firstLine;
+          const after = cleaned.slice((urlMatch.index ?? 0) + urlMatch[0].length).trim();
+          uc = after ? after.replace(/\s+/g, ' ').trim() : null;
+        }
+      } else {
+        // Legacy format: ◊ Label / USECASE : ... / LIEN : ...
+        const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
+        for (const line of lines) {
+          if (line.startsWith('◊')) {
+            lbl = line.replace(/^◊\s*/, '').trim();
+          } else if (/^USECASE\s*:/i.test(line)) {
+            uc = line.replace(/^USECASE\s*:/i, '').trim() || null;
+          } else if (/^LIEN\s*:/i.test(line)) {
+            url = line.replace(/^LIEN\s*:/i, '').trim();
+          } else if (!lbl) {
+            lbl = line;
+          }
         }
       }
+
       if (!lbl || !url) continue;
       const slug = generateSlug(lbl, used, lawyerName);
       used.add(slug);
       rows.push({ slug, destination_url: url, label: lbl, use_case: uc, lawyer_name: lawyerName || null });
     }
     return rows;
+
   }
 
   async function handleBulkImport() {
