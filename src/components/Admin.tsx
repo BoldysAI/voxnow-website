@@ -20,6 +20,7 @@ import {
   Shield,
   LogOut,
   Loader2,
+  Link,
   DollarSign
 } from 'lucide-react';
 import { CostDashboard } from './CostDashboard';
