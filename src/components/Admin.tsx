@@ -24,7 +24,7 @@ import {
   DollarSign
 } from 'lucide-react';
 import { CostDashboard } from './CostDashboard';
-import { SimplicyRedirections } from './SimplicyRedirections';
+import SimplicyRedirections from './SimplicyRedirections';
 
 interface User {
   id: string;
