@@ -720,6 +720,24 @@ export function CostDashboard() {
         </div>
       </section>
 
+      {/* ── Coût par client ───────────────────────────────────────────── */}
+      <section>
+        <SectionHeader icon={Users} title="Coût par client" />
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <ResponsiveContainer width="100%" height={Math.max(240, clientCosts.length * 56)}>
+            <BarChart data={clientCosts} layout="vertical" margin={{ left: 0, right: 24, top: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+              <XAxis type="number" tickFormatter={v => fmt(v)} tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="client_name" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={170} />
+              <Tooltip content={<ClientCostTooltip />} />
+              <Bar dataKey="cost" name="Coût" fill={VOXNOW_COLORS.secondary} radius={[0, 4, 4, 0]}>
+                <LabelList dataKey="cost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </section>
+
       {/* ── Tableau client × mois ───────────────────────────────────── */}
       <section>
         <SectionHeader icon={Table2} title="Coût par client et par mois" />
