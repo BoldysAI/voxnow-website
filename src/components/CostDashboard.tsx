@@ -201,6 +201,19 @@ const UnitCostTooltip = ({ active, payload }: any) => {
   );
 };
 
+const ClientCostTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
+      <p className="text-gray-800 font-semibold mb-1">{data.client_name}</p>
+      <p className="text-gray-600">Coût total : {fmt(data.cost)}</p>
+      <p className="text-gray-600">Nombre de messages : {data.count}</p>
+      <p className="text-gray-500 text-xs mt-1 border-t border-gray-100 pt-1">Coût moyen / message : {fmt(data.cost / data.count)}</p>
+    </div>
+  );
+};
+
 
 // ─── Filter Bar ───────────────────────────────────────────────────────────────
 
@@ -467,7 +480,7 @@ export function CostDashboard() {
     setClientCosts(
       Array.from(clientMap.entries())
         .map(([client_name, v]) => ({ client_name, ...v }))
-        .sort((a, b) => b.cost - a.cost).slice(0, 5)
+        .sort((a, b) => b.cost - a.cost)
     );
 
 
