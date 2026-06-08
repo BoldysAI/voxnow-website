@@ -108,7 +108,7 @@ function applyFilters(rows: TwilioCost[], f: Filters): TwilioCost[] {
     const d = new Date(r.created_at);
     if (f.startDate && d < new Date(f.startDate + 'T00:00:00'))  return false;
     if (f.endDate   && d > new Date(f.endDate   + 'T23:59:59'))  return false;
-    if (f.client      && (r.client_name ?? 'Non défini') !== f.client)       return false;
+    if (f.client.length > 0 && !f.client.includes(r.client_name ?? 'Non défini')) return false;
     if (f.messageType && (r.message_type ?? 'Non défini') !== f.messageType)  return false;
     return true;
   });
