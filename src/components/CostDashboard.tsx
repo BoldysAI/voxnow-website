@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   LineChart,
   Line,
@@ -57,7 +57,7 @@ interface MonthlyClientCost { client_name: string; total: number; msgCount: numb
 interface Filters {
   startDate: string;
   endDate: string;
-  client: string;
+  client: string[];
   messageType: string;
 }
 
@@ -108,7 +108,7 @@ function applyFilters(rows: TwilioCost[], f: Filters): TwilioCost[] {
     const d = new Date(r.created_at);
     if (f.startDate && d < new Date(f.startDate + 'T00:00:00'))  return false;
     if (f.endDate   && d > new Date(f.endDate   + 'T23:59:59'))  return false;
-    if (f.client      && (r.client_name ?? 'Non défini') !== f.client)       return false;
+    if (f.client.length > 0 && !f.client.includes(r.client_name ?? 'Non défini')) return false;
     if (f.messageType && (r.message_type ?? 'Non défini') !== f.messageType)  return false;
     return true;
   });
@@ -215,6 +215,98 @@ const ClientCostTooltip = ({ active, payload }: any) => {
 };
 
 
+// ─── MultiSelect ──────────────────────────────────────────────────────────────
+
+function MultiSelect({
+  label, placeholder, options, selected, onChange,
+}: {
+  label: string;
+  placeholder: string;
+  options: string[];
+  selected: string[];
+  onChange: (vals: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const toggle = (val: string) => {
+    if (selected.includes(val)) onChange(selected.filter(v => v !== val));
+    else onChange([...selected, val]);
+  };
+
+  const filtered = options.filter(o => o.toLowerCase().includes(query.toLowerCase()));
+  const display = selected.length === 0
+    ? placeholder
+    : selected.length === 1
+      ? selected[0]
+      : `${selected.length} ${label} sélectionnés`;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-vox-blue/30 focus:border-vox-blue min-w-[160px] flex items-center justify-between gap-2 bg-white"
+      >
+        <span className={`truncate ${selected.length === 0 ? 'text-gray-500' : ''}`}>{display}</span>
+        <ChevronDown className={`h-3.5 w-3.5 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute z-20 mt-1 w-64 max-h-72 overflow-hidden bg-white border border-gray-200 rounded-lg shadow-lg flex flex-col">
+          <div className="p-2 border-b border-gray-100 flex items-center gap-2">
+            <input
+              type="text"
+              autoFocus
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Rechercher..."
+              className="flex-1 text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-vox-blue/30"
+            />
+            {selected.length > 0 && (
+              <button
+                type="button"
+                onClick={() => onChange([])}
+                className="text-xs text-gray-500 hover:text-rose-500"
+                title="Tout désélectionner"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          <div className="overflow-y-auto flex-1">
+            {filtered.length === 0 && (
+              <div className="px-3 py-2 text-xs text-gray-400 italic">Aucun résultat</div>
+            )}
+            {filtered.map(opt => (
+              <label
+                key={opt}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.includes(opt)}
+                  onChange={() => toggle(opt)}
+                  className="rounded border-gray-300 text-vox-blue focus:ring-vox-blue/30"
+                />
+                <span className="truncate">{opt}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Filter Bar ───────────────────────────────────────────────────────────────
 
 function FilterBar({
@@ -225,10 +317,10 @@ function FilterBar({
   uniqueClients: string[];
   uniqueMessageTypes: string[];
 }) {
-  const activeCount = [filters.startDate, filters.endDate, filters.client, filters.messageType]
-    .filter(Boolean).length;
+  const activeCount = [filters.startDate, filters.endDate, filters.messageType].filter(Boolean).length
+    + (filters.client.length > 0 ? 1 : 0);
 
-  const reset = () => onChange({ startDate: '', endDate: '', client: '', messageType: '' });
+  const reset = () => onChange({ startDate: '', endDate: '', client: [], messageType: '' });
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
@@ -263,14 +355,13 @@ function FilterBar({
           />
         </div>
 
-        <select
-          value={filters.client}
-          onChange={e => onChange({ ...filters, client: e.target.value })}
-          className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-vox-blue/30 focus:border-vox-blue min-w-[160px]"
-        >
-          <option value="">Tous les clients</option>
-          {uniqueClients.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <MultiSelect
+          label="clients"
+          placeholder="Tous les clients"
+          options={uniqueClients}
+          selected={filters.client}
+          onChange={vals => onChange({ ...filters, client: vals })}
+        />
 
         <select
           value={filters.messageType}
@@ -307,7 +398,7 @@ export function CostDashboard() {
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState('');
   const [allCosts, setAllCosts] = useState<TwilioCost[]>([]);
-  const [filters,  setFilters]  = useState<Filters>({ startDate: '', endDate: '', client: '', messageType: '' });
+  const [filters,  setFilters]  = useState<Filters>({ startDate: '', endDate: '', client: [], messageType: '' });
 
   // KPIs
   const [totalCost, setTotalCost]               = useState(0);
