@@ -306,7 +306,7 @@ export function CostDashboard() {
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState('');
   const [allCosts, setAllCosts] = useState<TwilioCost[]>([]);
-  const [filters,  setFilters]  = useState<Filters>({ startDate: '', endDate: '', client: '', messageType: '' });
+  const [filters,  setFilters]  = useState<Filters>({ startDate: '', endDate: '', client: [], messageType: '' });
 
   // KPIs
   const [totalCost, setTotalCost]               = useState(0);
