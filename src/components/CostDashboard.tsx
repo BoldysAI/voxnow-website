@@ -263,14 +263,13 @@ function FilterBar({
           />
         </div>
 
-        <select
-          value={filters.client}
-          onChange={e => onChange({ ...filters, client: e.target.value })}
-          className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-vox-blue/30 focus:border-vox-blue min-w-[160px]"
-        >
-          <option value="">Tous les clients</option>
-          {uniqueClients.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <MultiSelect
+          label="clients"
+          placeholder="Tous les clients"
+          options={uniqueClients}
+          selected={filters.client}
+          onChange={vals => onChange({ ...filters, client: vals })}
+        />
 
         <select
           value={filters.messageType}
