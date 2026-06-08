@@ -446,8 +446,10 @@ export function CostDashboard() {
       const prev = dailyMsgMap.get(key) ?? { label: lbl, reponses: 0, manques: 0 };
       if (isAnsweredType(r.message_type)) {
         dailyMsgMap.set(key, { ...prev, reponses: prev.reponses + 1 });
-      } else {
+      } else if (isMissedType(r.message_type)) {
         dailyMsgMap.set(key, { ...prev, manques: prev.manques + 1 });
+      } else {
+        dailyMsgMap.set(key, prev);
       }
     });
     setDailyBreakdown(
