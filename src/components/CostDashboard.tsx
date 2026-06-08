@@ -776,6 +776,9 @@ export function CostDashboard() {
                       );
                     })}
                     <td className="px-5 py-3 text-right font-semibold text-vox-blue tabular-nums">{fmt(row.total as number)}</td>
+                    <td className="px-5 py-3 text-right text-gray-500 tabular-nums text-xs">
+                      {row.msgCount > 0 ? fmt((row.total as number) / (row.msgCount as number)) : '—'}
+                    </td>
                   </tr>
                 ))}
               </tbody>
