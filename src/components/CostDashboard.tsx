@@ -489,7 +489,7 @@ export function CostDashboard() {
     setSortedMonthKeys(allSortedKeys);
     const allClientNames = Array.from(clientMap.keys());
     const matrix: MonthlyClientCost[] = allClientNames.map(client => {
-      const row: MonthlyClientCost = { client_name: client, total: 0 };
+      const row: MonthlyClientCost = { client_name: client, total: 0, msgCount: 0 };
       let rowTotal = 0;
       allSortedKeys.forEach(key => {
         const lbl = monthlyMap.get(key)?.label ?? key;
@@ -503,6 +503,8 @@ export function CostDashboard() {
         row[lbl] = sum;
         rowTotal += sum;
       });
+      const msgCount = rows.filter(r => (r.client_name ?? 'Non défini') === client).length;
+      row.msgCount = msgCount;
       row.total = rowTotal;
       return row;
     });
