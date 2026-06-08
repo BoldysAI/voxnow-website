@@ -4,9 +4,6 @@ import {
   Line,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -28,8 +25,6 @@ import {
   BarChart3,
   Activity,
   Table2,
-  Percent,
-  PhoneCall,
   Filter,
   Download,
   ChevronDown,
@@ -58,15 +53,6 @@ interface MonthlyCost  { sortKey: string; month: string; cost: number }
 interface MessageTypeCost { message_type: string; label: string; cost: number; count: number }
 interface ClientCost   { client_name: string; cost: number; count: number }
 interface MonthlyClientCost { client_name: string; total: number; [month: string]: string | number }
-interface ClientProfitability {
-  client_name: string;
-  active_months: number;
-  total_cost: number;
-  total_revenue: number;
-  total_profit: number;
-  avg_monthly_cost: number;
-  avg_monthly_profitability: number;
-}
 interface Filters {
   startDate: string;
   endDate: string;
@@ -76,7 +62,7 @@ interface Filters {
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const MONTHLY_REVENUE = 90; // €/client/month
+
 
 const VOXNOW_COLORS = {
   primary:   '#095C97',
@@ -202,28 +188,6 @@ const CountTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-// Toggle button pair
-function ViewToggle({ value, onChange, options }: {
-  value: string;
-  onChange: (v: string) => void;
-  options: { value: string; label: string }[];
-}) {
-  return (
-    <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-1">
-      {options.map(o => (
-        <button
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            value === o.value ? 'bg-white text-vox-blue shadow-sm' : 'text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          {o.label}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 // ─── Filter Bar ───────────────────────────────────────────────────────────────
 
@@ -327,7 +291,7 @@ export function CostDashboard() {
   const [currentMonthCost, setCurrentMonthCost] = useState(0);
   const [lastMonthCost, setLastMonthCost]       = useState(0);
   const [monthlyEvolution, setMonthlyEvolution] = useState(0);
-  const [answerRate, setAnswerRate]             = useState(0);
+  
 
   // Charts
   const [dailyCosts, setDailyCosts]           = useState<DailyCost[]>([]);
@@ -337,10 +301,10 @@ export function CostDashboard() {
   const [clientCosts, setClientCosts]         = useState<ClientCost[]>([]);
   const [monthlyClientMatrix, setMonthlyClientMatrix] = useState<MonthlyClientCost[]>([]);
   const [sortedMonthKeys, setSortedMonthKeys] = useState<string[]>([]);
-  const [clientProfitability, setClientProfitability] = useState<ClientProfitability[]>([]);
+  
 
   // UI state
-  const [profitView, setProfitView] = useState<'percent' | 'total'>('percent');
+  
   const [tableOpen, setTableOpen]   = useState(false);
 
   // ── Derived data ──
@@ -354,14 +318,6 @@ export function CostDashboard() {
     [...new Set(allCosts.map(r => r.message_type ?? 'Non défini'))].sort(),
   [allCosts]);
 
-  // Profitability sorted by current view
-  const sortedProfitData = useMemo(() =>
-    [...clientProfitability].sort((a, b) =>
-      profitView === 'percent'
-        ? b.avg_monthly_profitability - a.avg_monthly_profitability
-        : b.total_profit - a.total_profit
-    ),
-  [clientProfitability, profitView]);
 
   const avgDailyCost = useMemo(() =>
     dailyCosts.length > 0 ? dailyCosts.reduce((s, d) => s + d.cost, 0) / dailyCosts.length : 0,
@@ -411,8 +367,7 @@ export function CostDashboard() {
     const prevMo = rows.filter(r => { const d = new Date(r.created_at); return d >= prevMonthStart && d < curMonthStart; })
                        .reduce((s, r) => s + (r.cost ?? 0), 0);
 
-    const answered = rows.filter(r => isAnsweredType(r.message_type)).length;
-    const clients  = new Set(rows.map(r => r.client_name ?? 'Non défini')).size;
+    const clients = new Set(rows.map(r => r.client_name ?? 'Non défini')).size;
 
     setTotalCost(total);
     setAverageCost(avg);
@@ -421,7 +376,7 @@ export function CostDashboard() {
     setCurrentMonthCost(curMo);
     setLastMonthCost(prevMo);
     setMonthlyEvolution(prevMo > 0 ? ((curMo - prevMo) / prevMo) * 100 : 0);
-    setAnswerRate(rows.length > 0 ? (answered / rows.length) * 100 : 0);
+    
 
     // ── Daily costs ──
     const dailyCostMap = new Map<string, { label: string; cost: number }>();
@@ -495,23 +450,6 @@ export function CostDashboard() {
         .sort((a, b) => b.cost - a.cost).slice(0, 5)
     );
 
-    // ── Client profitability ──
-    const profData: ClientProfitability[] = Array.from(clientMap.entries()).map(([client_name, { cost: total_cost }]) => {
-      const activeSet = new Set<string>();
-      rows.forEach(r => {
-        if ((r.client_name ?? 'Non défini') === client_name) {
-          const d = new Date(r.created_at);
-          activeSet.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
-        }
-      });
-      const active_months             = activeSet.size || 1;
-      const total_revenue             = active_months * MONTHLY_REVENUE;
-      const total_profit              = total_revenue - total_cost;
-      const avg_monthly_cost          = total_cost / active_months;
-      const avg_monthly_profitability = ((MONTHLY_REVENUE - avg_monthly_cost) / MONTHLY_REVENUE) * 100;
-      return { client_name, active_months, total_cost, total_revenue, total_profit, avg_monthly_cost, avg_monthly_profitability };
-    });
-    setClientProfitability(profData);
 
     // ── Monthly client matrix ──
     const allSortedKeys = Array.from(monthlyMap.keys()).sort();
@@ -591,8 +529,10 @@ export function CostDashboard() {
   }
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
-  const totalTypeCost  = messageTypeCosts.reduce((s, t) => s + t.cost, 0);
-  const totalClientCost = clientCosts.reduce((s, c) => s + c.cost, 0);
+
+  // Kept for Step 2 — currently unused after Répartition removal
+  void messageTypeCosts;
+  void clientCosts;
 
   return (
     <div className="space-y-8">
@@ -623,7 +563,7 @@ export function CostDashboard() {
           <KpiCard label="Total Messages"      value={totalMessages.toLocaleString('fr-FR')} sub="Nombre d'entrées filtrées" icon={MessageSquare} iconColor="text-light-blue" iconBg="bg-light-blue/10" />
           <KpiCard label="Clients actifs"      value={String(activeClients)} sub="Clients avec activité" icon={Users}        iconColor="text-purple-500"  iconBg="bg-purple-50" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <KpiCard label="Mois en cours"       value={fmt(currentMonthCost)} sub="Coût du mois actuel"    icon={Calendar}   iconColor="text-light-green" iconBg="bg-light-green/10" />
           <KpiCard label="Mois précédent"      value={fmt(lastMonthCost)}    sub="Coût du mois dernier"   icon={Calendar}   iconColor="text-gray-400"    iconBg="bg-gray-100" />
           <KpiCard
@@ -634,15 +574,6 @@ export function CostDashboard() {
             iconColor={monthlyEvolution >= 0 ? 'text-rose-500' : 'text-now-green'}
             iconBg={monthlyEvolution >= 0 ? 'bg-rose-50' : 'bg-now-green/10'}
             trend={evolutionTrend}
-          />
-          <KpiCard
-            label="Taux de réponse"
-            value={`${answerRate.toFixed(1)}%`}
-            sub="Appels répondus / total"
-            icon={PhoneCall}
-            iconColor={answerRate >= 50 ? 'text-now-green' : 'text-rose-500'}
-            iconBg={answerRate >= 50 ? 'bg-now-green/10' : 'bg-rose-50'}
-            accent={answerRate >= 50 ? VOXNOW_COLORS.secondary : VOXNOW_COLORS.rose}
           />
         </div>
       </section>
@@ -717,198 +648,7 @@ export function CostDashboard() {
         </div>
       </section>
 
-      {/* ── Répartition ─────────────────────────────────────────────── */}
-      <section>
-        <SectionHeader icon={Users} title="Répartition" />
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-          {/* Cost by message type */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <p className="text-base font-semibold text-gray-800 mb-4">Coût par type de message</p>
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie data={messageTypeCosts} cx="50%" cy="45%" innerRadius={65} outerRadius={100} paddingAngle={3} dataKey="cost" nameKey="label">
-                  {messageTypeCosts.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={0} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0].payload as MessageTypeCost;
-                    const pct = totalTypeCost > 0 ? (d.cost / totalTypeCost) * 100 : 0;
-                    return (
-                      <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
-                        <p className="font-semibold text-gray-800 mb-2">{d.label}</p>
-                        <div className="space-y-1 text-xs">
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Coût</span>
-                            <span className="font-medium">{fmt(d.cost)}</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Part du total</span>
-                            <span className="font-bold text-vox-blue">{pct.toFixed(1)}%</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Messages</span>
-                            <span className="font-medium">{d.count}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }}
-                />
-                <Legend iconType="circle" iconSize={8} formatter={(_, entry: any) => (
-                  <span className="text-xs text-gray-600">{entry.payload?.label}</span>
-                )} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-          {/* Top 5 clients */}
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <p className="text-base font-semibold text-gray-800 mb-4">Top 5 clients par coût</p>
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie data={clientCosts} cx="50%" cy="45%" innerRadius={65} outerRadius={100} paddingAngle={3} dataKey="cost" nameKey="client_name">
-                  {clientCosts.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={0} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0].payload as ClientCost;
-                    const pct = totalClientCost > 0 ? (d.cost / totalClientCost) * 100 : 0;
-                    return (
-                      <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
-                        <p className="font-semibold text-gray-800 mb-2">{d.client_name}</p>
-                        <div className="space-y-1 text-xs">
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Coût</span>
-                            <span className="font-medium">{fmt(d.cost)}</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Part du total</span>
-                            <span className="font-bold text-vox-blue">{pct.toFixed(1)}%</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Messages</span>
-                            <span className="font-medium">{d.count}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }}
-                />
-                <Legend iconType="circle" iconSize={8} formatter={(v) => (
-                  <span className="text-xs text-gray-600">{v}</span>
-                )} />
-              </PieChart>
-            </ResponsiveContainer>
-          </div>
-
-        </div>
-      </section>
-
-      {/* ── Rentabilité par client ──────────────────────────────────── */}
-      <section>
-        <SectionHeader icon={Percent} title="Rentabilité par client">
-          <ViewToggle
-            value={profitView}
-            onChange={v => setProfitView(v as 'percent' | 'total')}
-            options={[{ value: 'percent', label: '% par mois' }, { value: 'total', label: 'Total €' }]}
-          />
-        </SectionHeader>
-
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div className="flex items-center gap-4 mb-5 text-xs text-gray-500 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-sm" style={{ background: VOXNOW_COLORS.secondary }} />
-              <span>Rentable</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-sm" style={{ background: VOXNOW_COLORS.rose }} />
-              <span>Déficitaire (coût &gt; {MONTHLY_REVENUE}€/mois)</span>
-            </div>
-            <span className="ml-auto text-gray-400 italic">
-              Hypothèse : {MONTHLY_REVENUE}€ de revenus / client / mois actif
-            </span>
-          </div>
-
-          <ResponsiveContainer width="100%" height={Math.max(280, sortedProfitData.length * 52)}>
-            <BarChart data={sortedProfitData} layout="vertical" margin={{ left: 8, right: 70, top: 4, bottom: 4 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
-              <XAxis
-                type="number"
-                tickFormatter={v => profitView === 'percent' ? `${v.toFixed(0)}%` : `${v.toFixed(0)}€`}
-                tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false}
-                domain={profitView === 'percent' ? ['auto', 100] : ['auto', 'auto']}
-              />
-              <YAxis type="category" dataKey="client_name" width={160} tick={{ fontSize: 12, fill: '#374151' }} tickLine={false} axisLine={false} />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const d = payload[0].payload as ClientProfitability;
-                  return (
-                    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm min-w-[230px]">
-                      <p className="font-semibold text-gray-800 mb-3">{d.client_name}</p>
-                      <div className="space-y-1.5 text-xs">
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Mois actifs</span>
-                          <span className="font-medium">{d.active_months} mois</span>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Revenus totaux</span>
-                          <span className="font-medium">{fmt(d.total_revenue)}</span>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Coûts totaux</span>
-                          <span className="font-medium">{fmt(d.total_cost)}</span>
-                        </div>
-                        <div className="border-t border-gray-100 pt-1.5 mt-1 flex justify-between gap-4">
-                          <span className="text-gray-500">Marge nette</span>
-                          <span className={`font-bold ${d.total_profit >= 0 ? 'text-now-green' : 'text-rose-500'}`}>
-                            {d.total_profit >= 0 ? '+' : ''}{fmt(d.total_profit)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Rentabilité moy.</span>
-                          <span className={`font-bold ${d.avg_monthly_profitability >= 0 ? 'text-now-green' : 'text-rose-500'}`}>
-                            {d.avg_monthly_profitability >= 0 ? '+' : ''}{d.avg_monthly_profitability.toFixed(1)}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }}
-              />
-              <Bar
-                dataKey={profitView === 'percent' ? 'avg_monthly_profitability' : 'total_profit'}
-                radius={[0, 4, 4, 0]}
-                label={{
-                  position: 'right', fontSize: 11, fill: '#6b7280',
-                  formatter: (v: any) => {
-                    const n = typeof v === 'number' ? v : Number(v);
-                    return profitView === 'percent'
-                      ? `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
-                      : `${n >= 0 ? '+' : ''}${n.toFixed(0)}€`;
-                  },
-                }}
-              >
-                {sortedProfitData.map((entry, i) => (
-                  <Cell
-                    key={i}
-                    fill={(profitView === 'percent' ? entry.avg_monthly_profitability : entry.total_profit) >= 0
-                      ? VOXNOW_COLORS.secondary
-                      : VOXNOW_COLORS.rose}
-                  />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
-      </section>
 
       {/* ── Tableau client × mois ───────────────────────────────────── */}
       <section>
