@@ -201,6 +201,19 @@ const UnitCostTooltip = ({ active, payload }: any) => {
   );
 };
 
+const ClientCostTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
+      <p className="text-gray-800 font-semibold mb-1">{data.client_name}</p>
+      <p className="text-gray-600">Coût total : {fmt(data.cost)}</p>
+      <p className="text-gray-600">Nombre de messages : {data.count}</p>
+      <p className="text-gray-500 text-xs mt-1 border-t border-gray-100 pt-1">Coût moyen / message : {fmt(data.cost / data.count)}</p>
+    </div>
+  );
+};
+
 
 // ─── Filter Bar ───────────────────────────────────────────────────────────────
 
@@ -467,7 +480,7 @@ export function CostDashboard() {
     setClientCosts(
       Array.from(clientMap.entries())
         .map(([client_name, v]) => ({ client_name, ...v }))
-        .sort((a, b) => b.cost - a.cost).slice(0, 5)
+        .sort((a, b) => b.cost - a.cost)
     );
 
 
@@ -550,7 +563,7 @@ export function CostDashboard() {
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
 
-  void clientCosts;
+  
 
   return (
     <div className="space-y-8">
@@ -704,6 +717,24 @@ export function CostDashboard() {
               </BarChart>
             </ResponsiveContainer>
           </div>
+        </div>
+      </section>
+
+      {/* ── Coût par client ───────────────────────────────────────────── */}
+      <section>
+        <SectionHeader icon={Users} title="Coût par client" />
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <ResponsiveContainer width="100%" height={Math.max(240, clientCosts.length * 56)}>
+            <BarChart data={clientCosts} layout="vertical" margin={{ left: 0, right: 24, top: 0, bottom: 0 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+              <XAxis type="number" tickFormatter={v => fmt(v)} tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="client_name" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={170} />
+              <Tooltip content={<ClientCostTooltip />} />
+              <Bar dataKey="cost" name="Coût" fill={VOXNOW_COLORS.secondary} radius={[0, 4, 4, 0]}>
+                <LabelList dataKey="cost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </section>
 
