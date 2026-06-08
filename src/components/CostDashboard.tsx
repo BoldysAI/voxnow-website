@@ -550,7 +550,7 @@ export function CostDashboard() {
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
 
-  void clientCosts;
+  
 
   return (
     <div className="space-y-8">
