@@ -4,9 +4,6 @@ import {
   Line,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -370,8 +367,7 @@ export function CostDashboard() {
     const prevMo = rows.filter(r => { const d = new Date(r.created_at); return d >= prevMonthStart && d < curMonthStart; })
                        .reduce((s, r) => s + (r.cost ?? 0), 0);
 
-    const answered = rows.filter(r => isAnsweredType(r.message_type)).length;
-    const clients  = new Set(rows.map(r => r.client_name ?? 'Non défini')).size;
+    const clients = new Set(rows.map(r => r.client_name ?? 'Non défini')).size;
 
     setTotalCost(total);
     setAverageCost(avg);
@@ -533,8 +529,6 @@ export function CostDashboard() {
   }
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
-  const totalTypeCost  = messageTypeCosts.reduce((s, t) => s + t.cost, 0);
-  const totalClientCost = clientCosts.reduce((s, c) => s + c.cost, 0);
 
   return (
     <div className="space-y-8">
