@@ -530,6 +530,10 @@ export function CostDashboard() {
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
 
+  // Kept for Step 2 — currently unused after Répartition removal
+  void messageTypeCosts;
+  void clientCosts;
+
   return (
     <div className="space-y-8">
 
