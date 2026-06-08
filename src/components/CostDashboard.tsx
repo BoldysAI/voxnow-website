@@ -1,17 +1,15 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import {
   LineChart,
   Line,
   BarChart,
   Bar,
-  PieChart,
-  Pie,
-  Cell,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
   Legend,
+  LabelList,
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
@@ -28,8 +26,6 @@ import {
   BarChart3,
   Activity,
   Table2,
-  Percent,
-  PhoneCall,
   Filter,
   Download,
   ChevronDown,
@@ -57,26 +53,17 @@ interface DailyMessageBreakdown { date: string; dateKey: string; reponses: numbe
 interface MonthlyCost  { sortKey: string; month: string; cost: number }
 interface MessageTypeCost { message_type: string; label: string; cost: number; count: number }
 interface ClientCost   { client_name: string; cost: number; count: number }
-interface MonthlyClientCost { client_name: string; total: number; [month: string]: string | number }
-interface ClientProfitability {
-  client_name: string;
-  active_months: number;
-  total_cost: number;
-  total_revenue: number;
-  total_profit: number;
-  avg_monthly_cost: number;
-  avg_monthly_profitability: number;
-}
+interface MonthlyClientCost { client_name: string; total: number; msgCount: number; [month: string]: string | number }
 interface Filters {
   startDate: string;
   endDate: string;
-  client: string;
+  client: string[];
   messageType: string;
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-const MONTHLY_REVENUE = 90; // €/client/month
+
 
 const VOXNOW_COLORS = {
   primary:   '#095C97',
@@ -121,7 +108,7 @@ function applyFilters(rows: TwilioCost[], f: Filters): TwilioCost[] {
     const d = new Date(r.created_at);
     if (f.startDate && d < new Date(f.startDate + 'T00:00:00'))  return false;
     if (f.endDate   && d > new Date(f.endDate   + 'T23:59:59'))  return false;
-    if (f.client      && (r.client_name ?? 'Non défini') !== f.client)       return false;
+    if (f.client.length > 0 && !f.client.includes(r.client_name ?? 'Non défini')) return false;
     if (f.messageType && (r.message_type ?? 'Non défini') !== f.messageType)  return false;
     return true;
   });
@@ -202,25 +189,120 @@ const CountTooltip = ({ active, payload, label }: any) => {
   );
 };
 
-// Toggle button pair
-function ViewToggle({ value, onChange, options }: {
-  value: string;
-  onChange: (v: string) => void;
-  options: { value: string; label: string }[];
-}) {
+const UnitCostTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
   return (
-    <div className="flex items-center bg-gray-100 rounded-xl p-1 gap-1">
-      {options.map(o => (
-        <button
-          key={o.value}
-          onClick={() => onChange(o.value)}
-          className={`px-4 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            value === o.value ? 'bg-white text-vox-blue shadow-sm' : 'text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          {o.label}
-        </button>
-      ))}
+    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
+      <p className="text-gray-800 font-semibold mb-1">{data.label}</p>
+      <p style={{ color: VOXNOW_COLORS.accent1 }} className="font-semibold">Coût unitaire moyen : {fmt(data.unitCost)}</p>
+      <p className="text-gray-400 text-xs mt-1 border-t border-gray-100 pt-1">{data.count} messages · Total {fmt(data.cost)}</p>
+    </div>
+  );
+};
+
+const ClientCostTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
+      <p className="text-gray-800 font-semibold mb-1">{data.client_name}</p>
+      <p className="text-gray-600">Coût total : {fmt(data.cost)}</p>
+      <p className="text-gray-600">Nombre de messages : {data.count}</p>
+      <p className="text-gray-500 text-xs mt-1 border-t border-gray-100 pt-1">Coût moyen / message : {fmt(data.cost / data.count)}</p>
+    </div>
+  );
+};
+
+
+// ─── MultiSelect ──────────────────────────────────────────────────────────────
+
+function MultiSelect({
+  label, placeholder, options, selected, onChange,
+}: {
+  label: string;
+  placeholder: string;
+  options: string[];
+  selected: string[];
+  onChange: (vals: string[]) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const toggle = (val: string) => {
+    if (selected.includes(val)) onChange(selected.filter(v => v !== val));
+    else onChange([...selected, val]);
+  };
+
+  const filtered = options.filter(o => o.toLowerCase().includes(query.toLowerCase()));
+  const display = selected.length === 0
+    ? placeholder
+    : selected.length === 1
+      ? selected[0]
+      : `${selected.length} ${label} sélectionnés`;
+
+  return (
+    <div className="relative" ref={ref}>
+      <button
+        type="button"
+        onClick={() => setOpen(o => !o)}
+        className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-vox-blue/30 focus:border-vox-blue min-w-[160px] flex items-center justify-between gap-2 bg-white"
+      >
+        <span className={`truncate ${selected.length === 0 ? 'text-gray-500' : ''}`}>{display}</span>
+        <ChevronDown className={`h-3.5 w-3.5 text-gray-400 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute z-20 mt-1 w-64 max-h-72 overflow-hidden bg-white border border-gray-200 rounded-lg shadow-lg flex flex-col">
+          <div className="p-2 border-b border-gray-100 flex items-center gap-2">
+            <input
+              type="text"
+              autoFocus
+              value={query}
+              onChange={e => setQuery(e.target.value)}
+              placeholder="Rechercher..."
+              className="flex-1 text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-vox-blue/30"
+            />
+            {selected.length > 0 && (
+              <button
+                type="button"
+                onClick={() => onChange([])}
+                className="text-xs text-gray-500 hover:text-rose-500"
+                title="Tout désélectionner"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+          <div className="overflow-y-auto flex-1">
+            {filtered.length === 0 && (
+              <div className="px-3 py-2 text-xs text-gray-400 italic">Aucun résultat</div>
+            )}
+            {filtered.map(opt => (
+              <label
+                key={opt}
+                className="flex items-center gap-2 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-50 cursor-pointer"
+              >
+                <input
+                  type="checkbox"
+                  checked={selected.includes(opt)}
+                  onChange={() => toggle(opt)}
+                  className="rounded border-gray-300 text-vox-blue focus:ring-vox-blue/30"
+                />
+                <span className="truncate">{opt}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -235,10 +317,10 @@ function FilterBar({
   uniqueClients: string[];
   uniqueMessageTypes: string[];
 }) {
-  const activeCount = [filters.startDate, filters.endDate, filters.client, filters.messageType]
-    .filter(Boolean).length;
+  const activeCount = [filters.startDate, filters.endDate, filters.messageType].filter(Boolean).length
+    + (filters.client.length > 0 ? 1 : 0);
 
-  const reset = () => onChange({ startDate: '', endDate: '', client: '', messageType: '' });
+  const reset = () => onChange({ startDate: '', endDate: '', client: [], messageType: '' });
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
@@ -273,14 +355,13 @@ function FilterBar({
           />
         </div>
 
-        <select
-          value={filters.client}
-          onChange={e => onChange({ ...filters, client: e.target.value })}
-          className="text-xs border border-gray-200 rounded-lg px-2.5 py-1.5 text-gray-700 focus:outline-none focus:ring-2 focus:ring-vox-blue/30 focus:border-vox-blue min-w-[160px]"
-        >
-          <option value="">Tous les clients</option>
-          {uniqueClients.map(c => <option key={c} value={c}>{c}</option>)}
-        </select>
+        <MultiSelect
+          label="clients"
+          placeholder="Tous les clients"
+          options={uniqueClients}
+          selected={filters.client}
+          onChange={vals => onChange({ ...filters, client: vals })}
+        />
 
         <select
           value={filters.messageType}
@@ -317,7 +398,7 @@ export function CostDashboard() {
   const [loading, setLoading] = useState(true);
   const [error,   setError]   = useState('');
   const [allCosts, setAllCosts] = useState<TwilioCost[]>([]);
-  const [filters,  setFilters]  = useState<Filters>({ startDate: '', endDate: '', client: '', messageType: '' });
+  const [filters,  setFilters]  = useState<Filters>({ startDate: '', endDate: '', client: [], messageType: '' });
 
   // KPIs
   const [totalCost, setTotalCost]               = useState(0);
@@ -327,7 +408,7 @@ export function CostDashboard() {
   const [currentMonthCost, setCurrentMonthCost] = useState(0);
   const [lastMonthCost, setLastMonthCost]       = useState(0);
   const [monthlyEvolution, setMonthlyEvolution] = useState(0);
-  const [answerRate, setAnswerRate]             = useState(0);
+  
 
   // Charts
   const [dailyCosts, setDailyCosts]           = useState<DailyCost[]>([]);
@@ -337,10 +418,10 @@ export function CostDashboard() {
   const [clientCosts, setClientCosts]         = useState<ClientCost[]>([]);
   const [monthlyClientMatrix, setMonthlyClientMatrix] = useState<MonthlyClientCost[]>([]);
   const [sortedMonthKeys, setSortedMonthKeys] = useState<string[]>([]);
-  const [clientProfitability, setClientProfitability] = useState<ClientProfitability[]>([]);
+  
 
   // UI state
-  const [profitView, setProfitView] = useState<'percent' | 'total'>('percent');
+  
   const [tableOpen, setTableOpen]   = useState(false);
 
   // ── Derived data ──
@@ -354,18 +435,17 @@ export function CostDashboard() {
     [...new Set(allCosts.map(r => r.message_type ?? 'Non défini'))].sort(),
   [allCosts]);
 
-  // Profitability sorted by current view
-  const sortedProfitData = useMemo(() =>
-    [...clientProfitability].sort((a, b) =>
-      profitView === 'percent'
-        ? b.avg_monthly_profitability - a.avg_monthly_profitability
-        : b.total_profit - a.total_profit
-    ),
-  [clientProfitability, profitView]);
 
   const avgDailyCost = useMemo(() =>
     dailyCosts.length > 0 ? dailyCosts.reduce((s, d) => s + d.cost, 0) / dailyCosts.length : 0,
   [dailyCosts]);
+
+  const messageTypeUnitCost = useMemo(() =>
+    messageTypeCosts.map(t => ({
+      ...t,
+      unitCost: t.count > 0 ? t.cost / t.count : 0,
+    })).sort((a, b) => b.unitCost - a.unitCost),
+  [messageTypeCosts]);
 
   // ── Fetch ──
   useEffect(() => { fetchCosts(); }, []);
@@ -377,18 +457,30 @@ export function CostDashboard() {
     try {
       setLoading(true);
       setError('');
-      const { data, error: fetchError } = await supabase
-        .from('twilio_costs' as any)
-        .select('*')
-        .order('created_at', { ascending: false }) as { data: TwilioCost[] | null; error: any };
+      // Supabase plafonne à 1000 lignes par requête : on pagine pour tout récupérer
+      const PAGE_SIZE = 1000;
+      const aggregated: TwilioCost[] = [];
+      let from = 0;
+      // Sécurité : limite à 100 pages (100k lignes)
+      for (let i = 0; i < 100; i++) {
+        const { data, error: fetchError } = await supabase
+          .from('twilio_costs' as any)
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(from, from + PAGE_SIZE - 1) as { data: TwilioCost[] | null; error: any };
 
-      if (fetchError) {
-        if (fetchError.code === '42501' || fetchError.message?.includes('permission denied') || fetchError.message?.includes('row-level security')) {
-          throw new Error('Accès refusé par les politiques RLS. Veuillez configurer un accès public en lecture sur la table twilio_costs.');
+        if (fetchError) {
+          if (fetchError.code === '42501' || fetchError.message?.includes('permission denied') || fetchError.message?.includes('row-level security')) {
+            throw new Error('Accès refusé par les politiques RLS. Veuillez configurer un accès public en lecture sur la table twilio_costs.');
+          }
+          throw new Error(fetchError.message);
         }
-        throw new Error(fetchError.message);
+        const batch = data ?? [];
+        aggregated.push(...batch);
+        if (batch.length < PAGE_SIZE) break;
+        from += PAGE_SIZE;
       }
-      setAllCosts(data ?? []);
+      setAllCosts(aggregated);
     } catch (err) {
       console.error('Error fetching costs:', err);
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement des données');
@@ -411,8 +503,7 @@ export function CostDashboard() {
     const prevMo = rows.filter(r => { const d = new Date(r.created_at); return d >= prevMonthStart && d < curMonthStart; })
                        .reduce((s, r) => s + (r.cost ?? 0), 0);
 
-    const answered = rows.filter(r => isAnsweredType(r.message_type)).length;
-    const clients  = new Set(rows.map(r => r.client_name ?? 'Non défini')).size;
+    const clients = new Set(rows.map(r => r.client_name ?? 'Non défini')).size;
 
     setTotalCost(total);
     setAverageCost(avg);
@@ -421,7 +512,7 @@ export function CostDashboard() {
     setCurrentMonthCost(curMo);
     setLastMonthCost(prevMo);
     setMonthlyEvolution(prevMo > 0 ? ((curMo - prevMo) / prevMo) * 100 : 0);
-    setAnswerRate(rows.length > 0 ? (answered / rows.length) * 100 : 0);
+    
 
     // ── Daily costs ──
     const dailyCostMap = new Map<string, { label: string; cost: number }>();
@@ -446,8 +537,10 @@ export function CostDashboard() {
       const prev = dailyMsgMap.get(key) ?? { label: lbl, reponses: 0, manques: 0 };
       if (isAnsweredType(r.message_type)) {
         dailyMsgMap.set(key, { ...prev, reponses: prev.reponses + 1 });
-      } else {
+      } else if (isMissedType(r.message_type)) {
         dailyMsgMap.set(key, { ...prev, manques: prev.manques + 1 });
+      } else {
+        dailyMsgMap.set(key, prev);
       }
     });
     setDailyBreakdown(
@@ -492,33 +585,16 @@ export function CostDashboard() {
     setClientCosts(
       Array.from(clientMap.entries())
         .map(([client_name, v]) => ({ client_name, ...v }))
-        .sort((a, b) => b.cost - a.cost).slice(0, 5)
+        .sort((a, b) => b.cost - a.cost)
     );
 
-    // ── Client profitability ──
-    const profData: ClientProfitability[] = Array.from(clientMap.entries()).map(([client_name, { cost: total_cost }]) => {
-      const activeSet = new Set<string>();
-      rows.forEach(r => {
-        if ((r.client_name ?? 'Non défini') === client_name) {
-          const d = new Date(r.created_at);
-          activeSet.add(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`);
-        }
-      });
-      const active_months             = activeSet.size || 1;
-      const total_revenue             = active_months * MONTHLY_REVENUE;
-      const total_profit              = total_revenue - total_cost;
-      const avg_monthly_cost          = total_cost / active_months;
-      const avg_monthly_profitability = ((MONTHLY_REVENUE - avg_monthly_cost) / MONTHLY_REVENUE) * 100;
-      return { client_name, active_months, total_cost, total_revenue, total_profit, avg_monthly_cost, avg_monthly_profitability };
-    });
-    setClientProfitability(profData);
 
     // ── Monthly client matrix ──
     const allSortedKeys = Array.from(monthlyMap.keys()).sort();
     setSortedMonthKeys(allSortedKeys);
     const allClientNames = Array.from(clientMap.keys());
     const matrix: MonthlyClientCost[] = allClientNames.map(client => {
-      const row: MonthlyClientCost = { client_name: client, total: 0 };
+      const row: MonthlyClientCost = { client_name: client, total: 0, msgCount: 0 };
       let rowTotal = 0;
       allSortedKeys.forEach(key => {
         const lbl = monthlyMap.get(key)?.label ?? key;
@@ -532,6 +608,8 @@ export function CostDashboard() {
         row[lbl] = sum;
         rowTotal += sum;
       });
+      const msgCount = rows.filter(r => (r.client_name ?? 'Non défini') === client).length;
+      row.msgCount = msgCount;
       row.total = rowTotal;
       return row;
     });
@@ -591,8 +669,8 @@ export function CostDashboard() {
   }
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
-  const totalTypeCost  = messageTypeCosts.reduce((s, t) => s + t.cost, 0);
-  const totalClientCost = clientCosts.reduce((s, c) => s + c.cost, 0);
+
+  
 
   return (
     <div className="space-y-8">
@@ -623,7 +701,7 @@ export function CostDashboard() {
           <KpiCard label="Total Messages"      value={totalMessages.toLocaleString('fr-FR')} sub="Nombre d'entrées filtrées" icon={MessageSquare} iconColor="text-light-blue" iconBg="bg-light-blue/10" />
           <KpiCard label="Clients actifs"      value={String(activeClients)} sub="Clients avec activité" icon={Users}        iconColor="text-purple-500"  iconBg="bg-purple-50" />
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           <KpiCard label="Mois en cours"       value={fmt(currentMonthCost)} sub="Coût du mois actuel"    icon={Calendar}   iconColor="text-light-green" iconBg="bg-light-green/10" />
           <KpiCard label="Mois précédent"      value={fmt(lastMonthCost)}    sub="Coût du mois dernier"   icon={Calendar}   iconColor="text-gray-400"    iconBg="bg-gray-100" />
           <KpiCard
@@ -634,15 +712,6 @@ export function CostDashboard() {
             iconColor={monthlyEvolution >= 0 ? 'text-rose-500' : 'text-now-green'}
             iconBg={monthlyEvolution >= 0 ? 'bg-rose-50' : 'bg-now-green/10'}
             trend={evolutionTrend}
-          />
-          <KpiCard
-            label="Taux de réponse"
-            value={`${answerRate.toFixed(1)}%`}
-            sub="Appels répondus / total"
-            icon={PhoneCall}
-            iconColor={answerRate >= 50 ? 'text-now-green' : 'text-rose-500'}
-            iconBg={answerRate >= 50 ? 'bg-now-green/10' : 'bg-rose-50'}
-            accent={answerRate >= 50 ? VOXNOW_COLORS.secondary : VOXNOW_COLORS.rose}
           />
         </div>
       </section>
@@ -717,193 +786,59 @@ export function CostDashboard() {
         </div>
       </section>
 
-      {/* ── Répartition ─────────────────────────────────────────────── */}
+      {/* ── Coût par type de message ────────────────────────────────── */}
       <section>
-        <SectionHeader icon={Users} title="Répartition" />
+        <SectionHeader icon={BarChart3} title="Coût par type de message" />
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-
-          {/* Cost by message type */}
+          {/* Panel 1 — Coût total par type */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <p className="text-base font-semibold text-gray-800 mb-4">Coût par type de message</p>
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie data={messageTypeCosts} cx="50%" cy="45%" innerRadius={65} outerRadius={100} paddingAngle={3} dataKey="cost" nameKey="label">
-                  {messageTypeCosts.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={0} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0].payload as MessageTypeCost;
-                    const pct = totalTypeCost > 0 ? (d.cost / totalTypeCost) * 100 : 0;
-                    return (
-                      <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
-                        <p className="font-semibold text-gray-800 mb-2">{d.label}</p>
-                        <div className="space-y-1 text-xs">
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Coût</span>
-                            <span className="font-medium">{fmt(d.cost)}</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Part du total</span>
-                            <span className="font-bold text-vox-blue">{pct.toFixed(1)}%</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Messages</span>
-                            <span className="font-medium">{d.count}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }}
-                />
-                <Legend iconType="circle" iconSize={8} formatter={(_, entry: any) => (
-                  <span className="text-xs text-gray-600">{entry.payload?.label}</span>
-                )} />
-              </PieChart>
+            <p className="text-base font-semibold text-gray-800 mb-4">Coût total</p>
+            <ResponsiveContainer width="100%" height={Math.max(200, messageTypeCosts.length * 52)}>
+              <BarChart data={messageTypeCosts} layout="vertical" margin={{ left: 0, right: 24, top: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                <XAxis type="number" tickFormatter={v => fmt(v)} tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={180} />
+                <Tooltip content={<CurrencyTooltip />} />
+                <Bar dataKey="cost" name="Coût" fill={VOXNOW_COLORS.primary} radius={[0, 4, 4, 0]}>
+                  <LabelList dataKey="cost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </div>
 
-          {/* Top 5 clients */}
+          {/* Panel 2 — Coût unitaire moyen par type */}
           <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-            <p className="text-base font-semibold text-gray-800 mb-4">Top 5 clients par coût</p>
-            <ResponsiveContainer width="100%" height={280}>
-              <PieChart>
-                <Pie data={clientCosts} cx="50%" cy="45%" innerRadius={65} outerRadius={100} paddingAngle={3} dataKey="cost" nameKey="client_name">
-                  {clientCosts.map((_, i) => (
-                    <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} strokeWidth={0} />
-                  ))}
-                </Pie>
-                <Tooltip
-                  content={({ active, payload }) => {
-                    if (!active || !payload?.length) return null;
-                    const d = payload[0].payload as ClientCost;
-                    const pct = totalClientCost > 0 ? (d.cost / totalClientCost) * 100 : 0;
-                    return (
-                      <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
-                        <p className="font-semibold text-gray-800 mb-2">{d.client_name}</p>
-                        <div className="space-y-1 text-xs">
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Coût</span>
-                            <span className="font-medium">{fmt(d.cost)}</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Part du total</span>
-                            <span className="font-bold text-vox-blue">{pct.toFixed(1)}%</span>
-                          </div>
-                          <div className="flex justify-between gap-4">
-                            <span className="text-gray-500">Messages</span>
-                            <span className="font-medium">{d.count}</span>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  }}
-                />
-                <Legend iconType="circle" iconSize={8} formatter={(v) => (
-                  <span className="text-xs text-gray-600">{v}</span>
-                )} />
-              </PieChart>
+            <div className="mb-4">
+              <p className="text-base font-semibold text-gray-800">Coût unitaire moyen (coût total / nb messages)</p>
+              <p className="text-xs text-gray-400 mt-0.5">Utile pour comparer l'efficience réelle de chaque type</p>
+            </div>
+            <ResponsiveContainer width="100%" height={Math.max(200, messageTypeUnitCost.length * 52)}>
+              <BarChart data={messageTypeUnitCost} layout="vertical" margin={{ left: 0, right: 24, top: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                <XAxis type="number" tickFormatter={v => fmt(v)} tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={180} />
+                <Tooltip content={<UnitCostTooltip />} />
+                <Bar dataKey="unitCost" name="Coût unitaire moyen" fill={VOXNOW_COLORS.accent1} radius={[0, 4, 4, 0]}>
+                  <LabelList dataKey="unitCost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
+                </Bar>
+              </BarChart>
             </ResponsiveContainer>
           </div>
-
         </div>
       </section>
 
-      {/* ── Rentabilité par client ──────────────────────────────────── */}
+      {/* ── Coût par client ───────────────────────────────────────────── */}
       <section>
-        <SectionHeader icon={Percent} title="Rentabilité par client">
-          <ViewToggle
-            value={profitView}
-            onChange={v => setProfitView(v as 'percent' | 'total')}
-            options={[{ value: 'percent', label: '% par mois' }, { value: 'total', label: 'Total €' }]}
-          />
-        </SectionHeader>
-
+        <SectionHeader icon={Users} title="Coût par client" />
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <div className="flex items-center gap-4 mb-5 text-xs text-gray-500 flex-wrap">
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-sm" style={{ background: VOXNOW_COLORS.secondary }} />
-              <span>Rentable</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <div className="w-3 h-3 rounded-sm" style={{ background: VOXNOW_COLORS.rose }} />
-              <span>Déficitaire (coût &gt; {MONTHLY_REVENUE}€/mois)</span>
-            </div>
-            <span className="ml-auto text-gray-400 italic">
-              Hypothèse : {MONTHLY_REVENUE}€ de revenus / client / mois actif
-            </span>
-          </div>
-
-          <ResponsiveContainer width="100%" height={Math.max(280, sortedProfitData.length * 52)}>
-            <BarChart data={sortedProfitData} layout="vertical" margin={{ left: 8, right: 70, top: 4, bottom: 4 }}>
+          <ResponsiveContainer width="100%" height={Math.max(240, clientCosts.length * 56)}>
+            <BarChart data={clientCosts} layout="vertical" margin={{ left: 0, right: 24, top: 0, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
-              <XAxis
-                type="number"
-                tickFormatter={v => profitView === 'percent' ? `${v.toFixed(0)}%` : `${v.toFixed(0)}€`}
-                tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false}
-                domain={profitView === 'percent' ? ['auto', 100] : ['auto', 'auto']}
-              />
-              <YAxis type="category" dataKey="client_name" width={160} tick={{ fontSize: 12, fill: '#374151' }} tickLine={false} axisLine={false} />
-              <Tooltip
-                content={({ active, payload }) => {
-                  if (!active || !payload?.length) return null;
-                  const d = payload[0].payload as ClientProfitability;
-                  return (
-                    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-4 text-sm min-w-[230px]">
-                      <p className="font-semibold text-gray-800 mb-3">{d.client_name}</p>
-                      <div className="space-y-1.5 text-xs">
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Mois actifs</span>
-                          <span className="font-medium">{d.active_months} mois</span>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Revenus totaux</span>
-                          <span className="font-medium">{fmt(d.total_revenue)}</span>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Coûts totaux</span>
-                          <span className="font-medium">{fmt(d.total_cost)}</span>
-                        </div>
-                        <div className="border-t border-gray-100 pt-1.5 mt-1 flex justify-between gap-4">
-                          <span className="text-gray-500">Marge nette</span>
-                          <span className={`font-bold ${d.total_profit >= 0 ? 'text-now-green' : 'text-rose-500'}`}>
-                            {d.total_profit >= 0 ? '+' : ''}{fmt(d.total_profit)}
-                          </span>
-                        </div>
-                        <div className="flex justify-between gap-4">
-                          <span className="text-gray-500">Rentabilité moy.</span>
-                          <span className={`font-bold ${d.avg_monthly_profitability >= 0 ? 'text-now-green' : 'text-rose-500'}`}>
-                            {d.avg_monthly_profitability >= 0 ? '+' : ''}{d.avg_monthly_profitability.toFixed(1)}%
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                }}
-              />
-              <Bar
-                dataKey={profitView === 'percent' ? 'avg_monthly_profitability' : 'total_profit'}
-                radius={[0, 4, 4, 0]}
-                label={{
-                  position: 'right', fontSize: 11, fill: '#6b7280',
-                  formatter: (v: any) => {
-                    const n = typeof v === 'number' ? v : Number(v);
-                    return profitView === 'percent'
-                      ? `${n >= 0 ? '+' : ''}${n.toFixed(1)}%`
-                      : `${n >= 0 ? '+' : ''}${n.toFixed(0)}€`;
-                  },
-                }}
-              >
-                {sortedProfitData.map((entry, i) => (
-                  <Cell
-                    key={i}
-                    fill={(profitView === 'percent' ? entry.avg_monthly_profitability : entry.total_profit) >= 0
-                      ? VOXNOW_COLORS.secondary
-                      : VOXNOW_COLORS.rose}
-                  />
-                ))}
+              <XAxis type="number" tickFormatter={v => fmt(v)} tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+              <YAxis type="category" dataKey="client_name" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={170} />
+              <Tooltip content={<ClientCostTooltip />} />
+              <Bar dataKey="cost" name="Coût" fill={VOXNOW_COLORS.secondary} radius={[0, 4, 4, 0]}>
+                <LabelList dataKey="cost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -924,6 +859,7 @@ export function CostDashboard() {
                     return <th key={key} className="px-4 py-3 text-right font-semibold text-gray-600 whitespace-nowrap">{label}</th>;
                   })}
                   <th className="px-5 py-3 text-right font-semibold text-gray-600">Total</th>
+                  <th className="px-5 py-3 text-right font-semibold text-gray-600 whitespace-nowrap">Moy./msg</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -945,6 +881,9 @@ export function CostDashboard() {
                       );
                     })}
                     <td className="px-5 py-3 text-right font-semibold text-vox-blue tabular-nums">{fmt(row.total as number)}</td>
+                    <td className="px-5 py-3 text-right text-gray-500 tabular-nums text-xs">
+                      {row.msgCount > 0 ? fmt((row.total as number) / (row.msgCount as number)) : '—'}
+                    </td>
                   </tr>
                 ))}
               </tbody>
