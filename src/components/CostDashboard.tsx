@@ -57,7 +57,7 @@ interface MonthlyClientCost { client_name: string; total: number; msgCount: numb
 interface Filters {
   startDate: string;
   endDate: string;
-  client: string;
+  client: string[];
   messageType: string;
 }
 
