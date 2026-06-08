@@ -754,6 +754,7 @@ export function CostDashboard() {
                     return <th key={key} className="px-4 py-3 text-right font-semibold text-gray-600 whitespace-nowrap">{label}</th>;
                   })}
                   <th className="px-5 py-3 text-right font-semibold text-gray-600">Total</th>
+                  <th className="px-5 py-3 text-right font-semibold text-gray-600 whitespace-nowrap">Moy./msg</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
