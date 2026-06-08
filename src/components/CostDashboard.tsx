@@ -366,18 +366,30 @@ export function CostDashboard() {
     try {
       setLoading(true);
       setError('');
-      const { data, error: fetchError } = await supabase
-        .from('twilio_costs' as any)
-        .select('*')
-        .order('created_at', { ascending: false }) as { data: TwilioCost[] | null; error: any };
+      // Supabase plafonne à 1000 lignes par requête : on pagine pour tout récupérer
+      const PAGE_SIZE = 1000;
+      const aggregated: TwilioCost[] = [];
+      let from = 0;
+      // Sécurité : limite à 100 pages (100k lignes)
+      for (let i = 0; i < 100; i++) {
+        const { data, error: fetchError } = await supabase
+          .from('twilio_costs' as any)
+          .select('*')
+          .order('created_at', { ascending: false })
+          .range(from, from + PAGE_SIZE - 1) as { data: TwilioCost[] | null; error: any };
 
-      if (fetchError) {
-        if (fetchError.code === '42501' || fetchError.message?.includes('permission denied') || fetchError.message?.includes('row-level security')) {
-          throw new Error('Accès refusé par les politiques RLS. Veuillez configurer un accès public en lecture sur la table twilio_costs.');
+        if (fetchError) {
+          if (fetchError.code === '42501' || fetchError.message?.includes('permission denied') || fetchError.message?.includes('row-level security')) {
+            throw new Error('Accès refusé par les politiques RLS. Veuillez configurer un accès public en lecture sur la table twilio_costs.');
+          }
+          throw new Error(fetchError.message);
         }
-        throw new Error(fetchError.message);
+        const batch = data ?? [];
+        aggregated.push(...batch);
+        if (batch.length < PAGE_SIZE) break;
+        from += PAGE_SIZE;
       }
-      setAllCosts(data ?? []);
+      setAllCosts(aggregated);
     } catch (err) {
       console.error('Error fetching costs:', err);
       setError(err instanceof Error ? err.message : 'Erreur lors du chargement des données');
