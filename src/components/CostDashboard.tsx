@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  LabelList,
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
@@ -188,6 +189,18 @@ const CountTooltip = ({ active, payload, label }: any) => {
   );
 };
 
+const UnitCostTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
+      <p className="text-gray-800 font-semibold mb-1">{data.label}</p>
+      <p style={{ color: VOXNOW_COLORS.accent1 }} className="font-semibold">Coût unitaire moyen : {fmt(data.unitCost)}</p>
+      <p className="text-gray-400 text-xs mt-1 border-t border-gray-100 pt-1">{data.count} messages · Total {fmt(data.cost)}</p>
+    </div>
+  );
+};
+
 
 // ─── Filter Bar ───────────────────────────────────────────────────────────────
 
@@ -322,6 +335,13 @@ export function CostDashboard() {
   const avgDailyCost = useMemo(() =>
     dailyCosts.length > 0 ? dailyCosts.reduce((s, d) => s + d.cost, 0) / dailyCosts.length : 0,
   [dailyCosts]);
+
+  const messageTypeUnitCost = useMemo(() =>
+    messageTypeCosts.map(t => ({
+      ...t,
+      unitCost: t.count > 0 ? t.cost / t.count : 0,
+    })).sort((a, b) => b.unitCost - a.unitCost),
+  [messageTypeCosts]);
 
   // ── Fetch ──
   useEffect(() => { fetchCosts(); }, []);
@@ -530,8 +550,6 @@ export function CostDashboard() {
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
 
-  // Kept for Step 2 — currently unused after Répartition removal
-  void messageTypeCosts;
   void clientCosts;
 
   return (
