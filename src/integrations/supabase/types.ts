@@ -432,6 +432,42 @@ export type Database = {
           },
         ]
       }
+      voxnowmail_folders: {
+        Row: {
+          code: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_custom: boolean | null
+          is_selected: boolean | null
+          libelle: string | null
+          nom_dossier: string
+          user_id: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_custom?: boolean | null
+          is_selected?: boolean | null
+          libelle?: string | null
+          nom_dossier: string
+          user_id: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_custom?: boolean | null
+          is_selected?: boolean | null
+          libelle?: string | null
+          nom_dossier?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       voxnowmail_mailboxes: {
         Row: {
           agent_status: string | null
