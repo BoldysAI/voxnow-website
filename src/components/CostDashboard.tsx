@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
+  LabelList,
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
@@ -188,6 +189,18 @@ const CountTooltip = ({ active, payload, label }: any) => {
   );
 };
 
+const UnitCostTooltip = ({ active, payload }: any) => {
+  if (!active || !payload?.length) return null;
+  const data = payload[0].payload;
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-lg p-3 text-sm">
+      <p className="text-gray-800 font-semibold mb-1">{data.label}</p>
+      <p style={{ color: VOXNOW_COLORS.accent1 }} className="font-semibold">Coût unitaire moyen : {fmt(data.unitCost)}</p>
+      <p className="text-gray-400 text-xs mt-1 border-t border-gray-100 pt-1">{data.count} messages · Total {fmt(data.cost)}</p>
+    </div>
+  );
+};
+
 
 // ─── Filter Bar ───────────────────────────────────────────────────────────────
 
@@ -322,6 +335,13 @@ export function CostDashboard() {
   const avgDailyCost = useMemo(() =>
     dailyCosts.length > 0 ? dailyCosts.reduce((s, d) => s + d.cost, 0) / dailyCosts.length : 0,
   [dailyCosts]);
+
+  const messageTypeUnitCost = useMemo(() =>
+    messageTypeCosts.map(t => ({
+      ...t,
+      unitCost: t.count > 0 ? t.cost / t.count : 0,
+    })).sort((a, b) => b.unitCost - a.unitCost),
+  [messageTypeCosts]);
 
   // ── Fetch ──
   useEffect(() => { fetchCosts(); }, []);
@@ -530,8 +550,6 @@ export function CostDashboard() {
 
   const evolutionTrend = monthlyEvolution > 5 ? 'up' : monthlyEvolution < -5 ? 'down' : null;
 
-  // Kept for Step 2 — currently unused after Répartition removal
-  void messageTypeCosts;
   void clientCosts;
 
   return (
@@ -648,7 +666,46 @@ export function CostDashboard() {
         </div>
       </section>
 
+      {/* ── Coût par type de message ────────────────────────────────── */}
+      <section>
+        <SectionHeader icon={BarChart3} title="Coût par type de message" />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {/* Panel 1 — Coût total par type */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <p className="text-base font-semibold text-gray-800 mb-4">Coût total</p>
+            <ResponsiveContainer width="100%" height={Math.max(200, messageTypeCosts.length * 52)}>
+              <BarChart data={messageTypeCosts} layout="vertical" margin={{ left: 0, right: 24, top: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                <XAxis type="number" tickFormatter={v => fmt(v)} tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={180} />
+                <Tooltip content={<CurrencyTooltip />} />
+                <Bar dataKey="cost" name="Coût" fill={VOXNOW_COLORS.primary} radius={[0, 4, 4, 0]}>
+                  <LabelList dataKey="cost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
 
+          {/* Panel 2 — Coût unitaire moyen par type */}
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div className="mb-4">
+              <p className="text-base font-semibold text-gray-800">Coût unitaire moyen (coût total / nb messages)</p>
+              <p className="text-xs text-gray-400 mt-0.5">Utile pour comparer l'efficience réelle de chaque type</p>
+            </div>
+            <ResponsiveContainer width="100%" height={Math.max(200, messageTypeUnitCost.length * 52)}>
+              <BarChart data={messageTypeUnitCost} layout="vertical" margin={{ left: 0, right: 24, top: 0, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
+                <XAxis type="number" tickFormatter={v => fmt(v)} tick={{ fontSize: 11, fill: '#9ca3af' }} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={180} />
+                <Tooltip content={<UnitCostTooltip />} />
+                <Bar dataKey="unitCost" name="Coût unitaire moyen" fill={VOXNOW_COLORS.accent1} radius={[0, 4, 4, 0]}>
+                  <LabelList dataKey="unitCost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </section>
 
       {/* ── Tableau client × mois ───────────────────────────────────── */}
       <section>
