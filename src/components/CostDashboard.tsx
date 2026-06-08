@@ -225,10 +225,10 @@ function FilterBar({
   uniqueClients: string[];
   uniqueMessageTypes: string[];
 }) {
-  const activeCount = [filters.startDate, filters.endDate, filters.client, filters.messageType]
-    .filter(Boolean).length;
+  const activeCount = [filters.startDate, filters.endDate, filters.messageType].filter(Boolean).length
+    + (filters.client.length > 0 ? 1 : 0);
 
-  const reset = () => onChange({ startDate: '', endDate: '', client: '', messageType: '' });
+  const reset = () => onChange({ startDate: '', endDate: '', client: [], messageType: '' });
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4 mb-6">
