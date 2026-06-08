@@ -680,7 +680,7 @@ export function CostDashboard() {
                 <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={180} />
                 <Tooltip content={<CurrencyTooltip />} />
                 <Bar dataKey="cost" name="Coût" fill={VOXNOW_COLORS.primary} radius={[0, 4, 4, 0]}>
-                  <LabelList dataKey="cost" position="right" fontSize={11} fill="#6b7280" formatter={(v: number) => fmt(v)} />
+                  <LabelList dataKey="cost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
@@ -699,7 +699,7 @@ export function CostDashboard() {
                 <YAxis type="category" dataKey="label" tick={{ fontSize: 11, fill: '#6b7280' }} tickLine={false} axisLine={false} width={180} />
                 <Tooltip content={<UnitCostTooltip />} />
                 <Bar dataKey="unitCost" name="Coût unitaire moyen" fill={VOXNOW_COLORS.accent1} radius={[0, 4, 4, 0]}>
-                  <LabelList dataKey="unitCost" position="right" fontSize={11} fill="#6b7280" formatter={(v: number) => fmt(v)} />
+                  <LabelList dataKey="unitCost" position="right" fontSize={11} fill="#6b7280" formatter={(v: any) => fmt(v)} />
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
