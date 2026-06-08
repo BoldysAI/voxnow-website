@@ -53,7 +53,7 @@ interface DailyMessageBreakdown { date: string; dateKey: string; reponses: numbe
 interface MonthlyCost  { sortKey: string; month: string; cost: number }
 interface MessageTypeCost { message_type: string; label: string; cost: number; count: number }
 interface ClientCost   { client_name: string; cost: number; count: number }
-interface MonthlyClientCost { client_name: string; total: number; [month: string]: string | number }
+interface MonthlyClientCost { client_name: string; total: number; msgCount: number; [month: string]: string | number }
 interface Filters {
   startDate: string;
   endDate: string;
@@ -489,7 +489,7 @@ export function CostDashboard() {
     setSortedMonthKeys(allSortedKeys);
     const allClientNames = Array.from(clientMap.keys());
     const matrix: MonthlyClientCost[] = allClientNames.map(client => {
-      const row: MonthlyClientCost = { client_name: client, total: 0 };
+      const row: MonthlyClientCost = { client_name: client, total: 0, msgCount: 0 };
       let rowTotal = 0;
       allSortedKeys.forEach(key => {
         const lbl = monthlyMap.get(key)?.label ?? key;
@@ -503,6 +503,8 @@ export function CostDashboard() {
         row[lbl] = sum;
         rowTotal += sum;
       });
+      const msgCount = rows.filter(r => (r.client_name ?? 'Non défini') === client).length;
+      row.msgCount = msgCount;
       row.total = rowTotal;
       return row;
     });
@@ -752,6 +754,7 @@ export function CostDashboard() {
                     return <th key={key} className="px-4 py-3 text-right font-semibold text-gray-600 whitespace-nowrap">{label}</th>;
                   })}
                   <th className="px-5 py-3 text-right font-semibold text-gray-600">Total</th>
+                  <th className="px-5 py-3 text-right font-semibold text-gray-600 whitespace-nowrap">Moy./msg</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
@@ -773,6 +776,9 @@ export function CostDashboard() {
                       );
                     })}
                     <td className="px-5 py-3 text-right font-semibold text-vox-blue tabular-nums">{fmt(row.total as number)}</td>
+                    <td className="px-5 py-3 text-right text-gray-500 tabular-nums text-xs">
+                      {row.msgCount > 0 ? fmt((row.total as number) / (row.msgCount as number)) : '—'}
+                    </td>
                   </tr>
                 ))}
               </tbody>
