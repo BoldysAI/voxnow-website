@@ -53,7 +53,7 @@ interface DailyMessageBreakdown { date: string; dateKey: string; reponses: numbe
 interface MonthlyCost  { sortKey: string; month: string; cost: number }
 interface MessageTypeCost { message_type: string; label: string; cost: number; count: number }
 interface ClientCost   { client_name: string; cost: number; count: number }
-interface MonthlyClientCost { client_name: string; total: number; [month: string]: string | number }
+interface MonthlyClientCost { client_name: string; total: number; msgCount: number; [month: string]: string | number }
 interface Filters {
   startDate: string;
   endDate: string;
