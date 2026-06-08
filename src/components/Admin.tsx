@@ -20,9 +20,11 @@ import {
   Shield,
   LogOut,
   Loader2,
+  Link,
   DollarSign
 } from 'lucide-react';
 import { CostDashboard } from './CostDashboard';
+import SimplicyRedirections from './SimplicyRedirections';
 
 interface User {
   id: string;
@@ -125,7 +127,7 @@ export function Admin() {
   const [showCreatePassword, setShowCreatePassword] = useState(false);
   
   // Tab state
-  const [activeTab, setActiveTab] = useState<'users' | 'costs'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'costs' | 'simplicy'>('users');
 
   // Check if user is already authenticated on component mount
   useEffect(() => {
@@ -463,7 +465,7 @@ export function Admin() {
               <div>
                 <h1 className="text-xl font-bold text-red-600">Administration</h1>
                 <p className="text-sm text-gray-600">
-                  {activeTab === 'users' ? 'Gestion des utilisateurs' : 'Dashboard des coûts'}
+                  {activeTab === 'users' ? 'Gestion des utilisateurs' : activeTab === 'costs' ? 'Dashboard des coûts' : 'Redirections Simplicy'}
                 </p>
               </div>
             </div>
@@ -509,6 +511,17 @@ export function Admin() {
           >
             <DollarSign className="h-5 w-5 mr-2" />
             Dashboard
+          </button>
+          <button
+            onClick={() => setActiveTab('simplicy')}
+            className={`px-6 py-3 rounded-lg font-medium transition-colors flex items-center ${
+              activeTab === 'simplicy'
+                ? 'bg-red-600 text-white'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <Link className="h-5 w-5 mr-2" />
+            Simplicy
           </button>
         </div>
 
@@ -980,6 +993,9 @@ export function Admin() {
 
         {/* Costs Tab Content */}
         {activeTab === 'costs' && <CostDashboard />}
+
+        {/* Simplicy Tab Content */}
+        {activeTab === 'simplicy' && <SimplicyRedirections />}
       </div>
     </div>
   );

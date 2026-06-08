@@ -118,6 +118,39 @@ export type Database = {
         }
         Relationships: []
       }
+      redirections: {
+        Row: {
+          click_count: number
+          created_at: string
+          destination_url: string
+          id: string
+          label: string | null
+          lawyer_name: string | null
+          slug: string
+          use_case: string | null
+        }
+        Insert: {
+          click_count?: number
+          created_at?: string
+          destination_url: string
+          id?: string
+          label?: string | null
+          lawyer_name?: string | null
+          slug: string
+          use_case?: string | null
+        }
+        Update: {
+          click_count?: number
+          created_at?: string
+          destination_url?: string
+          id?: string
+          label?: string | null
+          lawyer_name?: string | null
+          slug?: string
+          use_case?: string | null
+        }
+        Relationships: []
+      }
       twilio_costs: {
         Row: {
           client_id: string | null
@@ -192,6 +225,7 @@ export type Database = {
           "Symplicy ?": boolean | null
           "Transcript Whisper": string | null
           updated_at: string | null
+          vrai_numero: string | null
           wants_referral: boolean | null
         }
         Insert: {
@@ -223,6 +257,7 @@ export type Database = {
           "Symplicy ?"?: boolean | null
           "Transcript Whisper"?: string | null
           updated_at?: string | null
+          vrai_numero?: string | null
           wants_referral?: boolean | null
         }
         Update: {
@@ -254,6 +289,7 @@ export type Database = {
           "Symplicy ?"?: boolean | null
           "Transcript Whisper"?: string | null
           updated_at?: string | null
+          vrai_numero?: string | null
           wants_referral?: boolean | null
         }
         Relationships: [
