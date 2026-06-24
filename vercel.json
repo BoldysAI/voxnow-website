@@ -1,5 +1,8 @@
 {
   "rewrites": [
+    { "source": "/mail", "destination": "https://mailing.voxnow.pro" },
+    { "source": "/mail/", "destination": "https://mailing.voxnow.pro" },
+    { "source": "/mail/:path*", "destination": "https://mailing.voxnow.pro/:path*" },
     { "source": "/(.*)", "destination": "/" }
   ]
 }
