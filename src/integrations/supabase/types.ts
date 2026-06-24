@@ -466,7 +466,15 @@ export type Database = {
           nom_dossier?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "voxnowmail_folders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "voxnowmail_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       voxnowmail_mailboxes: {
         Row: {
@@ -502,7 +510,15 @@ export type Database = {
           last_ping_at?: string | null
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "voxnowmail_mailboxes_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "voxnowmail_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       voxnowmail_profiles: {
         Row: {
@@ -516,7 +532,7 @@ export type Database = {
         Insert: {
           cabinet?: string | null
           created_at?: string | null
-          id: string
+          id?: string
           nom: string
           prenom: string
           trial_ends_at?: string | null
@@ -533,7 +549,31 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      voxnowmail_folders_lisible: {
+        Row: {
+          cabinet: string | null
+          code: string | null
+          created_at: string | null
+          description: string | null
+          imap_email: string | null
+          is_custom: boolean | null
+          is_selected: boolean | null
+          libelle: string | null
+          nom: string | null
+          nom_dossier: string | null
+          prenom: string | null
+          user_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "voxnowmail_folders_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "voxnowmail_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       [_ in never]: never
