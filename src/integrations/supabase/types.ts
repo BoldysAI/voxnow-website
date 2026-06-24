@@ -118,6 +118,39 @@ export type Database = {
         }
         Relationships: []
       }
+      redirections: {
+        Row: {
+          click_count: number
+          created_at: string
+          destination_url: string
+          id: string
+          label: string | null
+          lawyer_name: string | null
+          slug: string
+          use_case: string | null
+        }
+        Insert: {
+          click_count?: number
+          created_at?: string
+          destination_url: string
+          id?: string
+          label?: string | null
+          lawyer_name?: string | null
+          slug: string
+          use_case?: string | null
+        }
+        Update: {
+          click_count?: number
+          created_at?: string
+          destination_url?: string
+          id?: string
+          label?: string | null
+          lawyer_name?: string | null
+          slug?: string
+          use_case?: string | null
+        }
+        Relationships: []
+      }
       twilio_costs: {
         Row: {
           client_id: string | null
@@ -192,6 +225,7 @@ export type Database = {
           "Symplicy ?": boolean | null
           "Transcript Whisper": string | null
           updated_at: string | null
+          vrai_numero: string | null
           wants_referral: boolean | null
         }
         Insert: {
@@ -223,6 +257,7 @@ export type Database = {
           "Symplicy ?"?: boolean | null
           "Transcript Whisper"?: string | null
           updated_at?: string | null
+          vrai_numero?: string | null
           wants_referral?: boolean | null
         }
         Update: {
@@ -254,6 +289,7 @@ export type Database = {
           "Symplicy ?"?: boolean | null
           "Transcript Whisper"?: string | null
           updated_at?: string | null
+          vrai_numero?: string | null
           wants_referral?: boolean | null
         }
         Relationships: [
@@ -395,6 +431,105 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      voxnowmail_folders: {
+        Row: {
+          code: string | null
+          created_at: string | null
+          description: string | null
+          id: string
+          is_custom: boolean | null
+          is_selected: boolean | null
+          libelle: string | null
+          nom_dossier: string
+          user_id: string
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_custom?: boolean | null
+          is_selected?: boolean | null
+          libelle?: string | null
+          nom_dossier: string
+          user_id: string
+        }
+        Update: {
+          code?: string | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          is_custom?: boolean | null
+          is_selected?: boolean | null
+          libelle?: string | null
+          nom_dossier?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      voxnowmail_mailboxes: {
+        Row: {
+          agent_status: string | null
+          container_id: string | null
+          created_at: string | null
+          id: string
+          imap_email: string
+          imap_host: string | null
+          imap_password_encrypted: string
+          last_ping_at: string | null
+          user_id: string
+        }
+        Insert: {
+          agent_status?: string | null
+          container_id?: string | null
+          created_at?: string | null
+          id?: string
+          imap_email: string
+          imap_host?: string | null
+          imap_password_encrypted: string
+          last_ping_at?: string | null
+          user_id: string
+        }
+        Update: {
+          agent_status?: string | null
+          container_id?: string | null
+          created_at?: string | null
+          id?: string
+          imap_email?: string
+          imap_host?: string | null
+          imap_password_encrypted?: string
+          last_ping_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      voxnowmail_profiles: {
+        Row: {
+          cabinet: string | null
+          created_at: string | null
+          id: string
+          nom: string
+          prenom: string
+          trial_ends_at: string | null
+        }
+        Insert: {
+          cabinet?: string | null
+          created_at?: string | null
+          id: string
+          nom: string
+          prenom: string
+          trial_ends_at?: string | null
+        }
+        Update: {
+          cabinet?: string | null
+          created_at?: string | null
+          id?: string
+          nom?: string
+          prenom?: string
+          trial_ends_at?: string | null
+        }
+        Relationships: []
       }
     }
     Views: {
