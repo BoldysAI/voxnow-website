@@ -880,7 +880,7 @@ export function AdministrateurProvisoire() {
                     <span className="text-4xl font-bold text-gray-900">90€</span>
                     <span className="text-gray-600">/mois/user</span>
                   </div>
-                  <p className="text-sm text-gray-500">Jusqu'à 300 messages/mois</p>
+                  <p className="text-sm text-gray-500">Par tranche de 300 appels reçus/mois</p>
                 </div>
                 
                 <ul className="space-y-4 mb-8">
