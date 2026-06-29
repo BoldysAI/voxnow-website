@@ -1770,6 +1770,7 @@ function App() {
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/gravacao" element={<GravacaoPage />} />
         <Route path="/offre" element={<PaymentPage />} />
+        <Route path="/offres" element={<PaymentPagePlus />} />
         <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />
         <Route path="/free-trial" element={<FreeTrialPage />} />
         <Route path="/blog" element={<BlogList />} />
