@@ -368,6 +368,9 @@ export function PaymentPagePlus() {
                 <span className="text-xl text-gray-600 ml-2">/mois</span>
               </div>
               
+              <p className="text-sm text-gray-500 mb-3">
+                Formule adaptée aux cabinets recevant plus de 300 appels/mois ou utilisant 2 comptes utilisateurs.
+              </p>
               <p className="text-gray-600 mb-8">
                 Votre service reste actif • Facturation automatique mensuelle • Sans engagement • Résiliable à tout moment
               </p>
