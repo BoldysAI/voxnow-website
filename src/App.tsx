@@ -36,6 +36,7 @@ import { Profile } from './components/Profile';
 import { RecordingPage } from './components/RecordingPage';
 import { GravacaoPage } from './components/GravacaoPage';
 import { PaymentPage } from './components/PaymentPage';
+import { PaymentPagePlus } from './components/PaymentPagePlus';
 import { OngoingFreeTrialPage } from './components/OngoingFreeTrialPage';
 import { BlogSection } from './components/BlogSection';
 import { BlogList } from './components/BlogList';
@@ -1769,6 +1770,7 @@ function App() {
         <Route path="/recording" element={<RecordingPage />} />
         <Route path="/gravacao" element={<GravacaoPage />} />
         <Route path="/offre" element={<PaymentPage />} />
+        <Route path="/offres" element={<PaymentPagePlus />} />
         <Route path="/ongoingfreetrial" element={<OngoingFreeTrialPage />} />
         <Route path="/free-trial" element={<FreeTrialPage />} />
         <Route path="/blog" element={<BlogList />} />
