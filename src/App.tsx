@@ -36,6 +36,7 @@ import { Profile } from './components/Profile';
 import { RecordingPage } from './components/RecordingPage';
 import { GravacaoPage } from './components/GravacaoPage';
 import { PaymentPage } from './components/PaymentPage';
+import { PaymentPagePlus } from './components/PaymentPagePlus';
 import { OngoingFreeTrialPage } from './components/OngoingFreeTrialPage';
 import { BlogSection } from './components/BlogSection';
 import { BlogList } from './components/BlogList';
